@@ -14,6 +14,13 @@ This repository contains the forensic audit and migration blueprint for rebuildi
 6. [AI-Native Upgrade Recommendations](docs/06-ai-native-upgrade-recommendations.md) — UX/performance/SEO/accessibility/trust improvements, current branding preserved.
 7. [Development Roadmap](docs/07-development-roadmap.md) — phased execution plan, Phase 0 through Phase 9.
 8. [UI Foundation Summary](docs/08-ui-foundation-summary.md) — what was built in this phase: folder structure, component list, reusability strategy, and what's deferred.
+9. [Project Accounts](docs/09-project-accounts.md) — GitHub/Sanity/Vercel connection status, env vars, and what's still missing (API tokens, email/captcha providers). Supabase intentionally not connected yet.
+
+## Live links
+
+- Repo: https://github.com/abhimagicsquad-cmd/mw_host_ai
+- Production: https://mw-host-ai.vercel.app
+- Sanity project: https://www.sanity.io/manage/project/uf33qaon
 
 ## Critical items before development starts
 
