@@ -49,7 +49,7 @@ export function HeroSection({
               <ul className="grid gap-3 sm:grid-cols-2">
                 {bullets.map((bullet) => (
                   <li key={bullet} className="flex items-start gap-2.5 text-sm font-medium text-brand-navy">
-                    <span className="mt-0.5 flex size-4.5 shrink-0 items-center justify-center rounded-full bg-brand-orange/15 text-brand-orange">
+                    <span className="mt-0.5 flex size-4.5 shrink-0 items-center justify-center rounded-full bg-brand-orange/15 text-brand-orange-accessible">
                       <Check className="size-3" />
                     </span>
                     {bullet}

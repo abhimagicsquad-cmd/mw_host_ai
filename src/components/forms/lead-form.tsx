@@ -113,7 +113,8 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
       <SelectField
         name="service"
         control={control}
-        label="What are you interested in? (optional)"
+        label="What are you interested in?"
+        required
         placeholder="Select a service"
         options={serviceOptions}
         error={errors.service?.message}

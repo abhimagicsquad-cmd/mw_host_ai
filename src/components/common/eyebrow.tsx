@@ -16,7 +16,7 @@ export function Eyebrow({ children, icon: Icon, tone = "orange", className }: Ey
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold tracking-wide uppercase",
         tone === "orange"
-          ? "border-brand-orange/20 bg-brand-orange/10 text-brand-orange"
+          ? "border-brand-orange/20 bg-brand-orange/10 text-brand-orange-accessible"
           : "border-white/15 bg-white/10 text-white/90 backdrop-blur-sm",
         className
       )}

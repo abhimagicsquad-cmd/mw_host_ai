@@ -6,7 +6,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { legalDocuments, legalSlugs } from "@/constants/legal-content"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
 type LegalPageProps = {
   params: Promise<{ slug: string }>
@@ -22,10 +22,11 @@ export async function generateMetadata({ params }: LegalPageProps): Promise<Meta
 
   if (!doc) return {}
 
-  return {
-    title: `${doc.title} | ${siteConfig.name}`,
+  return buildMetadata({
+    title: doc.title,
     description: doc.summary,
-  }
+    path: `/legal/${doc.slug}`,
+  })
 }
 
 export default async function LegalPage({ params }: LegalPageProps) {

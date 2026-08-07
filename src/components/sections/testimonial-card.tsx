@@ -18,7 +18,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
     <figure className="flex h-full flex-col gap-4 rounded-2xl border border-border-alt bg-background p-7 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-center justify-between">
-        <Quote className="size-7 text-brand-orange/30" />
+        <Quote className="size-7 text-brand-orange-accessible/30" />
         {testimonial.rating ? <RatingStars rating={testimonial.rating} /> : null}
       </div>
       <blockquote className="flex-1 text-[0.95rem] leading-relaxed text-body-text">&ldquo;{testimonial.quote}&rdquo;</blockquote>

@@ -9,7 +9,7 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/constants/dedicated-pages-data"
 import { dedicatedPlans } from "@/constants/pricing-plans"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
 type DedicatedSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -25,10 +25,11 @@ export async function generateMetadata({ params }: DedicatedSlugPageProps): Prom
 
   if (!page) return {}
 
-  return {
-    title: `${page.title} | ${siteConfig.name}`,
+  return buildMetadata({
+    title: page.title,
     description: page.description,
-  }
+    path: `/dedicated-hosting/${page.slug}`,
+  })
 }
 
 export default async function DedicatedSlugPage({ params }: DedicatedSlugPageProps) {

@@ -1,3 +1,4 @@
+import { FaqJsonLd } from "@/components/common/json-ld"
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
@@ -23,6 +24,7 @@ export function FAQSection({
 }: FAQSectionProps) {
   return (
     <SectionContainer background={background} width="default">
+      <FaqJsonLd items={items} />
       <SectionHeading eyebrow={eyebrow} title={title} description={description} />
       <div className="mt-10">
         <FAQAccordion items={items} />

@@ -10,6 +10,7 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { getHostingPage, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
 type HostingSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -25,10 +26,11 @@ export async function generateMetadata({ params }: HostingSlugPageProps): Promis
 
   if (!page) return {}
 
-  return {
-    title: `${page.title} | ${siteConfig.name}`,
+  return buildMetadata({
+    title: page.title,
     description: page.description,
-  }
+    path: `/hosting/${page.slug}`,
+  })
 }
 
 export default async function HostingSlugPage({ params }: HostingSlugPageProps) {

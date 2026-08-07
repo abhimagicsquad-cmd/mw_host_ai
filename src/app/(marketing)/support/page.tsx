@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { BookOpen, Phone, Ticket } from "lucide-react"
 
 import { LeadForm } from "@/components/forms/lead-form"
@@ -9,11 +8,13 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Support | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Support",
   description: "Reach MagicWorks Host support by phone, ticket, or knowledge base — 24/7 support on every plan.",
-}
+  path: "/support",
+})
 
 const supportChannels = [
   {
@@ -49,7 +50,7 @@ export default function SupportPage() {
         <div className="grid gap-6 sm:grid-cols-3">
           {supportChannels.map((channel) => (
             <div key={channel.title} className="flex flex-col gap-3 rounded-2xl border border-border-alt bg-background p-6">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
+              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange-accessible">
                 <channel.icon className="size-5" />
               </span>
               <p className="font-heading text-base font-semibold text-brand-navy">{channel.title}</p>
@@ -58,7 +59,7 @@ export default function SupportPage() {
                 href={channel.cta.href}
                 target={channel.cta.external ? "_blank" : undefined}
                 rel={channel.cta.external ? "noopener noreferrer" : undefined}
-                className="mt-auto text-sm font-semibold text-brand-orange hover:underline"
+                className="mt-auto text-sm font-semibold text-brand-orange-accessible hover:underline"
               >
                 {channel.cta.label}
               </a>

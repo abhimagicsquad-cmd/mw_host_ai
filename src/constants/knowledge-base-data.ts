@@ -148,3 +148,11 @@ export const kbArticles: KBArticle[] = [
     readTime: "5 min read",
   },
 ]
+
+export function getKBCategory(slug: string) {
+  return kbCategories.find((category) => category.slug === slug)
+}
+
+export function getArticlesByCategory(slug: string) {
+  return kbArticles.filter((article) => article.categorySlug === slug)
+}

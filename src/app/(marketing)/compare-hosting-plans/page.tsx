@@ -1,5 +1,3 @@
-import type { Metadata } from "next"
-
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
@@ -9,12 +7,13 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { comparisonRows } from "@/constants/compare-hosting-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Compare Hosting Plans | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Compare Hosting Plans",
   description: "A side-by-side feature comparison of every MagicWorks Host NVMe shared hosting tier — storage, bandwidth, email, and more.",
-}
+  path: "/compare-hosting-plans",
+})
 
 export default function CompareHostingPlansPage() {
   return (

@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { Eye, Gauge, HeadphonesIcon, HeartHandshake, ShieldCheck, Target, Users, Zap } from "lucide-react"
 
 import { CTASection } from "@/components/sections/cta-section"
@@ -8,13 +7,14 @@ import { PageHero } from "@/components/sections/page-hero"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `About Us | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "About Us",
   description:
     "MagicWorks Host is a division of MagicWorks IT Solutions, hosting businesses across India since 2012 with NVMe-powered infrastructure and 24/7 support.",
-}
+  path: "/about-us",
+})
 
 export default function AboutUsPage() {
   return (

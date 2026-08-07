@@ -8,7 +8,7 @@ import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { domainIncludedFeatures, domainPages, getDomainPage, tldPricing } from "@/constants/domain-pages-data"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
 type DomainSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -24,10 +24,11 @@ export async function generateMetadata({ params }: DomainSlugPageProps): Promise
 
   if (!page) return {}
 
-  return {
-    title: `${page.title} | ${siteConfig.name}`,
+  return buildMetadata({
+    title: page.title,
     description: page.description,
-  }
+    path: `/domain/${page.slug}`,
+  })
 }
 
 export default async function DomainSlugPage({ params }: DomainSlugPageProps) {

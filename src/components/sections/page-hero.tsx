@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
+import { BreadcrumbJsonLd } from "@/components/common/json-ld"
 import { Reveal } from "@/components/common/reveal"
 import { Breadcrumbs } from "@/components/sections/breadcrumbs"
 import { SectionContainer } from "@/components/layout/section-container"
@@ -26,6 +27,7 @@ export function PageHero({ title, description, breadcrumbs, cta, ctaSource = "pa
       padded={false}
       className={cn("relative overflow-hidden py-14 sm:py-20", isDark && "text-white")}
     >
+      {breadcrumbs?.length ? <BreadcrumbJsonLd items={breadcrumbs} /> : null}
       {isDark ? (
         <>
           <div className="pointer-events-none absolute -top-1/2 left-1/3 size-[32rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />

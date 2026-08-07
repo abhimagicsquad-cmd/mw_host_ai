@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import { emailField, nameField, phoneField } from "@/schemas/shared"
+import { serviceField } from "@/schemas/lead-form.schema"
 import { hostingTypeOptions, serviceOptions } from "@/constants/service-options"
 
 export { serviceOptions, hostingTypeOptions }
@@ -10,13 +11,7 @@ export const getQuoteFormSchema = z.object({
   email: emailField,
   phone: phoneField,
   company: z.string().trim().max(120, "Company name is too long.").optional().or(z.literal("")),
-  service: z
-    .string()
-    .min(1, "Please select a service.")
-    .refine(
-      (value) => serviceOptions.some((option) => option.value === value),
-      "Please select a valid service."
-    ),
+  service: serviceField,
   hostingType: z
     .string()
     .optional()

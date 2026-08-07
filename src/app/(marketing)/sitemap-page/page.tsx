@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 
 import { PageHero } from "@/components/sections/page-hero"
@@ -6,12 +5,13 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
 import { hostingPages } from "@/constants/hosting-pages-data"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Sitemap | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Sitemap",
   description: "A full index of every MagicWorks Host page — hosting, domains, SSL, email, and company pages.",
-}
+  path: "/sitemap-page",
+})
 
 const sitemapGroups: { heading: string; links: { label: string; href: string }[] }[] = [
   {
@@ -81,7 +81,7 @@ export default function SitemapPage() {
               <ul className="mt-4 flex flex-col gap-2.5">
                 {group.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-sm text-body-text hover:text-brand-orange">
+                    <Link href={link.href} className="text-sm text-body-text hover:text-brand-orange-accessible">
                       {link.label}
                     </Link>
                   </li>

@@ -1,17 +1,16 @@
-import type { Metadata } from "next"
-
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { emailHubIntro, emailIncludedFeatures, emailPages } from "@/constants/email-pages-data"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Email Hosting | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Email Hosting",
   description: "Professional business email hosting on your own domain — Business and Enterprise tiers, billed per mailbox.",
-}
+  path: "/email-hosting",
+})
 
 export default function EmailHostingHubPage() {
   return (

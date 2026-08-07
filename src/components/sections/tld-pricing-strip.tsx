@@ -14,7 +14,7 @@ export function TldPricingStrip({ items }: TldPricingStripProps) {
             <div className="flex flex-col items-center gap-1 rounded-2xl border border-border-alt bg-background p-5 text-center">
               <p className="font-heading text-xl font-bold text-brand-navy">{item.tld}</p>
               <p className="text-sm text-body-text">
-                <span className="font-semibold text-brand-orange">{item.price}</span>
+                <span className="font-semibold text-brand-orange-accessible">{item.price}</span>
                 <span className="text-muted-foreground">{item.suffix}</span>
               </p>
             </div>

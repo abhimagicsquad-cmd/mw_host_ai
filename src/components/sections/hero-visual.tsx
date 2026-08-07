@@ -41,7 +41,7 @@ export function HeroVisual() {
 
         <div className="mt-6 grid grid-cols-2 gap-3 border-t border-white/10 pt-5">
           <div className="flex items-center gap-2.5">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5 text-brand-orange">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5 text-brand-orange-accessible">
               <Zap className="size-4" />
             </span>
             <div>
@@ -50,7 +50,7 @@ export function HeroVisual() {
             </div>
           </div>
           <div className="flex items-center gap-2.5">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5 text-brand-orange">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/5 text-brand-orange-accessible">
               <Gauge className="size-4" />
             </span>
             <div>
@@ -62,7 +62,7 @@ export function HeroVisual() {
       </div>
 
       <div className="absolute -right-6 -top-6 flex items-center gap-2 rounded-2xl border border-border-alt bg-background px-4 py-3 shadow-xl sm:-right-10">
-        <span className="flex size-8 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange">
+        <span className="flex size-8 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange-accessible">
           <ShieldCheck className="size-4" />
         </span>
         <div>

@@ -10,7 +10,7 @@ import { PricingCard } from "@/components/sections/pricing-card"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { emailIncludedFeatures, emailPages, getEmailPage } from "@/constants/email-pages-data"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
 type EmailSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -26,10 +26,11 @@ export async function generateMetadata({ params }: EmailSlugPageProps): Promise<
 
   if (!page) return {}
 
-  return {
-    title: `${page.title} | ${siteConfig.name}`,
+  return buildMetadata({
+    title: page.title,
     description: page.description,
-  }
+    path: `/email-hosting/${page.slug}`,
+  })
 }
 
 export default async function EmailSlugPage({ params }: EmailSlugPageProps) {

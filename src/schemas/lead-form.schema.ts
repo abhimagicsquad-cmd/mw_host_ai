@@ -10,12 +10,11 @@ export const leadMessageField = z
   .optional()
   .or(z.literal(""))
 
-const leadServiceField = z
+export const serviceField = z
   .string()
-  .optional()
-  .or(z.literal(""))
+  .min(1, "Please select a service.")
   .refine(
-    (value) => !value || serviceOptions.some((option) => option.value === value),
+    (value) => serviceOptions.some((option) => option.value === value),
     "Please select a valid service."
   )
 
@@ -24,7 +23,7 @@ export const leadFormSchema = z.object({
   name: nameField,
   phone: phoneField,
   email: emailField,
-  service: leadServiceField,
+  service: serviceField,
   message: leadMessageField,
   // Honeypot: real users never see or fill this. Non-empty => likely a bot.
   // Named distinctly from any real "company" field so the two never collide.

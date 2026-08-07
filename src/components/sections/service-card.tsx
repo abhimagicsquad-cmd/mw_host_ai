@@ -25,7 +25,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
         {service.icon ? (
           <IconBadge icon={service.icon} className="transition-transform group-hover:scale-105" />
         ) : null}
-        {service.featured ? <Badge className="bg-brand-orange text-white">Popular</Badge> : null}
+        {service.featured ? <Badge className="bg-brand-orange-accessible text-white">Popular</Badge> : null}
       </div>
       <div>
         <p className="font-heading text-lg font-semibold text-brand-navy">{service.title}</p>
@@ -37,7 +37,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
           {service.priceSuffix ? <span className="text-sm text-muted-foreground">{service.priceSuffix}</span> : null}
         </p>
       ) : null}
-      <span className="mt-auto flex items-center gap-1.5 text-sm font-medium text-brand-orange">
+      <span className="mt-auto flex items-center gap-1.5 text-sm font-medium text-brand-orange-accessible">
         Learn more
         <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
       </span>

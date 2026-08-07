@@ -1,18 +1,7 @@
-import {
-  Database,
-  Gauge,
-  HeadphonesIcon,
-  Lock,
-  Mail,
-  MousePointerClick,
-  Rocket,
-  Server,
-  ShieldCheck,
-  TrendingUp,
-  Zap,
-} from "lucide-react"
+import { HeadphonesIcon, Lock, Server, ShieldCheck, TrendingUp, Zap } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { OrganizationJsonLd } from "@/components/common/json-ld"
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { AboutCredibilitySection } from "@/components/sections/about-credibility-section"
 import { BannerSection } from "@/components/sections/banner-section"
@@ -24,40 +13,14 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
-import { WhyChooseUs } from "@/components/sections/why-choose-us"
+import { TrustHighlights } from "@/components/sections/trust-highlights"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
-import { siteConfig } from "@/constants/site-config"
-
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      name: siteConfig.name,
-      url: siteConfig.url,
-      logo: `${siteConfig.url}/images/logo-magicworkshost-best-web-hosting-300.png`,
-      telephone: siteConfig.contact.phone,
-      email: siteConfig.contact.email,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: siteConfig.contact.address,
-      },
-    },
-    {
-      "@type": "WebSite",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-  ],
-}
+import { trustHighlights } from "@/constants/trust-highlights-data"
 
 export default function HomePage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-      />
+      <OrganizationJsonLd />
 
       <BannerSection
         message="Save up to 30% on annual NVMe hosting plans — limited time."
@@ -73,12 +36,12 @@ export default function HomePage() {
             <span className="text-gradient-brand">10X faster</span>
           </>
         }
-        description="Your website deserves NVMe-powered infrastructure, not recycled excuses. Free SSL, one-click installs, and 24/7 support are included on every MagicWorks Host plan."
+        description="Most budget hosts sell you slow HDD storage, a support queue measured in days, and a renewal price that quietly triples. We built the opposite: NVMe storage on every plan, a real SLA, and a team that answers the phone."
         bullets={[
-          "10X faster page loads",
-          "One-click WordPress & app installs",
-          "Intuitive cPanel control panel",
-          "PHP running up to 3x faster than Apache",
+          "NVMe storage standard, not a paid upgrade",
+          "24/7 support that picks up the phone",
+          "Transparent renewal pricing, no bait-and-switch",
+          "Free migration on every annual plan",
         ]}
         primaryCta={{ label: "Choose your plan", href: "#pricing" }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
@@ -111,28 +74,12 @@ export default function HomePage() {
         />
       </div>
 
-      <WhyChooseUs
+      <TrustHighlights
         eyebrow="Why MagicWorks Host"
-        title="Everything you need to run your website, in one place"
-        description="No plugins to babysit, no surprise fees — just the tools a growing website actually needs."
-        reasons={[
-          { title: "Easy to manage", description: "Full cPanel access with a clean, modern control panel UI.", icon: MousePointerClick },
-          { title: "Unlimited email accounts", description: "Business-grade email included on every plan.", icon: Mail },
-          { title: "150+ one-click scripts", description: "Softaculous installs for WordPress and more, in seconds.", icon: Rocket },
-          { title: "NVMe on every plan", description: "The fastest storage tier available, not an upsell.", icon: Gauge },
-          { title: "Unlimited MySQL databases", description: "Scale your apps and sites without extra fees.", icon: Database },
-          { title: "24/7 expert support", description: "Real humans on the phone and on tickets, every day.", icon: HeadphonesIcon },
-        ]}
-        cta={
-          <LeadCTAButton
-            source="why-choose-us"
-            variant="outline"
-            dialogTitle="Not sure where to start?"
-            dialogDescription="Tell us a bit about your site and we'll point you at the right plan."
-          >
-            Talk to an expert
-          </LeadCTAButton>
-        }
+        title="Promises we back with an SLA, not just a landing page"
+        description="Every claim below is something we'll put in writing — service credits, migration help, and backups included."
+        background="alt"
+        highlights={trustHighlights}
       />
 
       <ServiceGrid
@@ -235,6 +182,7 @@ export default function HomePage() {
       <FAQSection
         title="Frequently asked questions"
         description="Everything you need to know before you switch."
+        contactCta={false}
         items={[
           { question: "How fast can I get started?", answer: "Most accounts are provisioned within 5 minutes of payment confirmation — no waiting on manual setup." },
           { question: "Do you offer a money-back guarantee?", answer: "Yes — every plan includes a 30-day money-back guarantee, no questions asked." },

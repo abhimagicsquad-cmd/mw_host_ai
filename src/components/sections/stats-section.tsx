@@ -40,7 +40,7 @@ export function StatsSection({ eyebrow, title, description, stats, background = 
                 }
               >
                 {stat.icon ? (
-                  <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
+                  <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange-accessible">
                     <stat.icon className="size-5" />
                   </span>
                 ) : null}

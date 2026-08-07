@@ -63,7 +63,7 @@ export function MobileNav({ items }: MobileNavProps) {
                               />
                             }
                           >
-                            {link.icon ? <link.icon className="size-4 text-brand-orange" /> : null}
+                            {link.icon ? <link.icon className="size-4 text-brand-orange-accessible" /> : null}
                             {link.label}
                           </SheetClose>
                         </li>
@@ -97,7 +97,7 @@ export function MobileNav({ items }: MobileNavProps) {
             href={siteConfig.contact.phoneHref}
             className="flex items-center gap-2 text-sm font-medium text-brand-navy"
           >
-            <Phone className="size-4 text-brand-orange" />
+            <Phone className="size-4 text-brand-orange-accessible" />
             {siteConfig.contact.phone}
           </a>
           <CTAButton href="/contact-us" className="w-full justify-center" onClick={() => setOpen(false)}>

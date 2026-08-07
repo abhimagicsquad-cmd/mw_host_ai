@@ -1,17 +1,16 @@
-import type { Metadata } from "next"
-
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { BlogExplorer } from "@/components/sections/blog-explorer"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { blogCategories, blogPosts } from "@/constants/blog-data"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Blog | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Blog",
   description: "Hosting performance, security, and WordPress articles from the MagicWorks Host team.",
-}
+  path: "/blog",
+})
 
 export default function BlogPage() {
   return (

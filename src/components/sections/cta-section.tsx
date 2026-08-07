@@ -16,7 +16,7 @@ type CTASectionProps = {
 
 const backgroundStyles = {
   navy: "bg-brand-navy text-white",
-  orange: "bg-brand-orange text-white",
+  orange: "bg-brand-orange-accessible text-white",
   alt: "bg-surface-alt text-brand-navy",
 } as const
 

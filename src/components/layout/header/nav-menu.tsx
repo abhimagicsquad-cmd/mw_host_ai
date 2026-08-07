@@ -36,7 +36,7 @@ export function NavMenu({ items }: NavMenuProps) {
                         {column.links.map((link) => (
                           <li key={link.href}>
                             <NavigationMenuLink render={<Link href={link.href} />}>
-                              {link.icon ? <link.icon className="text-brand-orange" /> : null}
+                              {link.icon ? <link.icon className="text-brand-orange-accessible" /> : null}
                               {link.label}
                             </NavigationMenuLink>
                           </li>
@@ -47,7 +47,7 @@ export function NavMenu({ items }: NavMenuProps) {
                   {item.featured ? (
                     <div className="flex w-60 flex-col gap-2 rounded-lg bg-surface-alt p-4">
                       {item.featured.icon ? (
-                        <item.featured.icon className="size-5 text-brand-orange" />
+                        <item.featured.icon className="size-5 text-brand-orange-accessible" />
                       ) : null}
                       <p className="font-heading text-sm font-semibold text-brand-navy">
                         {item.featured.title}
@@ -57,7 +57,7 @@ export function NavMenu({ items }: NavMenuProps) {
                       ) : null}
                       <Link
                         href={item.featured.href}
-                        className="mt-auto text-sm font-medium text-brand-orange hover:underline"
+                        className="mt-auto text-sm font-medium text-brand-orange-accessible hover:underline"
                       >
                         Learn more →
                       </Link>

@@ -9,7 +9,7 @@ const sizeClasses = {
 } as const
 
 const toneClasses = {
-  orange: "bg-brand-orange/10 text-brand-orange",
+  orange: "bg-brand-orange/10 text-brand-orange-accessible",
   navy: "bg-brand-navy/10 text-brand-navy dark:bg-white/10 dark:text-white",
   cyan: "bg-brand-cta-secondary/10 text-brand-cta-secondary",
 } as const

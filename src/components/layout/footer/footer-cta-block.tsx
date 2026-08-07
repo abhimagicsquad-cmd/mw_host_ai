@@ -22,7 +22,7 @@ export function FooterCTABlock({
       </div>
       <div className="flex flex-col items-center gap-3 sm:flex-row">
         <a href={siteConfig.contact.phoneHref} className="flex items-center gap-2 text-sm font-medium text-white">
-          <Phone className="size-4 text-brand-orange" />
+          <Phone className="size-4 text-brand-orange-accessible" />
           {siteConfig.contact.phone}
         </a>
         <LeadCTAButton source="footer">{ctaLabel}</LeadCTAButton>

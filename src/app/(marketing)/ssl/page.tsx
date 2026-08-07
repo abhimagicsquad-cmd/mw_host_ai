@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { KeyRound, Lock, ScanSearch, ShieldCheck, ShoppingCart, TrendingUp } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
@@ -8,12 +7,13 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { sslPlans } from "@/constants/pricing-plans"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `SSL Certificates | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "SSL Certificates",
   description: "Domain Validated, Business Validated, Wildcard, and Extended Validated SSL certificates to secure your site and build customer trust.",
-}
+  path: "/ssl",
+})
 
 export default function SslPage() {
   return (

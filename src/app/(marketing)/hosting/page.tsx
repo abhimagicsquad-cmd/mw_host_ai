@@ -1,5 +1,3 @@
-import type { Metadata } from "next"
-
 import { GetQuoteForm } from "@/components/forms/get-quote-form"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
@@ -10,12 +8,13 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { hostingHubIntro, hostingPageIcons, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Web Hosting | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Web Hosting",
   description: "NVMe-powered shared hosting plans for every kind of website — general web hosting, SEO, WordPress, Linux, and unlimited tiers.",
-}
+  path: "/hosting",
+})
 
 export default function HostingHubPage() {
   return (

@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { BadgePercent, Link2, TrendingDown, Wallet } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
@@ -7,12 +6,13 @@ import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Become Our Affiliate | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Become Our Affiliate",
   description: "Earn 20% recurring commission referring businesses to MagicWorks Host — 90-day cookie, low minimum withdrawal, no cap.",
-}
+  path: "/become-our-affiliate",
+})
 
 export default function BecomeOurAffiliatePage() {
   return (

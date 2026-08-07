@@ -1,5 +1,3 @@
-import type { Metadata } from "next"
-
 import { GetQuoteForm } from "@/components/forms/get-quote-form"
 import { LeadForm } from "@/components/forms/lead-form"
 import { ContactSection } from "@/components/sections/contact-section"
@@ -10,12 +8,14 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Contact Us | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Contact Us",
   description:
     "Get in touch with MagicWorks Host — call, email, or send us your details and our team will respond within a few hours.",
-}
+  path: "/contact-us",
+})
 
 export default function ContactUsPage() {
   return (

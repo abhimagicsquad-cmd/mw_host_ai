@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import { Cpu, Gauge, HeadphonesIcon, Server, ShieldCheck, Zap } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
@@ -10,12 +9,13 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { vpsPlans } from "@/constants/pricing-plans"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `VPS Hosting | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "VPS Hosting",
   description: "NVMe-backed VPS hosting with full root access — dedicated CPU and RAM without dedicated-server pricing.",
-}
+  path: "/vps-hosting",
+})
 
 export default function VpsHostingPage() {
   return (

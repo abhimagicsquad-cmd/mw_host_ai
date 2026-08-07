@@ -1,5 +1,3 @@
-import type { Metadata } from "next"
-
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FeaturesSection } from "@/components/sections/features-section"
@@ -7,12 +5,13 @@ import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { domainHubIntro, domainIncludedFeatures, domainPageIcons, domainPages, tldPricing } from "@/constants/domain-pages-data"
-import { siteConfig } from "@/constants/site-config"
+import { buildMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `Domain Names | ${siteConfig.name}`,
+export const metadata = buildMetadata({
+  title: "Domain Names",
   description: "Register, host, or transfer your domain — .com, .in, .co.in, and .org, backed by registrar lock and auto-renewal.",
-}
+  path: "/domain",
+})
 
 export default function DomainHubPage() {
   return (
