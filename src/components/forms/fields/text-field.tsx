@@ -1,3 +1,4 @@
+import { useId } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { FormFieldShell } from "@/components/forms/fields/form-field-shell"
@@ -28,16 +29,18 @@ export function TextField({
   autoComplete,
   maxLength,
 }: TextFieldProps) {
+  const id = useId()
+
   return (
     <FormFieldShell
-      htmlFor={registration.name}
+      htmlFor={id}
       label={label}
       required={required}
       description={description}
       error={error}
     >
       <Input
-        id={registration.name}
+        id={id}
         type={type}
         placeholder={placeholder}
         aria-invalid={Boolean(error)}

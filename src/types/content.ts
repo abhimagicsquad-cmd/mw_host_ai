@@ -36,6 +36,8 @@ export type PricingPlan = {
   features: string[]
   cta: CTA
   featured?: boolean
+  /** Value from the centralized service-options list, used to pre-select the lead form's service field. */
+  service?: string
 }
 
 export type Testimonial = {

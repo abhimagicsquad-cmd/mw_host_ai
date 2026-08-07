@@ -1,3 +1,4 @@
+import { useId } from "react"
 import type { Control, FieldPath, FieldValues } from "react-hook-form"
 import { Controller } from "react-hook-form"
 
@@ -33,9 +34,11 @@ export function SelectField<TFieldValues extends FieldValues>({
   error,
   options,
 }: SelectFieldProps<TFieldValues>) {
+  const id = useId()
+
   return (
     <FormFieldShell
-      htmlFor={name}
+      htmlFor={id}
       label={label}
       required={required}
       description={description}
@@ -49,8 +52,10 @@ export function SelectField<TFieldValues extends FieldValues>({
             value={field.value || null}
             onValueChange={(value) => field.onChange(value ?? "")}
           >
-            <SelectTrigger id={name} className="w-full" aria-invalid={Boolean(error)}>
-              <SelectValue placeholder={placeholder} />
+            <SelectTrigger id={id} className="w-full" aria-invalid={Boolean(error)}>
+              <SelectValue placeholder={placeholder}>
+                {(value: string) => options.find((option) => option.value === value)?.label ?? placeholder}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {options.map((option) => (

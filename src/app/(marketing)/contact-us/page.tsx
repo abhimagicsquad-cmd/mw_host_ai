@@ -1,10 +1,13 @@
 import type { Metadata } from "next"
 
+import { GetQuoteForm } from "@/components/forms/get-quote-form"
 import { LeadForm } from "@/components/forms/lead-form"
 import { ContactSection } from "@/components/sections/contact-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { PageHero } from "@/components/sections/page-hero"
+import { SectionContainer } from "@/components/layout/section-container"
+import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
 
@@ -30,6 +33,17 @@ export default function ContactUsPage() {
       >
         <LeadForm source="contact-page" submitLabel="Send message" />
       </ContactSection>
+
+      <SectionContainer width="narrow" background="alt">
+        <SectionHeading
+          eyebrow="Planning something bigger"
+          title="Request a detailed quote"
+          description="Tell us your service, hosting type, and requirements and we'll follow up with pricing tailored to your project."
+        />
+        <div className="mx-auto mt-10 max-w-xl">
+          <GetQuoteForm source="contact-page:quote" />
+        </div>
+      </SectionContainer>
 
       <FAQSection
         eyebrow="Before you reach out"

@@ -1,13 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useId, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
+import { SelectField } from "@/components/forms/fields/select-field"
 import { TextField } from "@/components/forms/fields/text-field"
 import { TextareaField } from "@/components/forms/fields/textarea-field"
 import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { serviceOptions } from "@/constants/service-options"
 import { cn } from "@/lib/utils"
 import { leadFormDefaultValues, leadFormSchema, type LeadFormValues } from "@/schemas/lead-form.schema"
 
@@ -20,6 +22,8 @@ type LeadFormProps = {
   source: string
   onSuccess?: () => void
   submitLabel?: string
+  /** Pre-selects the service dropdown for context-aware CTAs (e.g. a specific pricing plan or service page). Still editable. */
+  defaultService?: string
   className?: string
 }
 
@@ -31,18 +35,20 @@ function filterPhoneInput(event: React.ChangeEvent<HTMLInputElement>) {
   event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10)
 }
 
-export function LeadForm({ source, onSuccess, submitLabel = "Send my details", className }: LeadFormProps) {
+export function LeadForm({ source, onSuccess, submitLabel = "Send my details", defaultService, className }: LeadFormProps) {
   const [result, setResult] = useState<LeadFormResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
+  const honeypotId = useId()
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<LeadFormValues>({
     resolver: zodResolver(leadFormSchema),
-    defaultValues: leadFormDefaultValues,
+    defaultValues: { ...leadFormDefaultValues, service: defaultService ?? "" },
   })
 
   const onSubmit = async (values: LeadFormValues) => {
@@ -104,6 +110,14 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", c
           error={errors.email?.message}
         />
       </div>
+      <SelectField
+        name="service"
+        control={control}
+        label="What are you interested in? (optional)"
+        placeholder="Select a service"
+        options={serviceOptions}
+        error={errors.service?.message}
+      />
       <TextareaField
         label="Message (optional)"
         rows={4}
@@ -114,8 +128,8 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", c
 
       {/* Honeypot — invisible to real users, silently flags automated submissions. */}
       <div className="pointer-events-none absolute -left-[9999px] opacity-0" aria-hidden="true">
-        <label htmlFor="lead-company">Company</label>
-        <input id="lead-company" type="text" tabIndex={-1} autoComplete="off" {...register("company")} />
+        <label htmlFor={honeypotId}>Website</label>
+        <input id={honeypotId} type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>
 
       {result ? <FormStatusMessage status={result.success ? "success" : "error"} message={result.message} /> : null}

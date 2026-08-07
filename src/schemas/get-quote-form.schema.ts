@@ -1,15 +1,9 @@
 import { z } from "zod"
 
 import { emailField, nameField, phoneField } from "@/schemas/shared"
+import { hostingTypeOptions, serviceOptions } from "@/constants/service-options"
 
-export const serviceOptions = [
-  { value: "shared-hosting", label: "Shared Hosting" },
-  { value: "vps-hosting", label: "VPS Hosting" },
-  { value: "dedicated-server", label: "Dedicated Server" },
-  { value: "domain", label: "Domain Registration" },
-  { value: "ssl", label: "SSL Certificate" },
-  { value: "email-hosting", label: "Email Hosting" },
-] as const
+export { serviceOptions, hostingTypeOptions }
 
 export const getQuoteFormSchema = z.object({
   name: nameField,
@@ -23,11 +17,21 @@ export const getQuoteFormSchema = z.object({
       (value) => serviceOptions.some((option) => option.value === value),
       "Please select a valid service."
     ),
+  hostingType: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (value) => !value || hostingTypeOptions.some((option) => option.value === value),
+      "Please select a valid hosting type."
+    ),
   requirements: z
     .string()
     .trim()
     .min(10, "Please describe your requirements (at least 10 characters).")
     .max(2000, "Message is too long."),
+  // Honeypot: real users never see or fill this. Non-empty => likely a bot.
+  website: z.string().max(120).optional().or(z.literal("")),
 })
 
 export type GetQuoteFormValues = z.infer<typeof getQuoteFormSchema>
@@ -38,5 +42,7 @@ export const getQuoteFormDefaultValues: GetQuoteFormValues = {
   phone: "",
   company: "",
   service: "",
+  hostingType: "",
   requirements: "",
+  website: "",
 }

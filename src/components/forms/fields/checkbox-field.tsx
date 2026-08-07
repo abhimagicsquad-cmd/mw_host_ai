@@ -1,3 +1,4 @@
+import { useId } from "react"
 import type { ReactNode } from "react"
 import type { Control, FieldPath, FieldValues } from "react-hook-form"
 import { Controller } from "react-hook-form"
@@ -21,6 +22,8 @@ export function CheckboxField<TFieldValues extends FieldValues>({
   error,
   className,
 }: CheckboxFieldProps<TFieldValues>) {
+  const id = useId()
+
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       <div className="flex items-start gap-2">
@@ -29,7 +32,7 @@ export function CheckboxField<TFieldValues extends FieldValues>({
           control={control}
           render={({ field }) => (
             <Checkbox
-              id={name}
+              id={id}
               checked={Boolean(field.value)}
               onCheckedChange={(checked) => field.onChange(checked)}
               aria-invalid={Boolean(error)}
@@ -37,7 +40,7 @@ export function CheckboxField<TFieldValues extends FieldValues>({
             />
           )}
         />
-        <Label htmlFor={name} className="font-normal text-muted-foreground">
+        <Label htmlFor={id} className="font-normal text-muted-foreground">
           {label}
         </Label>
       </div>

@@ -25,6 +25,7 @@ import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
+import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { siteConfig } from "@/constants/site-config"
 
 const organizationJsonLd = {
@@ -106,49 +107,7 @@ export default function HomePage() {
           eyebrow="Pricing"
           title="Select your web hosting package"
           description="Every plan includes free SSL, cPanel, and JetBackup — no hidden setup fees."
-          plans={[
-            {
-              slug: "starter",
-              name: "Starter NVMe",
-              price: "₹145",
-              priceSuffix: "/mo",
-              regularPrice: "₹194",
-              discountLabel: "15% off annually",
-              features: ["1GB NVMe storage", "5GB bandwidth", "10 email accounts", "Free SSL"],
-              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
-            },
-            {
-              slug: "basic-plus",
-              name: "Basic Plus NVMe",
-              price: "₹407",
-              priceSuffix: "/mo",
-              regularPrice: "₹542",
-              discountLabel: "24% off annually",
-              features: ["50GB NVMe storage", "20GB bandwidth", "30 email accounts", "Free SSL"],
-              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
-              featured: true,
-            },
-            {
-              slug: "deluxe",
-              name: "Deluxe NVMe",
-              price: "₹814",
-              priceSuffix: "/mo",
-              regularPrice: "₹1,085",
-              discountLabel: "30% off annually",
-              features: ["150GB NVMe storage", "50GB bandwidth", "100 email accounts", "Free SSL"],
-              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
-            },
-            {
-              slug: "unlimited",
-              name: "Unlimited NVMe",
-              price: "₹1,162",
-              priceSuffix: "/mo",
-              regularPrice: "₹1,550",
-              discountLabel: "25% off annually",
-              features: ["200GB NVMe storage", "200GB bandwidth", "Unlimited email", "Free SSL"],
-              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
-            },
-          ]}
+          plans={sharedHostingPlans}
         />
       </div>
 

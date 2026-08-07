@@ -62,15 +62,15 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, phone, email, message, company, source, formRenderedAt } = parsed.data
+  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType } = parsed.data
 
   const isLikelyBot =
-    Boolean(company) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
+    Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
 
   const isDuplicate = markAndCheckDuplicate(`${email.toLowerCase()}:${phone}`)
 
   if (!isLikelyBot && !isDuplicate) {
-    const result = await sendLeadNotificationEmail({ name, phone, email, message, source })
+    const result = await sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType })
 
     if (!result.sent && !result.skipped) {
       return NextResponse.json(

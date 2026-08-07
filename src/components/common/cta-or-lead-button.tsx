@@ -18,6 +18,7 @@ type CTAOrLeadButtonProps = {
   className?: string
   dialogTitle?: string
   dialogDescription?: string
+  defaultService?: string
 }
 
 export function CTAOrLeadButton({
@@ -29,6 +30,7 @@ export function CTAOrLeadButton({
   className,
   dialogTitle,
   dialogDescription,
+  defaultService,
 }: CTAOrLeadButtonProps) {
   if (cta.href === LEAD_CTA_HREF) {
     return (
@@ -40,6 +42,7 @@ export function CTAOrLeadButton({
         className={className}
         dialogTitle={dialogTitle}
         dialogDescription={dialogDescription}
+        defaultService={defaultService}
       >
         {cta.label}
       </LeadCTAButton>

@@ -17,6 +17,8 @@ type LeadCTAButtonProps = {
   className?: string
   dialogTitle?: string
   dialogDescription?: string
+  /** Pre-selects the lead form's service dropdown, e.g. from a pricing plan or service page CTA. */
+  defaultService?: string
 }
 
 export function LeadCTAButton({
@@ -29,6 +31,7 @@ export function LeadCTAButton({
   className,
   dialogTitle = "Talk to a hosting expert",
   dialogDescription = "Share a few details and our team will get back to you shortly.",
+  defaultService,
 }: LeadCTAButtonProps) {
   const [open, setOpen] = useState(false)
 
@@ -52,7 +55,7 @@ export function LeadCTAButton({
             <DialogTitle>{dialogTitle}</DialogTitle>
             <DialogDescription>{dialogDescription}</DialogDescription>
           </DialogHeader>
-          <LeadForm source={source} onSuccess={() => setOpen(false)} />
+          <LeadForm source={source} onSuccess={() => setOpen(false)} defaultService={defaultService} />
         </DialogContent>
       </Dialog>
     </>

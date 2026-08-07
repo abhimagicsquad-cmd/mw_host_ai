@@ -5,6 +5,7 @@ export const nameField = z
   .trim()
   .min(2, "Please enter your full name.")
   .max(80, "Name is too long.")
+  .regex(/^[A-Za-z]+(?:\s[A-Za-z]+)*$/, "Name can only contain letters and spaces.")
 
 export const emailField = z
   .string()
@@ -15,9 +16,7 @@ export const emailField = z
 export const phoneField = z
   .string()
   .trim()
-  .min(7, "Please enter a valid phone number.")
-  .max(20, "Please enter a valid phone number.")
-  .regex(/^[+\d][\d\s()-]*$/, "Please enter a valid phone number.")
+  .regex(/^\d{10}$/, "Enter a valid 10-digit phone number.")
 
 export const messageField = z
   .string()

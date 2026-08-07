@@ -1,22 +1,7 @@
 import { z } from "zod"
 
-export const leadNameField = z
-  .string()
-  .trim()
-  .min(2, "Please enter your full name.")
-  .max(80, "Name is too long.")
-  .regex(/^[A-Za-z]+(?:\s[A-Za-z]+)*$/, "Name can only contain letters and spaces.")
-
-export const leadPhoneField = z
-  .string()
-  .trim()
-  .regex(/^\d{10}$/, "Enter a valid 10-digit phone number.")
-
-export const leadEmailField = z
-  .string()
-  .trim()
-  .min(1, "Email is required.")
-  .email("Enter a valid email address.")
+import { serviceOptions } from "@/constants/service-options"
+import { emailField, nameField, phoneField } from "@/schemas/shared"
 
 export const leadMessageField = z
   .string()
@@ -25,14 +10,25 @@ export const leadMessageField = z
   .optional()
   .or(z.literal(""))
 
+const leadServiceField = z
+  .string()
+  .optional()
+  .or(z.literal(""))
+  .refine(
+    (value) => !value || serviceOptions.some((option) => option.value === value),
+    "Please select a valid service."
+  )
+
 /** Client-facing schema — exactly the fields rendered in <LeadForm />, plus a honeypot. */
 export const leadFormSchema = z.object({
-  name: leadNameField,
-  phone: leadPhoneField,
-  email: leadEmailField,
+  name: nameField,
+  phone: phoneField,
+  email: emailField,
+  service: leadServiceField,
   message: leadMessageField,
   // Honeypot: real users never see or fill this. Non-empty => likely a bot.
-  company: z.string().max(120).optional().or(z.literal("")),
+  // Named distinctly from any real "company" field so the two never collide.
+  website: z.string().max(120).optional().or(z.literal("")),
 })
 
 export type LeadFormValues = z.infer<typeof leadFormSchema>
@@ -41,14 +37,22 @@ export const leadFormDefaultValues: LeadFormValues = {
   name: "",
   phone: "",
   email: "",
+  service: "",
   message: "",
-  company: "",
+  website: "",
 }
 
-/** Server-facing schema — adds anti-spam/attribution metadata sent alongside the form fields. */
+/**
+ * Server-facing schema — the full superset accepted by /api/leads. Extends the
+ * client schema with anti-spam/attribution metadata, plus the extra optional
+ * fields <GetQuoteForm /> collects (real company name, hosting type) so both
+ * forms can share one submission pipeline.
+ */
 export const leadApiPayloadSchema = leadFormSchema.extend({
   source: z.string().max(60).optional(),
   formRenderedAt: z.number().optional(),
+  company: z.string().trim().max(120).optional().or(z.literal("")),
+  hostingType: z.string().max(60).optional().or(z.literal("")),
 })
 
 export type LeadApiPayload = z.infer<typeof leadApiPayloadSchema>

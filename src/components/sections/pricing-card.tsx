@@ -55,6 +55,7 @@ export function PricingCard({ plan }: PricingCardProps) {
         className="mt-auto w-full justify-center"
         dialogTitle={`Get started with ${plan.name}`}
         dialogDescription={`Share your details and we'll help you get set up on the ${plan.name} plan.`}
+        defaultService={plan.service}
       />
     </div>
   )

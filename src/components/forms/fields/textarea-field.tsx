@@ -1,3 +1,4 @@
+import { useId } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { FormFieldShell } from "@/components/forms/fields/form-field-shell"
@@ -22,16 +23,18 @@ export function TextareaField({
   rows = 5,
   registration,
 }: TextareaFieldProps) {
+  const id = useId()
+
   return (
     <FormFieldShell
-      htmlFor={registration.name}
+      htmlFor={id}
       label={label}
       required={required}
       description={description}
       error={error}
     >
       <Textarea
-        id={registration.name}
+        id={id}
         placeholder={placeholder}
         rows={rows}
         aria-invalid={Boolean(error)}
