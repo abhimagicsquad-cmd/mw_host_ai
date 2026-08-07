@@ -56,7 +56,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <ArrowLeft className="size-4" />
             Back to blog
           </Link>
-          <span className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange-accessible uppercase">
+          <span className="w-fit rounded-full border border-brand-orange/20 bg-orange-50 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange-accessible uppercase">
             {getBlogCategoryName(post.categorySlug)}
           </span>
           <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{post.title}</h1>

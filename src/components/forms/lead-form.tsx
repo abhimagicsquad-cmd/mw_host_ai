@@ -1,6 +1,7 @@
 "use client"
 
 import { useId, useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
@@ -36,6 +37,7 @@ function filterPhoneInput(event: React.ChangeEvent<HTMLInputElement>) {
 }
 
 export function LeadForm({ source, onSuccess, submitLabel = "Send my details", defaultService, className }: LeadFormProps) {
+  const router = useRouter()
   const [result, setResult] = useState<LeadFormResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
   const honeypotId = useId()
@@ -64,15 +66,17 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       const success = Boolean(data.success)
 
-      setResult({
-        success,
-        message: data.message ?? (success ? "Thanks — we'll be in touch shortly." : "Something went wrong. Please try again."),
-      })
-
       if (success) {
         reset()
         onSuccess?.()
+        router.push("/thank-you")
+        return
       }
+
+      setResult({
+        success,
+        message: data.message ?? "Something went wrong. Please try again.",
+      })
     } catch {
       setResult({ success: false, message: "Network error — please check your connection and try again." })
     }

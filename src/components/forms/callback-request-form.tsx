@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
@@ -18,6 +19,7 @@ import {
 } from "@/schemas/callback-request-form.schema"
 
 export function CallbackRequestForm() {
+  const router = useRouter()
   const [result, setResult] = useState<MockSubmitResult | null>(null)
 
   const {
@@ -33,8 +35,12 @@ export function CallbackRequestForm() {
 
   const onSubmit = async (values: CallbackRequestFormValues) => {
     const response = await mockSubmit(values)
+    if (response.success) {
+      reset()
+      router.push("/thank-you")
+      return
+    }
     setResult(response)
-    if (response.success) reset()
   }
 
   return (

@@ -1,6 +1,7 @@
 "use client"
 
 import { useId, useState } from "react"
+import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
 
@@ -33,6 +34,7 @@ function filterPhoneInput(event: React.ChangeEvent<HTMLInputElement>) {
 }
 
 export function GetQuoteForm({ source = "get-quote-form", defaultService, onSuccess }: GetQuoteFormProps) {
+  const router = useRouter()
   const [result, setResult] = useState<SubmitResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
   const honeypotId = useId()
@@ -77,15 +79,17 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       const success = Boolean(data.success)
 
-      setResult({
-        success,
-        message: data.message ?? (success ? "Thanks — we'll follow up with a quote shortly." : "Something went wrong. Please try again."),
-      })
-
       if (success) {
         reset()
         onSuccess?.()
+        router.push("/thank-you")
+        return
       }
+
+      setResult({
+        success,
+        message: data.message ?? "Something went wrong. Please try again.",
+      })
     } catch {
       setResult({ success: false, message: "Network error — please check your connection and try again." })
     }

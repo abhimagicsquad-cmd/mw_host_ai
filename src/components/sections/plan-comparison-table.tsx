@@ -34,7 +34,7 @@ export function PlanComparisonTable({ plans, rows }: PlanComparisonTableProps) {
                   key={plan.slug}
                   className={cn(
                     "p-4 text-center font-heading text-sm font-semibold",
-                    plan.featured ? "bg-brand-orange/10 text-brand-orange-accessible" : "text-brand-navy"
+                    plan.featured ? "bg-orange-50 text-brand-orange-accessible" : "text-brand-navy"
                   )}
                 >
                   <p>{plan.name}</p>
