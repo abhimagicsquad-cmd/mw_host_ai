@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 
 import { MotionProvider } from "@/components/common/motion-provider"
 import { Footer } from "@/components/layout/footer/footer"
@@ -12,6 +12,10 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: `${siteConfig.name} | ${siteConfig.tagline}`,
   description: siteConfig.description,
+}
+
+export const viewport: Viewport = {
+  themeColor: "#2a363f",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

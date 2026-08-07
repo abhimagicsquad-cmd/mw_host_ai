@@ -1,6 +1,6 @@
 import { Check } from "lucide-react"
 
-import { CTAButton } from "@/components/common/cta-button"
+import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { PricingPlan } from "@/types/content"
@@ -48,14 +48,14 @@ export function PricingCard({ plan }: PricingCardProps) {
         ))}
       </ul>
 
-      <CTAButton
-        href={plan.cta.href}
-        external={plan.cta.external}
+      <CTAOrLeadButton
+        cta={plan.cta}
+        source={`pricing:${plan.slug}`}
         variant={plan.featured ? "primary" : "outline"}
         className="mt-auto w-full justify-center"
-      >
-        {plan.cta.label}
-      </CTAButton>
+        dialogTitle={`Get started with ${plan.name}`}
+        dialogDescription={`Share your details and we'll help you get set up on the ${plan.name} plan.`}
+      />
     </div>
   )
 }

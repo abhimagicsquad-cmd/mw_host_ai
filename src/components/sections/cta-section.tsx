@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import { CTAButton } from "@/components/common/cta-button"
+import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { cn } from "@/lib/utils"
@@ -37,25 +37,21 @@ export function CTASection({ title, description, primaryCta, secondaryCta, backg
           <p className={isDark ? "max-w-2xl text-white/80" : "max-w-2xl text-body-text"}>{description}</p>
         ) : null}
         <div className="flex flex-wrap justify-center gap-4">
-          <CTAButton
-            href={primaryCta.href}
-            external={primaryCta.external}
+          <CTAOrLeadButton
+            cta={primaryCta}
+            source="cta-section:primary"
             size="lg"
             variant={isDark ? "outline" : "primary"}
             className={isDark ? "border-white bg-white text-brand-navy hover:bg-white/90" : undefined}
-          >
-            {primaryCta.label}
-          </CTAButton>
+          />
           {secondaryCta ? (
-            <CTAButton
-              href={secondaryCta.href}
-              external={secondaryCta.external}
+            <CTAOrLeadButton
+              cta={secondaryCta}
+              source="cta-section:secondary"
               size="lg"
               variant="ghost"
               className={isDark ? "text-white hover:bg-white/10" : undefined}
-            >
-              {secondaryCta.label}
-            </CTAButton>
+            />
           ) : null}
         </div>
       </Reveal>

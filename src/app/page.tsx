@@ -12,6 +12,8 @@ import {
   Zap,
 } from "lucide-react"
 
+import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { AboutCredibilitySection } from "@/components/sections/about-credibility-section"
 import { BannerSection } from "@/components/sections/banner-section"
 import { CTASection } from "@/components/sections/cta-section"
@@ -78,7 +80,7 @@ export default function HomePage() {
           "PHP running up to 3x faster than Apache",
         ]}
         primaryCta={{ label: "Choose your plan", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to an expert", href: "/contact-us" }}
+        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
         stats={[
           { label: "Uptime SLA", value: "99.9%" },
           { label: "Businesses hosted", value: "12,000+" },
@@ -113,7 +115,7 @@ export default function HomePage() {
               regularPrice: "₹194",
               discountLabel: "15% off annually",
               features: ["1GB NVMe storage", "5GB bandwidth", "10 email accounts", "Free SSL"],
-              cta: { label: "Buy Now", href: "#" },
+              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
             },
             {
               slug: "basic-plus",
@@ -123,7 +125,7 @@ export default function HomePage() {
               regularPrice: "₹542",
               discountLabel: "24% off annually",
               features: ["50GB NVMe storage", "20GB bandwidth", "30 email accounts", "Free SSL"],
-              cta: { label: "Buy Now", href: "#" },
+              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
               featured: true,
             },
             {
@@ -134,7 +136,7 @@ export default function HomePage() {
               regularPrice: "₹1,085",
               discountLabel: "30% off annually",
               features: ["150GB NVMe storage", "50GB bandwidth", "100 email accounts", "Free SSL"],
-              cta: { label: "Buy Now", href: "#" },
+              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
             },
             {
               slug: "unlimited",
@@ -144,7 +146,7 @@ export default function HomePage() {
               regularPrice: "₹1,550",
               discountLabel: "25% off annually",
               features: ["200GB NVMe storage", "200GB bandwidth", "Unlimited email", "Free SSL"],
-              cta: { label: "Buy Now", href: "#" },
+              cta: { label: "Buy Now", href: LEAD_CTA_HREF },
             },
           ]}
         />
@@ -162,6 +164,16 @@ export default function HomePage() {
           { title: "Unlimited MySQL databases", description: "Scale your apps and sites without extra fees.", icon: Database },
           { title: "24/7 expert support", description: "Real humans on the phone and on tickets, every day.", icon: HeadphonesIcon },
         ]}
+        cta={
+          <LeadCTAButton
+            source="why-choose-us"
+            variant="outline"
+            dialogTitle="Not sure where to start?"
+            dialogDescription="Tell us a bit about your site and we'll point you at the right plan."
+          >
+            Talk to an expert
+          </LeadCTAButton>
+        }
       />
 
       <ServiceGrid
@@ -198,6 +210,16 @@ export default function HomePage() {
             priceSuffix: "/yr",
           },
         ]}
+        cta={
+          <LeadCTAButton
+            source="services"
+            variant="outline"
+            dialogTitle="Get a recommendation"
+            dialogDescription="Tell us about your traffic and workload and we'll suggest the right tier."
+          >
+            Not sure which one you need? Ask us
+          </LeadCTAButton>
+        }
       />
 
       <AboutCredibilitySection
@@ -244,6 +266,11 @@ export default function HomePage() {
             rating: 4,
           },
         ]}
+        cta={
+          <LeadCTAButton source="testimonials" variant="outline">
+            Join our happy customers
+          </LeadCTAButton>
+        }
       />
 
       <FAQSection
@@ -261,7 +288,7 @@ export default function HomePage() {
         title="Ready to move your website to MagicWorks Host?"
         description="Free migration assistance included on every annual plan."
         primaryCta={{ label: "View plans", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to sales", href: "/contact-us" }}
+        secondaryCta={{ label: "Talk to sales", href: LEAD_CTA_HREF }}
         background="navy"
       />
     </>

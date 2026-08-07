@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
@@ -10,9 +12,10 @@ type ServiceGridProps = {
   description?: string
   services: ServiceItem[]
   background?: "none" | "alt"
+  cta?: ReactNode
 }
 
-export function ServiceGrid({ eyebrow, title, description, services, background = "none" }: ServiceGridProps) {
+export function ServiceGrid({ eyebrow, title, description, services, background = "none", cta }: ServiceGridProps) {
   return (
     <SectionContainer background={background} width="wide">
       <SectionHeading eyebrow={eyebrow} title={title} description={description} />
@@ -23,6 +26,7 @@ export function ServiceGrid({ eyebrow, title, description, services, background 
           </Reveal>
         ))}
       </div>
+      {cta ? <div className="mt-12 flex justify-center">{cta}</div> : null}
     </SectionContainer>
   )
 }

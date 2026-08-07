@@ -89,8 +89,7 @@ export const mainNav: NavItem[] = [
   },
   {
     label: "Knowledgebase",
-    href: "https://support.magicworkshost.com/knowledgebase",
-    external: true,
+    href: "/knowledge-base",
   },
   {
     label: "About",
@@ -131,7 +130,7 @@ export const footerColumns = {
     heading: "Resources",
     links: [
       { label: "Blog", href: "/blog" },
-      { label: "Knowledgebase", href: "https://support.magicworkshost.com/knowledgebase", external: true },
+      { label: "Knowledgebase", href: "/knowledge-base" },
       { label: "Support", href: "/support" },
       { label: "Privacy Policy", href: "/legal/privacy-policy" },
       { label: "Terms of Service", href: "/legal/terms-of-service" },

@@ -1,4 +1,5 @@
 import { IconBadge } from "@/components/common/icon-badge"
+import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { cn } from "@/lib/utils"
@@ -30,16 +31,17 @@ export function FeaturesSection({
   return (
     <SectionContainer background={background} width="wide">
       <SectionHeading eyebrow={eyebrow} title={title} description={description} />
-      <div className={cn("mt-10 grid gap-6", columnClasses[columns])}>
-        {features.map((feature) => (
-          <div
-            key={feature.title}
-            className="flex flex-col gap-3 rounded-2xl border border-border-alt bg-background p-6"
-          >
-            {feature.icon ? <IconBadge icon={feature.icon} /> : null}
-            <p className="font-heading text-base font-semibold text-brand-navy">{feature.title}</p>
-            <p className="text-sm text-body-text">{feature.description}</p>
-          </div>
+      <div className={cn("mt-12 grid gap-5", columnClasses[columns])}>
+        {features.map((feature, index) => (
+          <Reveal key={feature.title} delay={(index % 4) * 0.07}>
+            <div className="group flex h-full flex-col gap-3 rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:border-brand-orange/30 hover:shadow-lg">
+              {feature.icon ? (
+                <IconBadge icon={feature.icon} className="transition-colors group-hover:bg-brand-orange/10 group-hover:text-brand-orange" />
+              ) : null}
+              <p className="font-heading text-base font-semibold text-brand-navy">{feature.title}</p>
+              <p className="text-sm leading-relaxed text-body-text">{feature.description}</p>
+            </div>
+          </Reveal>
         ))}
       </div>
     </SectionContainer>

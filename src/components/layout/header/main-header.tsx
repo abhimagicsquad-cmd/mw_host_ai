@@ -1,4 +1,4 @@
-import { CTAButton } from "@/components/common/cta-button"
+import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { Logo } from "@/components/common/logo"
 import { mainNav } from "@/constants/nav-items"
 
@@ -16,9 +16,9 @@ export function MainHeader() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <CTAButton href="/contact-us" size="sm">
+          <LeadCTAButton source="header" size="sm">
             Get Started
-          </CTAButton>
+          </LeadCTAButton>
         </div>
 
         <div className="lg:hidden">

@@ -11,6 +11,9 @@ type TextFieldProps = {
   description?: string
   error?: string
   registration: UseFormRegisterReturn
+  inputMode?: React.ComponentProps<"input">["inputMode"]
+  autoComplete?: string
+  maxLength?: number
 }
 
 export function TextField({
@@ -21,6 +24,9 @@ export function TextField({
   description,
   error,
   registration,
+  inputMode,
+  autoComplete,
+  maxLength,
 }: TextFieldProps) {
   return (
     <FormFieldShell
@@ -35,6 +41,9 @@ export function TextField({
         type={type}
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
+        inputMode={inputMode}
+        autoComplete={autoComplete}
+        maxLength={maxLength}
         {...registration}
       />
     </FormFieldShell>

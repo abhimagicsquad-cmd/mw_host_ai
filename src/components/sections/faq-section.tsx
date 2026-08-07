@@ -1,4 +1,4 @@
-import { CTAButton } from "@/components/common/cta-button"
+import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { FAQAccordion } from "@/components/sections/faq-accordion"
@@ -30,9 +30,9 @@ export function FAQSection({
       {contactCta ? (
         <div className="mt-10 flex flex-col items-center gap-3 border-t border-border-alt pt-8 text-center">
           <p className="text-sm text-body-text">Still have questions? Our team replies within a few hours.</p>
-          <CTAButton href="/contact-us" variant="outline" size="sm">
+          <LeadCTAButton source="faq" variant="outline" size="sm">
             Contact support
-          </CTAButton>
+          </LeadCTAButton>
         </div>
       ) : null}
     </SectionContainer>

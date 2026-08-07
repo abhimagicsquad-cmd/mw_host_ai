@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import { IconBadge } from "@/components/common/icon-badge"
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
@@ -10,9 +12,10 @@ type WhyChooseUsProps = {
   description?: string
   reasons: Feature[]
   background?: "none" | "alt"
+  cta?: ReactNode
 }
 
-export function WhyChooseUs({ eyebrow, title, description, reasons, background = "alt" }: WhyChooseUsProps) {
+export function WhyChooseUs({ eyebrow, title, description, reasons, background = "alt", cta }: WhyChooseUsProps) {
   return (
     <SectionContainer background={background} width="wide">
       <SectionHeading eyebrow={eyebrow} title={title} description={description} />
@@ -29,6 +32,7 @@ export function WhyChooseUs({ eyebrow, title, description, reasons, background =
           </Reveal>
         ))}
       </div>
+      {cta ? <div className="mt-12 flex justify-center">{cta}</div> : null}
     </SectionContainer>
   )
 }

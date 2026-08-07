@@ -1,8 +1,10 @@
 import type { ReactNode } from "react"
 
+import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
+import { Reveal } from "@/components/common/reveal"
 import { Breadcrumbs } from "@/components/sections/breadcrumbs"
-import { CTAButton } from "@/components/common/cta-button"
 import { SectionContainer } from "@/components/layout/section-container"
+import { cn } from "@/lib/utils"
 import type { BreadcrumbItem, CTA } from "@/types/content"
 
 type PageHeroProps = {
@@ -10,23 +12,29 @@ type PageHeroProps = {
   description?: string
   breadcrumbs?: BreadcrumbItem[]
   cta?: CTA
+  ctaSource?: string
   background?: "navy" | "alt"
 }
 
-export function PageHero({ title, description, breadcrumbs, cta, background = "navy" }: PageHeroProps) {
+export function PageHero({ title, description, breadcrumbs, cta, ctaSource = "page-hero", background = "navy" }: PageHeroProps) {
   const isDark = background === "navy"
 
   return (
-    <SectionContainer background={background} width="wide" padded={false} className="py-14 sm:py-20">
-      <div className="flex flex-col gap-4">
+    <SectionContainer
+      background={background}
+      width="wide"
+      padded={false}
+      className={cn("relative overflow-hidden py-14 sm:py-20", isDark && "text-white")}
+    >
+      {isDark ? (
+        <>
+          <div className="pointer-events-none absolute -top-1/2 left-1/3 size-[32rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+          <div className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-15 [mask-image:radial-gradient(ellipse_60%_60%_at_30%_40%,black,transparent)]" />
+        </>
+      ) : null}
+      <Reveal className="relative flex flex-col gap-4">
         {breadcrumbs?.length ? <Breadcrumbs items={breadcrumbs} tone={isDark ? "light" : "dark"} /> : null}
-        <h1
-          className={
-            isDark
-              ? "font-heading text-3xl font-bold text-white sm:text-4xl"
-              : "font-heading text-3xl font-bold text-brand-navy sm:text-4xl"
-          }
-        >
+        <h1 className={isDark ? "font-heading text-3xl font-bold sm:text-4xl" : "font-heading text-3xl font-bold text-brand-navy sm:text-4xl"}>
           {title}
         </h1>
         {description ? (
@@ -34,12 +42,10 @@ export function PageHero({ title, description, breadcrumbs, cta, background = "n
         ) : null}
         {cta ? (
           <div className="pt-2">
-            <CTAButton href={cta.href} external={cta.external}>
-              {cta.label}
-            </CTAButton>
+            <CTAOrLeadButton cta={cta} source={ctaSource} />
           </div>
         ) : null}
-      </div>
+      </Reveal>
     </SectionContainer>
   )
 }

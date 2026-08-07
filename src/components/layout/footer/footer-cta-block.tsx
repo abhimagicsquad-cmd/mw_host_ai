@@ -1,20 +1,18 @@
 import { Phone } from "lucide-react"
 
-import { CTAButton } from "@/components/common/cta-button"
+import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { siteConfig } from "@/constants/site-config"
 
 type FooterCTABlockProps = {
   title?: string
   description?: string
   ctaLabel?: string
-  ctaHref?: string
 }
 
 export function FooterCTABlock({
   title = "Talk to a hosting expert",
   description = "Get a free consultation on the right plan for your website — no commitment required.",
   ctaLabel = "Get in touch",
-  ctaHref = "/contact-us",
 }: FooterCTABlockProps) {
   return (
     <div className="flex flex-col items-center justify-between gap-6 rounded-2xl bg-brand-navy-dark px-6 py-8 text-center sm:flex-row sm:text-left">
@@ -27,7 +25,7 @@ export function FooterCTABlock({
           <Phone className="size-4 text-brand-orange" />
           {siteConfig.contact.phone}
         </a>
-        <CTAButton href={ctaHref}>{ctaLabel}</CTAButton>
+        <LeadCTAButton source="footer">{ctaLabel}</LeadCTAButton>
       </div>
     </div>
   )

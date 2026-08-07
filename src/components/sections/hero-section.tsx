@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
 import { Check } from "lucide-react"
 
-import { CTAButton } from "@/components/common/cta-button"
+import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { Eyebrow } from "@/components/common/eyebrow"
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
@@ -63,14 +63,15 @@ export function HeroSection({
             <Reveal delay={0.2}>
               <div className="flex flex-wrap gap-4 pt-2">
                 {primaryCta ? (
-                  <CTAButton href={primaryCta.href} external={primaryCta.external} size="lg" className="shadow-lg shadow-brand-orange/25">
-                    {primaryCta.label}
-                  </CTAButton>
+                  <CTAOrLeadButton
+                    cta={primaryCta}
+                    source="hero:primary"
+                    size="lg"
+                    className="shadow-lg shadow-brand-orange/25"
+                  />
                 ) : null}
                 {secondaryCta ? (
-                  <CTAButton href={secondaryCta.href} external={secondaryCta.external} variant="outline" size="lg">
-                    {secondaryCta.label}
-                  </CTAButton>
+                  <CTAOrLeadButton cta={secondaryCta} source="hero:secondary" variant="outline" size="lg" />
                 ) : null}
               </div>
             </Reveal>

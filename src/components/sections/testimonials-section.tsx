@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { TestimonialCard } from "@/components/sections/testimonial-card"
@@ -16,6 +18,7 @@ type TestimonialsSectionProps = {
   description?: string
   testimonials: Testimonial[]
   background?: "none" | "alt"
+  cta?: ReactNode
 }
 
 export function TestimonialsSection({
@@ -24,6 +27,7 @@ export function TestimonialsSection({
   description,
   testimonials,
   background = "none",
+  cta,
 }: TestimonialsSectionProps) {
   return (
     <SectionContainer background={background} width="wide">
@@ -41,6 +45,7 @@ export function TestimonialsSection({
           <CarouselNext className="static translate-y-0" />
         </div>
       </Carousel>
+      {cta ? <div className="mt-8 flex justify-center">{cta}</div> : null}
     </SectionContainer>
   )
 }
