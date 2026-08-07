@@ -1,13 +1,13 @@
-import { Open_Sans, Roboto } from "next/font/google"
+import { Inter, Sora } from "next/font/google"
 
-export const headingFont = Roboto({
+export const headingFont = Sora({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["500", "600", "700", "800"],
   variable: "--font-heading",
   display: "swap",
 })
 
-export const bodyFont = Open_Sans({
+export const bodyFont = Inter({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",

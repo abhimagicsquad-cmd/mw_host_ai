@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { PricingCard } from "@/components/sections/pricing-card"
@@ -21,9 +22,11 @@ type PricingSectionProps = {
 
 function PricingGrid({ plans }: { plans: PricingPlan[] }) {
   return (
-    <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {plans.map((plan) => (
-        <PricingCard key={plan.slug} plan={plan} />
+    <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {plans.map((plan, index) => (
+        <Reveal key={plan.slug} delay={index * 0.06} className="h-full">
+          <PricingCard plan={plan} />
+        </Reveal>
       ))}
     </div>
   )

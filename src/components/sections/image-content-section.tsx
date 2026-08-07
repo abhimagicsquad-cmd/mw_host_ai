@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Check } from "lucide-react"
 
 import { CTAButton } from "@/components/common/cta-button"
+import { Eyebrow } from "@/components/common/eyebrow"
 import { SectionContainer } from "@/components/layout/section-container"
 import { cn } from "@/lib/utils"
 import type { CTA } from "@/types/content"
@@ -35,9 +36,7 @@ export function ImageContentSection({
           <Image src={image.src} alt={image.alt} fill className="object-cover" />
         </div>
         <div className={cn("flex flex-col gap-5", imagePosition === "left" ? "lg:order-2" : "lg:order-1")}>
-          {eyebrow ? (
-            <span className="text-sm font-semibold tracking-wide text-brand-orange uppercase">{eyebrow}</span>
-          ) : null}
+          {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
           <h2 className="font-heading text-3xl font-bold text-brand-navy">{title}</h2>
           {description ? <p className="text-body-text">{description}</p> : null}
           {bullets?.length ? (

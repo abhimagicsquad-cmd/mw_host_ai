@@ -1,7 +1,9 @@
 import type { ReactNode } from "react"
 
 import { CTAButton } from "@/components/common/cta-button"
+import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
+import { cn } from "@/lib/utils"
 import type { CTA } from "@/types/content"
 
 type CTASectionProps = {
@@ -22,8 +24,14 @@ export function CTASection({ title, description, primaryCta, secondaryCta, backg
   const isDark = background !== "alt"
 
   return (
-    <SectionContainer padded={false} className={backgroundStyles[background]}>
-      <div className="flex flex-col items-center gap-6 py-14 text-center sm:py-16">
+    <SectionContainer padded={false} className={cn("relative overflow-hidden", backgroundStyles[background])}>
+      {isDark ? (
+        <>
+          <div className="pointer-events-none absolute -top-1/2 left-1/2 size-[36rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+          <div className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-20 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,black,transparent)]" />
+        </>
+      ) : null}
+      <Reveal className="relative flex flex-col items-center gap-6 py-16 text-center sm:py-20">
         <h2 className="font-heading text-3xl font-bold sm:text-4xl">{title}</h2>
         {description ? (
           <p className={isDark ? "max-w-2xl text-white/80" : "max-w-2xl text-body-text"}>{description}</p>
@@ -50,7 +58,7 @@ export function CTASection({ title, description, primaryCta, secondaryCta, backg
             </CTAButton>
           ) : null}
         </div>
-      </div>
+      </Reveal>
     </SectionContainer>
   )
 }

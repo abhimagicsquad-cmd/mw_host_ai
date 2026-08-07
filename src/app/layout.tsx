@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { MotionProvider } from "@/components/common/motion-provider"
 import { Footer } from "@/components/layout/footer/footer"
 import { Header } from "@/components/layout/header/header"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -17,11 +18,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={`${headingFont.variable} ${bodyFont.variable} antialiased`}>
-        <TooltipProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </TooltipProvider>
+        <MotionProvider>
+          <TooltipProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </TooltipProvider>
+        </MotionProvider>
       </body>
     </html>
   )

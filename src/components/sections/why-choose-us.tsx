@@ -1,4 +1,5 @@
 import { IconBadge } from "@/components/common/icon-badge"
+import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import type { Feature } from "@/types/content"
@@ -15,15 +16,17 @@ export function WhyChooseUs({ eyebrow, title, description, reasons, background =
   return (
     <SectionContainer background={background} width="wide">
       <SectionHeading eyebrow={eyebrow} title={title} description={description} />
-      <div className="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
-        {reasons.map((reason) => (
-          <div key={reason.title} className="flex items-start gap-4">
-            {reason.icon ? <IconBadge icon={reason.icon} tone="navy" size="sm" /> : null}
-            <div>
-              <p className="font-heading text-sm font-semibold text-brand-navy">{reason.title}</p>
-              <p className="mt-1 text-sm text-body-text">{reason.description}</p>
+      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {reasons.map((reason, index) => (
+          <Reveal key={reason.title} delay={(index % 3) * 0.08}>
+            <div className="group h-full rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:border-brand-orange/30 hover:shadow-lg">
+              {reason.icon ? (
+                <IconBadge icon={reason.icon} tone="navy" className="transition-colors group-hover:bg-brand-orange/10 group-hover:text-brand-orange" />
+              ) : null}
+              <p className="mt-4 font-heading text-base font-semibold text-brand-navy">{reason.title}</p>
+              <p className="mt-1.5 text-sm leading-relaxed text-body-text">{reason.description}</p>
             </div>
-          </div>
+          </Reveal>
         ))}
       </div>
     </SectionContainer>

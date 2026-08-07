@@ -1,3 +1,4 @@
+import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { ServiceCard } from "@/components/sections/service-card"
@@ -15,9 +16,11 @@ export function ServiceGrid({ eyebrow, title, description, services, background 
   return (
     <SectionContainer background={background} width="wide">
       <SectionHeading eyebrow={eyebrow} title={title} description={description} />
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((service) => (
-          <ServiceCard key={service.slug} service={service} />
+      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((service, index) => (
+          <Reveal key={service.slug} delay={(index % 3) * 0.08}>
+            <ServiceCard service={service} />
+          </Reveal>
         ))}
       </div>
     </SectionContainer>

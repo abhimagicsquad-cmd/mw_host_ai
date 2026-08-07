@@ -150,8 +150,55 @@
   }
   body {
     @apply bg-background text-foreground;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+    line-height: 1.15;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+@layer utilities {
+  .bg-grid-pattern {
+    background-image: linear-gradient(
+        to right,
+        color-mix(in oklch, var(--brand-navy), transparent 94%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--brand-navy), transparent 94%) 1px,
+        transparent 1px
+      );
+    background-size: 40px 40px;
+  }
+
+  .bg-dot-pattern {
+    background-image: radial-gradient(
+      color-mix(in oklch, var(--brand-navy), transparent 88%) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+  }
+
+  .text-gradient-brand {
+    background-image: linear-gradient(90deg, var(--brand-orange), #ff9a5c);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
   }
 }

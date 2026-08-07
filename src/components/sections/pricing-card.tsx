@@ -13,8 +13,10 @@ export function PricingCard({ plan }: PricingCardProps) {
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-5 rounded-2xl border p-6",
-        plan.featured ? "border-brand-orange bg-white shadow-xl" : "border-border-alt bg-background"
+        "relative flex h-full flex-col gap-5 rounded-2xl border p-6 transition-all",
+        plan.featured
+          ? "border-brand-orange bg-white shadow-xl shadow-brand-orange/10 lg:-translate-y-2"
+          : "border-border-alt bg-background hover:-translate-y-1 hover:border-brand-navy/20 hover:shadow-lg"
       )}
     >
       {plan.featured ? (

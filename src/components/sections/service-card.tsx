@@ -15,17 +15,21 @@ export function ServiceCard({ service }: ServiceCardProps) {
     <Link
       href={service.href}
       className={cn(
-        "group flex flex-col gap-4 rounded-2xl border p-6 transition-shadow hover:shadow-lg",
-        service.featured ? "border-brand-orange bg-brand-orange/5" : "border-border-alt bg-background"
+        "group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border p-6 transition-all hover:-translate-y-1 hover:shadow-xl",
+        service.featured
+          ? "border-brand-orange/40 bg-gradient-to-b from-brand-orange/8 to-background"
+          : "border-border-alt bg-background hover:border-brand-navy/20"
       )}
     >
       <div className="flex items-start justify-between">
-        {service.icon ? <IconBadge icon={service.icon} /> : null}
+        {service.icon ? (
+          <IconBadge icon={service.icon} className="transition-transform group-hover:scale-105" />
+        ) : null}
         {service.featured ? <Badge className="bg-brand-orange text-white">Popular</Badge> : null}
       </div>
       <div>
         <p className="font-heading text-lg font-semibold text-brand-navy">{service.title}</p>
-        <p className="mt-1.5 text-sm text-body-text">{service.description}</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-body-text">{service.description}</p>
       </div>
       {service.price ? (
         <p className="text-brand-navy">
