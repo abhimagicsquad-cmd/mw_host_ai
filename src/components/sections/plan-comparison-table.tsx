@@ -11,7 +11,7 @@ type PlanComparisonTableProps = {
 }
 
 function renderCellValue(value: string) {
-  if (value === "Yes") return <Check className="mx-auto size-4 text-brand-orange-accessible" />
+  if (value === "Yes") return <Check className="mx-auto size-4 text-brand-orange" />
   if (value === "No") return <Minus className="mx-auto size-4 text-muted-foreground" />
   return value
 }
@@ -34,7 +34,7 @@ export function PlanComparisonTable({ plans, rows }: PlanComparisonTableProps) {
                   key={plan.slug}
                   className={cn(
                     "p-4 text-center font-heading text-sm font-semibold",
-                    plan.featured ? "bg-orange-50 text-brand-orange-accessible" : "text-brand-navy"
+                    plan.featured ? "bg-brand-orange/10 text-brand-orange" : "text-brand-navy"
                   )}
                 >
                   <p>{plan.name}</p>

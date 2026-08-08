@@ -58,7 +58,7 @@ export function BlogExplorer({ categories, posts }: BlogExplorerProps) {
             className={cn(
               "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
               activeCategory === "all"
-                ? "border-brand-orange bg-brand-orange-accessible text-white"
+                ? "border-brand-orange bg-brand-orange text-white"
                 : "border-border-alt bg-background text-brand-navy hover:border-brand-orange/40"
             )}
           >
@@ -72,7 +72,7 @@ export function BlogExplorer({ categories, posts }: BlogExplorerProps) {
               className={cn(
                 "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
                 activeCategory === category.slug
-                  ? "border-brand-orange bg-brand-orange-accessible text-white"
+                  ? "border-brand-orange bg-brand-orange text-white"
                   : "border-border-alt bg-background text-brand-navy hover:border-brand-orange/40"
               )}
             >
@@ -92,7 +92,7 @@ export function BlogExplorer({ categories, posts }: BlogExplorerProps) {
                 href={`/blog/${post.slug}`}
                 className="group flex flex-col gap-2 rounded-2xl border border-brand-orange/30 bg-gradient-to-b from-brand-orange/8 to-background p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
               >
-                <Badge className="w-fit bg-brand-orange-accessible text-white">Featured</Badge>
+                <Badge className="w-fit bg-brand-orange text-white">Featured</Badge>
                 <p className="font-heading text-base font-semibold text-brand-navy">{post.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{post.excerpt}</p>
                 <p className="mt-auto text-xs text-muted-foreground">{post.publishedLabel} &middot; {post.readTime}</p>
@@ -114,8 +114,8 @@ export function BlogExplorer({ categories, posts }: BlogExplorerProps) {
                 href={`/blog/${post.slug}`}
                 className="group flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <p className="text-xs font-semibold tracking-wide text-brand-orange-accessible uppercase">{categoryName(post.categorySlug)}</p>
-                <p className="font-heading text-base font-semibold text-brand-navy group-hover:text-brand-orange-accessible">{post.title}</p>
+                <p className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{categoryName(post.categorySlug)}</p>
+                <p className="font-heading text-base font-semibold text-brand-navy group-hover:text-brand-orange">{post.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{post.excerpt}</p>
                 <p className="mt-auto flex items-center gap-2 text-xs text-muted-foreground">
                   <span>{post.publishedLabel}</span>

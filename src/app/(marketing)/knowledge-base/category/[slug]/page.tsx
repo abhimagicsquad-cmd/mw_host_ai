@@ -87,7 +87,7 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
             <Link
               key={other.slug}
               href={`/knowledge-base/category/${other.slug}`}
-              className="rounded-full border border-border-alt bg-background px-3.5 py-1.5 text-sm font-medium text-brand-navy transition-colors hover:border-brand-orange/40 hover:text-brand-orange-accessible"
+              className="rounded-full border border-border-alt bg-background px-3.5 py-1.5 text-sm font-medium text-brand-navy transition-colors hover:border-brand-orange/40 hover:text-brand-orange"
             >
               {other.name}
             </Link>

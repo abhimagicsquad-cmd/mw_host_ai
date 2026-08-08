@@ -33,13 +33,13 @@ export default function KnowledgeBasePage() {
               href={`/knowledge-base/category/${category.slug}`}
               className="group flex items-start gap-3 rounded-2xl border border-border-alt bg-background p-5 transition-all hover:-translate-y-0.5 hover:border-brand-orange/30 hover:shadow-md"
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange-accessible">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-orange/10 text-brand-orange">
                 <category.icon className="size-5" />
               </span>
               <div>
-                <p className="font-heading text-sm font-semibold text-brand-navy group-hover:text-brand-orange-accessible">{category.name}</p>
+                <p className="font-heading text-sm font-semibold text-brand-navy group-hover:text-brand-orange">{category.name}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{category.description}</p>
-                <p className="mt-1 text-xs font-medium text-brand-orange-accessible">
+                <p className="mt-1 text-xs font-medium text-brand-orange">
                   {getArticlesByCategory(category.slug).length} articles
                 </p>
               </div>

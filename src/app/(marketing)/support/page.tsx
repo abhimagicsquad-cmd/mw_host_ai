@@ -50,7 +50,7 @@ export default function SupportPage() {
         <div className="grid gap-6 sm:grid-cols-3">
           {supportChannels.map((channel) => (
             <div key={channel.title} className="flex flex-col gap-3 rounded-2xl border border-border-alt bg-background p-6">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange-accessible">
+              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
                 <channel.icon className="size-5" />
               </span>
               <p className="font-heading text-base font-semibold text-brand-navy">{channel.title}</p>
@@ -59,7 +59,7 @@ export default function SupportPage() {
                 href={channel.cta.href}
                 target={channel.cta.external ? "_blank" : undefined}
                 rel={channel.cta.external ? "noopener noreferrer" : undefined}
-                className="mt-auto text-sm font-semibold text-brand-orange-accessible hover:underline"
+                className="mt-auto text-sm font-semibold text-brand-orange hover:underline"
               >
                 {channel.cta.label}
               </a>

@@ -16,7 +16,7 @@ export function RatingStars({ rating = 5, max = 5, className }: RatingStarsProps
           key={index}
           className={cn(
             "size-4",
-            index < rating ? "fill-brand-orange text-brand-orange-accessible" : "fill-none text-border-alt"
+            index < rating ? "fill-brand-orange text-brand-orange" : "fill-none text-border-alt"
           )}
         />
       ))}

@@ -52,11 +52,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <SectionContainer width="narrow" background="alt" className="py-12 sm:py-16">
         <Reveal className="flex flex-col gap-4">
-          <Link href="/blog" className="flex items-center gap-1.5 text-sm font-medium text-brand-orange-accessible hover:underline">
+          <Link href="/blog" className="flex items-center gap-1.5 text-sm font-medium text-brand-orange hover:underline">
             <ArrowLeft className="size-4" />
             Back to blog
           </Link>
-          <span className="w-fit rounded-full border border-brand-orange/20 bg-orange-50 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange-accessible uppercase">
+          <span className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase">
             {getBlogCategoryName(post.categorySlug)}
           </span>
           <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{post.title}</h1>
@@ -84,7 +84,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <ul className="mt-3 flex flex-col gap-2">
             {post.sections.map((section, index) => (
               <li key={section.heading}>
-                <a href={`#${slugifyHeading(section.heading)}`} className="text-sm text-body-text hover:text-brand-orange-accessible">
+                <a href={`#${slugifyHeading(section.heading)}`} className="text-sm text-body-text hover:text-brand-orange">
                   {index + 1}. {section.heading}
                 </a>
               </li>
@@ -130,7 +130,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 href={`/blog/${related.slug}`}
                 className="flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <p className="text-xs font-semibold tracking-wide text-brand-orange-accessible uppercase">{getBlogCategoryName(related.categorySlug)}</p>
+                <p className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{getBlogCategoryName(related.categorySlug)}</p>
                 <p className="font-heading text-sm font-semibold text-brand-navy">{related.title}</p>
                 <p className="text-sm text-body-text">{related.excerpt}</p>
               </Link>

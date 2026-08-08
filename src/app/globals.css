@@ -12,8 +12,6 @@
   --font-heading: var(--font-heading);
   --color-brand-orange: var(--brand-orange);
   --color-brand-orange-hover: var(--brand-orange-hover);
-  --color-brand-orange-accessible: var(--brand-orange-accessible);
-  --color-brand-orange-accessible-hover: var(--brand-orange-accessible-hover);
   --color-brand-navy: var(--brand-navy);
   --color-brand-navy-dark: var(--brand-navy-dark);
   --color-brand-cta-secondary: var(--brand-cta-secondary);
@@ -66,13 +64,6 @@
 :root {
   --brand-orange: #ff6600;
   --brand-orange-hover: #e65c00;
-  /* WCAG AA-safe variant of the brand orange (5.2:1 on white, vs. 2.93:1 for #ff6600) —
-     used wherever orange is a text color or a filled-button background carrying text.
-     Kept as close to the vivid brand orange as AA compliance allows. The vivid
-     --brand-orange stays for decorative/graphical use (icons, blobs, borders) and
-     text on dark backgrounds, where the darkened variant reads worse, not better. */
-  --brand-orange-accessible: #c2410c;
-  --brand-orange-accessible-hover: #9a3412;
   --brand-navy: #2a363f;
   --brand-navy-dark: #1c2329;
   --brand-cta-secondary: #019ad2;
@@ -82,7 +73,7 @@
   --brand-whatsapp: #25d366;
   --surface-alt: #f5f5f5;
   --border-alt: #e8e8e8;
-  --body-text: #666666;
+  --body-text: #727272;
   --muted-text-2: #999999;
 
   --background: oklch(1 0 0);
@@ -96,7 +87,7 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.5 0 0);
+  --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);

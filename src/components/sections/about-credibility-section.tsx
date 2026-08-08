@@ -37,7 +37,7 @@ export function AboutCredibilitySection({
             <ul className="flex flex-col gap-2.5">
               {bullets.map((bullet) => (
                 <li key={bullet} className="flex items-start gap-2 text-sm text-brand-navy">
-                  <Check className="mt-0.5 size-4 shrink-0 text-brand-orange-accessible" />
+                  <Check className="mt-0.5 size-4 shrink-0 text-brand-orange" />
                   {bullet}
                 </li>
               ))}

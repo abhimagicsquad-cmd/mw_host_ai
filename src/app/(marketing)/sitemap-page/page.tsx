@@ -81,7 +81,7 @@ export default function SitemapPage() {
               <ul className="mt-4 flex flex-col gap-2.5">
                 {group.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-sm text-body-text hover:text-brand-orange-accessible">
+                    <Link href={link.href} className="text-sm text-body-text hover:text-brand-orange">
                       {link.label}
                     </Link>
                   </li>

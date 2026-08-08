@@ -23,7 +23,7 @@ export function FormStatusMessage({ status, message, className }: FormStatusMess
       )}
     >
       {isSuccess ? (
-        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-brand-orange-accessible" />
+        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-brand-orange" />
       ) : (
         <XCircle className="mt-0.5 size-4 shrink-0 text-destructive" />
       )}

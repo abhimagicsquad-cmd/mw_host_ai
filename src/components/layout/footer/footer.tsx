@@ -30,7 +30,7 @@ export function Footer({ showCta = true }: FooterProps) {
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-b border-white/10 py-6 sm:justify-between">
           {trustBadges.map((badge) => (
             <div key={badge.label} className="flex items-center gap-2 text-xs font-medium text-white/70">
-              <badge.icon className="size-4 text-brand-orange-accessible" />
+              <badge.icon className="size-4 text-brand-orange" />
               {badge.label}
             </div>
           ))}
@@ -63,15 +63,15 @@ export function Footer({ showCta = true }: FooterProps) {
           <div className="flex flex-col gap-3">
             <p className="text-sm font-semibold text-white">Contact Information</p>
             <a href={siteConfig.contact.phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
-              <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange-accessible" />
+              <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
               {siteConfig.contact.phone}
             </a>
             <a href={`mailto:${siteConfig.contact.email}`} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
-              <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange-accessible" />
+              <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange" />
               {siteConfig.contact.email}
             </a>
             <p className="flex items-start gap-2.5 text-sm text-white/70">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange-accessible" />
+              <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />
               {siteConfig.contact.address}
             </p>
           </div>

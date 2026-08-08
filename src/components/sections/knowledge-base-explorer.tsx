@@ -59,7 +59,7 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
             className={cn(
               "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
               activeCategory === "all"
-                ? "border-brand-orange bg-brand-orange-accessible text-white"
+                ? "border-brand-orange bg-brand-orange text-white"
                 : "border-border-alt bg-background text-brand-navy hover:border-brand-orange/40"
             )}
           >
@@ -73,7 +73,7 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
               className={cn(
                 "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
                 activeCategory === category.slug
-                  ? "border-brand-orange bg-brand-orange-accessible text-white"
+                  ? "border-brand-orange bg-brand-orange text-white"
                   : "border-border-alt bg-background text-brand-navy hover:border-brand-orange/40"
               )}
             >
@@ -93,7 +93,7 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
                   <Badge variant="outline" className="text-muted-foreground">
                     {categoryName(article.categorySlug)}
                   </Badge>
-                  {article.featured ? <Badge className="bg-brand-orange-accessible text-white">Featured</Badge> : null}
+                  {article.featured ? <Badge className="bg-brand-orange text-white">Featured</Badge> : null}
                 </div>
                 <p className="font-heading text-sm font-semibold text-brand-navy">{article.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>

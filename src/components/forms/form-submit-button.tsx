@@ -15,7 +15,7 @@ export function FormSubmitButton({ isSubmitting, children, className }: FormSubm
       type="submit"
       disabled={isSubmitting}
       className={cn(
-        "h-11 w-full rounded-full bg-brand-orange-accessible px-6 text-white hover:bg-brand-orange-accessible-hover disabled:opacity-70",
+        "h-11 w-full rounded-full bg-brand-orange px-6 text-white hover:bg-brand-orange-hover disabled:opacity-70",
         className
       )}
     >

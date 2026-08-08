@@ -11,12 +11,10 @@ const ctaButtonVariants = cva(
   {
     variants: {
       variant: {
-        // bg-brand-orange-accessible (not the vivid --brand-orange) — this fill carries white
-        // text, and the vivid shade only reaches 2.93:1 contrast against white (fails WCAG AA 4.5:1).
-        primary: "bg-brand-orange-accessible text-white hover:bg-brand-orange-accessible-hover",
+        primary: "bg-brand-orange text-white hover:bg-brand-orange-hover",
         secondary:
           "bg-gradient-to-r from-brand-cta-secondary to-brand-cta-secondary-end text-white hover:from-brand-cta-secondary-hover hover:to-brand-cta-secondary-hover-end",
-        outline: "border-brand-orange bg-transparent text-brand-orange-accessible hover:bg-brand-orange/10",
+        outline: "border-brand-orange bg-transparent text-brand-orange hover:bg-brand-orange/10",
         ghost: "bg-transparent text-brand-navy hover:bg-brand-navy/5 dark:text-foreground",
       },
       size: {

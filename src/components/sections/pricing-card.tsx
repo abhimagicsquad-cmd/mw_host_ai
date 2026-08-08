@@ -20,7 +20,7 @@ export function PricingCard({ plan }: PricingCardProps) {
       )}
     >
       {plan.featured ? (
-        <Badge className="absolute -top-3 right-6 bg-brand-orange-accessible text-white">Most popular</Badge>
+        <Badge className="absolute -top-3 right-6 bg-brand-orange text-white">Most popular</Badge>
       ) : null}
 
       <div>
@@ -35,14 +35,14 @@ export function PricingCard({ plan }: PricingCardProps) {
       {plan.regularPrice ? (
         <p className="text-sm text-muted-foreground">
           <span className="line-through">{plan.regularPrice}</span>
-          {plan.discountLabel ? <span className="ml-2 text-brand-orange-accessible">{plan.discountLabel}</span> : null}
+          {plan.discountLabel ? <span className="ml-2 text-brand-orange">{plan.discountLabel}</span> : null}
         </p>
       ) : null}
 
       <ul className="flex flex-col gap-2.5">
         {plan.features.map((feature) => (
           <li key={feature} className="flex items-start gap-2 text-sm text-body-text">
-            <Check className="mt-0.5 size-4 shrink-0 text-brand-orange-accessible" />
+            <Check className="mt-0.5 size-4 shrink-0 text-brand-orange" />
             {feature}
           </li>
         ))}

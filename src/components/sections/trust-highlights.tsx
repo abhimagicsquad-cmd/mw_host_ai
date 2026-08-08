@@ -49,7 +49,7 @@ export function TrustHighlights({ eyebrow, title, description, highlights, backg
               <span
                 className={cn(
                   "flex size-11 items-center justify-center rounded-xl",
-                  isDark ? "bg-brand-orange/15 text-brand-orange-accessible" : "bg-brand-orange/10 text-brand-orange-accessible"
+                  isDark ? "bg-brand-orange/15 text-brand-orange" : "bg-brand-orange/10 text-brand-orange"
                 )}
               >
                 <highlight.icon className="size-5" />

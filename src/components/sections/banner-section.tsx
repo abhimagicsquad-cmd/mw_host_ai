@@ -33,7 +33,7 @@ export function BannerSection({
     <div
       className={cn(
         "relative flex flex-col items-center justify-center gap-3 px-4 py-3 text-center text-sm sm:flex-row",
-        tone === "orange" ? "bg-brand-orange-accessible text-white" : "bg-brand-navy text-white",
+        tone === "orange" ? "bg-brand-orange text-white" : "bg-brand-navy text-white",
         className
       )}
     >

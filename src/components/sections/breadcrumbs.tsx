@@ -28,7 +28,7 @@ export function Breadcrumbs({ items, tone = "dark" }: BreadcrumbsProps) {
                   href={item.href}
                   className={cn(
                     "transition-colors",
-                    isLight ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-brand-orange-accessible"
+                    isLight ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-brand-orange"
                   )}
                 >
                   {item.label}
