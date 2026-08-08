@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 
 import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { BreadcrumbJsonLd } from "@/components/common/json-ld"
-import { Reveal } from "@/components/common/reveal"
 import { Breadcrumbs } from "@/components/sections/breadcrumbs"
 import { SectionContainer } from "@/components/layout/section-container"
 import { cn } from "@/lib/utils"
@@ -34,7 +33,7 @@ export function PageHero({ title, description, breadcrumbs, cta, ctaSource = "pa
           <div className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-15 [mask-image:radial-gradient(ellipse_60%_60%_at_30%_40%,black,transparent)]" />
         </>
       ) : null}
-      <Reveal className="relative flex flex-col gap-4">
+      <div className="relative flex flex-col gap-4">
         {breadcrumbs?.length ? <Breadcrumbs items={breadcrumbs} tone={isDark ? "light" : "dark"} /> : null}
         <h1 className={isDark ? "font-heading text-3xl font-bold sm:text-4xl" : "font-heading text-3xl font-bold text-brand-navy sm:text-4xl"}>
           {title}
@@ -47,7 +46,7 @@ export function PageHero({ title, description, breadcrumbs, cta, ctaSource = "pa
             <CTAOrLeadButton cta={cta} source={ctaSource} />
           </div>
         ) : null}
-      </Reveal>
+      </div>
     </SectionContainer>
   )
 }

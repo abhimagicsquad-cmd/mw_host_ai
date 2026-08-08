@@ -1,11 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import type { LucideIcon } from "lucide-react"
 
 import { CTAButton } from "@/components/common/cta-button"
-import { LeadForm } from "@/components/forms/lead-form"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
+const LeadDialog = dynamic(() => import("@/components/common/lead-dialog").then((mod) => mod.LeadDialog), {
+  ssr: false,
+})
 
 type LeadCTAButtonProps = {
   children: React.ReactNode
@@ -34,6 +37,9 @@ export function LeadCTAButton({
   defaultService,
 }: LeadCTAButtonProps) {
   const [open, setOpen] = useState(false)
+  // Once true, stays true — keeps the dialog mounted after first open so close
+  // transitions still play, while deferring its bundle until actually needed.
+  const [hasOpened, setHasOpened] = useState(false)
 
   return (
     <>
@@ -44,20 +50,24 @@ export function LeadCTAButton({
         icon={icon}
         iconPosition={iconPosition}
         className={className}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setHasOpened(true)
+          setOpen(true)
+        }}
       >
         {children}
       </CTAButton>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{dialogTitle}</DialogTitle>
-            <DialogDescription>{dialogDescription}</DialogDescription>
-          </DialogHeader>
-          <LeadForm source={source} onSuccess={() => setOpen(false)} defaultService={defaultService} />
-        </DialogContent>
-      </Dialog>
+      {hasOpened ? (
+        <LeadDialog
+          open={open}
+          onOpenChange={setOpen}
+          source={source}
+          dialogTitle={dialogTitle}
+          dialogDescription={dialogDescription}
+          defaultService={defaultService}
+        />
+      ) : null}
     </>
   )
 }
