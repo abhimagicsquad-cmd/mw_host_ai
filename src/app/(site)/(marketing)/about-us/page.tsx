@@ -7,6 +7,7 @@ import { PageHero } from "@/components/sections/page-hero"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { PageBuilder } from "@/components/sanity/page-builder"
 import { buildMetadata } from "@/lib/seo"
 import { getAboutPage } from "@/sanity/lib/queries"
 
@@ -21,7 +22,13 @@ export async function generateMetadata() {
   })
 }
 
-export default function AboutUsPage() {
+export default async function AboutUsPage() {
+  const cms = await getAboutPage()
+
+  if (cms?.pageBuilder?.length) {
+    return <PageBuilder blocks={cms.pageBuilder} />
+  }
+
   return (
     <>
       <PageHero

@@ -6,7 +6,7 @@ import { siteConfig } from "@/constants/site-config"
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS || "MagicWorks Host <onboarding@resend.dev>"
-const NOTIFICATION_ADDRESS = process.env.LEAD_NOTIFICATION_EMAIL || siteConfig.contact.email
+const NOTIFICATION_ADDRESS = process.env.ADMIN_NOTIFICATION_EMAIL || siteConfig.contact.email
 
 export type LeadEmailPayload = {
   name: string

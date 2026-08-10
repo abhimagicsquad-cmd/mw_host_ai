@@ -2,7 +2,7 @@ import Link from "next/link"
 import { CreditCard, Mail, MapPin, Phone, RotateCcw, ShieldCheck, Zap } from "lucide-react"
 
 import { Logo } from "@/components/common/logo"
-import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon } from "@/components/common/social-icons"
+import { resolveSocialIcon } from "@/components/common/social-icons"
 import { footerColumns } from "@/constants/nav-items"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
 import { getSiteSettings } from "@/sanity/lib/queries"
@@ -16,14 +16,6 @@ const trustBadges = [
   { label: "30-day money-back guarantee", icon: RotateCcw },
   { label: "Secure payments", icon: CreditCard },
 ]
-
-const socialIconByPlatform = {
-  Facebook: FacebookIcon,
-  Twitter: TwitterIcon,
-  LinkedIn: LinkedinIcon,
-  Instagram: InstagramIcon,
-  YouTube: TwitterIcon,
-}
 
 type FooterProps = {
   showCta?: boolean
@@ -43,7 +35,7 @@ export async function Footer({ showCta = true }: FooterProps) {
     settings?.socialLinks?.map((social) => ({
       label: social.platform,
       href: social.url,
-      icon: socialIconByPlatform[social.platform as keyof typeof socialIconByPlatform] ?? FacebookIcon,
+      icon: resolveSocialIcon(social.platform),
     })) ?? defaultSocialLinks
 
   return (

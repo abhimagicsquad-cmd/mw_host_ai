@@ -1,18 +1,38 @@
+import type { Metadata } from "next"
+
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
+import { PageBuilder } from "@/components/sanity/page-builder"
 import { emailHubIntro, emailIncludedFeatures, emailPages } from "@/constants/email-pages-data"
 import { buildMetadata } from "@/lib/seo"
+import { getServicesPage } from "@/sanity/lib/queries"
 
-export const metadata = buildMetadata({
+const HUB_SLUG = "email-hosting"
+
+const fallbackMetadata = {
   title: "Email Hosting",
   description: "Professional business email hosting on your own domain — Business and Enterprise tiers, billed per mailbox.",
-  path: "/email-hosting",
-})
+}
 
-export default function EmailHostingHubPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const cms = await getServicesPage(HUB_SLUG)
+  return buildMetadata({
+    title: cms?.seo?.metaTitle ?? fallbackMetadata.title,
+    description: cms?.seo?.metaDescription ?? fallbackMetadata.description,
+    path: "/email-hosting",
+  })
+}
+
+export default async function EmailHostingHubPage() {
+  const cms = await getServicesPage(HUB_SLUG)
+
+  if (cms?.pageBuilder?.length) {
+    return <PageBuilder blocks={cms.pageBuilder} />
+  }
+
   return (
     <>
       <PageHero

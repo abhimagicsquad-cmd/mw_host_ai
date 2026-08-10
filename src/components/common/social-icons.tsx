@@ -1,4 +1,4 @@
-import type { SVGProps } from "react"
+import type { ComponentType, SVGProps } from "react"
 
 /**
  * Lightweight brand marks — lucide-react dropped social/brand icons, so
@@ -39,4 +39,17 @@ export function InstagramIcon(props: IconProps) {
       <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
     </svg>
   )
+}
+
+const socialIconByPlatform: Record<string, ComponentType<IconProps>> = {
+  Facebook: FacebookIcon,
+  Twitter: TwitterIcon,
+  LinkedIn: LinkedinIcon,
+  Instagram: InstagramIcon,
+  YouTube: TwitterIcon,
+}
+
+/** Maps a Sanity `socialLinks[].platform` value to its icon component, defaulting to Facebook's mark for unrecognized platforms. */
+export function resolveSocialIcon(platform: string): ComponentType<IconProps> {
+  return socialIconByPlatform[platform] ?? FacebookIcon
 }

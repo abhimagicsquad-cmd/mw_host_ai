@@ -1,19 +1,39 @@
+import type { Metadata } from "next"
+
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
+import { PageBuilder } from "@/components/sanity/page-builder"
 import { domainHubIntro, domainIncludedFeatures, domainPageIcons, domainPages, tldPricing } from "@/constants/domain-pages-data"
 import { buildMetadata } from "@/lib/seo"
+import { getServicesPage } from "@/sanity/lib/queries"
 
-export const metadata = buildMetadata({
+const HUB_SLUG = "domain"
+
+const fallbackMetadata = {
   title: "Domain Names",
   description: "Register, host, or transfer your domain — .com, .in, .co.in, and .org, backed by registrar lock and auto-renewal.",
-  path: "/domain",
-})
+}
 
-export default function DomainHubPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const cms = await getServicesPage(HUB_SLUG)
+  return buildMetadata({
+    title: cms?.seo?.metaTitle ?? fallbackMetadata.title,
+    description: cms?.seo?.metaDescription ?? fallbackMetadata.description,
+    path: "/domain",
+  })
+}
+
+export default async function DomainHubPage() {
+  const cms = await getServicesPage(HUB_SLUG)
+
+  if (cms?.pageBuilder?.length) {
+    return <PageBuilder blocks={cms.pageBuilder} />
+  }
+
   return (
     <>
       <PageHero

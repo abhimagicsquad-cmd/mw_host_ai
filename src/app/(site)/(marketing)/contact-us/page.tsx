@@ -7,6 +7,7 @@ import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { PageBuilder } from "@/components/sanity/page-builder"
 import { siteConfig } from "@/constants/site-config"
 import { buildMetadata } from "@/lib/seo"
 import { getContactPage } from "@/sanity/lib/queries"
@@ -22,7 +23,9 @@ export async function generateMetadata() {
   })
 }
 
-export default function ContactUsPage() {
+export default async function ContactUsPage() {
+  const cms = await getContactPage()
+
   return (
     <>
       <PageHero
@@ -30,6 +33,11 @@ export default function ContactUsPage() {
         description="Questions about a plan, a migration, or something urgent? Reach us directly or send your details below — we usually reply within a few hours."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Contact Us" }]}
       />
+
+      {/* CMS-editable supplementary content only — the lead-capture forms below stay
+          hardcoded on purpose, since pageBuilder has no form block and a full-page
+          takeover (like the homepage does) would delete them entirely. */}
+      {cms?.pageBuilder?.length ? <PageBuilder blocks={cms.pageBuilder} /> : null}
 
       <ContactSection
         eyebrow="Get in touch"
