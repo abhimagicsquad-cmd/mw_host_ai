@@ -2,8 +2,10 @@ import Link from "next/link"
 import { CreditCard, Mail, MapPin, Phone, RotateCcw, ShieldCheck, Zap } from "lucide-react"
 
 import { Logo } from "@/components/common/logo"
+import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon } from "@/components/common/social-icons"
 import { footerColumns } from "@/constants/nav-items"
-import { siteConfig, socialLinks } from "@/constants/site-config"
+import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
+import { getSiteSettings } from "@/sanity/lib/queries"
 
 import { FooterColumn } from "./footer-column"
 import { FooterCTABlock } from "./footer-cta-block"
@@ -15,17 +17,39 @@ const trustBadges = [
   { label: "Secure payments", icon: CreditCard },
 ]
 
+const socialIconByPlatform = {
+  Facebook: FacebookIcon,
+  Twitter: TwitterIcon,
+  LinkedIn: LinkedinIcon,
+  Instagram: InstagramIcon,
+  YouTube: TwitterIcon,
+}
+
 type FooterProps = {
   showCta?: boolean
 }
 
-export function Footer({ showCta = true }: FooterProps) {
+export async function Footer({ showCta = true }: FooterProps) {
   const year = new Date().getFullYear()
+  const settings = await getSiteSettings()
+
+  const siteName = settings?.siteName ?? siteConfig.name
+  const description = settings?.description ?? siteConfig.description
+  const phone = settings?.contactPhone ?? siteConfig.contact.phone
+  const phoneHref = settings?.contactPhoneHref ?? siteConfig.contact.phoneHref
+  const email = settings?.contactEmail ?? siteConfig.contact.email
+  const address = settings?.contactAddress ?? siteConfig.contact.address
+  const socials =
+    settings?.socialLinks?.map((social) => ({
+      label: social.platform,
+      href: social.url,
+      icon: socialIconByPlatform[social.platform as keyof typeof socialIconByPlatform] ?? FacebookIcon,
+    })) ?? defaultSocialLinks
 
   return (
     <footer className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
-        {showCta ? <FooterCTABlock /> : null}
+        {showCta ? <FooterCTABlock contactPhone={phone} contactPhoneHref={phoneHref} /> : null}
 
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-b border-white/10 py-6 sm:justify-between">
           {trustBadges.map((badge) => (
@@ -39,9 +63,9 @@ export function Footer({ showCta = true }: FooterProps) {
         <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-5">
           <div className="flex flex-col gap-4 lg:col-span-1">
             <Logo variant="light" />
-            <p className="text-sm text-white/70">{siteConfig.description}</p>
+            <p className="text-sm text-white/70">{description}</p>
             <div className="flex items-center gap-3 pt-1">
-              {socialLinks.map((social) => (
+              {socials.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
@@ -62,17 +86,17 @@ export function Footer({ showCta = true }: FooterProps) {
 
           <div className="flex flex-col gap-3">
             <p className="text-sm font-semibold text-white">Contact Information</p>
-            <a href={siteConfig.contact.phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
+            <a href={phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
               <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-              {siteConfig.contact.phone}
+              {phone}
             </a>
-            <a href={`mailto:${siteConfig.contact.email}`} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
+            <a href={`mailto:${email}`} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
               <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-              {siteConfig.contact.email}
+              {email}
             </a>
             <p className="flex items-start gap-2.5 text-sm text-white/70">
               <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-              {siteConfig.contact.address}
+              {address}
             </p>
           </div>
         </div>
@@ -81,7 +105,7 @@ export function Footer({ showCta = true }: FooterProps) {
       <div className="border-t border-white/10 bg-brand-navy-dark">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/60 sm:flex-row sm:px-6 lg:px-8">
           <p>
-            © 2012–{year} {siteConfig.name}. All rights reserved.
+            © 2012–{year} {siteName}. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <Link href="/legal/privacy-policy" className="hover:text-white">

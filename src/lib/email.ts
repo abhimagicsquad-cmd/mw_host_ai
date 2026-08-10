@@ -100,7 +100,7 @@ export async function sendLeadNotificationEmail(payload: LeadEmailPayload): Prom
       from: FROM_ADDRESS,
       to: NOTIFICATION_ADDRESS,
       replyTo: email,
-      subject: `New lead from ${source}: ${name}`,
+      subject: "New Lead — MWH",
       html,
       text,
     })

@@ -42,11 +42,12 @@ export function QuickInquiryForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3" noValidate>
-      <TextField label="Name" required registration={register("name")} error={errors.name?.message} />
+      <TextField label="Name" required placeholder="Full Name *" registration={register("name")} error={errors.name?.message} />
       <TextField
         label="Email"
         type="email"
         required
+        placeholder="Email Address *"
         registration={register("email")}
         error={errors.email?.message}
       />
@@ -54,12 +55,14 @@ export function QuickInquiryForm() {
         label="Phone"
         type="tel"
         required
+        placeholder="Phone Number *"
         registration={register("phone")}
         error={errors.phone?.message}
       />
       <TextareaField
         label="What do you need?"
         required
+        placeholder="What Do You Need? *"
         rows={3}
         registration={register("message")}
         error={errors.message?.message}

@@ -9,13 +9,18 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
 import { buildMetadata } from "@/lib/seo"
+import { getContactPage } from "@/sanity/lib/queries"
 
-export const metadata = buildMetadata({
-  title: "Contact Us",
-  description:
-    "Get in touch with MagicWorks Host — call, email, or send us your details and our team will respond within a few hours.",
-  path: "/contact-us",
-})
+export async function generateMetadata() {
+  const cms = await getContactPage()
+  return buildMetadata({
+    title: cms?.seo?.metaTitle ?? "Contact Us",
+    description:
+      cms?.seo?.metaDescription ??
+      "Get in touch with MagicWorks Host — call, email, or send us your details and our team will respond within a few hours.",
+    path: "/contact-us",
+  })
+}
 
 export default function ContactUsPage() {
   return (

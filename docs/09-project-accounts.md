@@ -28,9 +28,10 @@ Per "do not invent values," these were left blank rather than guessed:
 - **`SANITY_REVALIDATE_SECRET`** — any random string, shared between the webhook config and the revalidate route handler; can be generated when that route is built.
 - **Email provider** (`lib/email.ts`) — not chosen yet; architecture doc suggests Resend but no account/key exists for this project.
 - **Captcha** (`NEXT_PUBLIC_CAPTCHA_SITE_KEY` / `CAPTCHA_SECRET_KEY`) — provider not chosen (reCAPTCHA v3 vs. Cloudflare Turnstile per `06-ai-native-upgrade-recommendations.md`).
-- **Sanity Studio itself** — no `sanity.config.ts` / schema code exists yet. The project/dataset are connected and ready, but building the Studio route + implementing `05-sanity-schema-plan.md` as actual schema code is separate, larger work.
 - **Custom domain** — Vercel project currently only has its default `mw-host-ai.vercel.app` domain; no custom domain (e.g. magicworkshost.com) is attached.
+
+**Sanity Studio — now implemented.** Schema code lives at `src/sanity/schemaTypes/`, the Studio is served from `/studio`, and `src/sanity/lib/queries.ts` fetches content for pages. Pages fall back to their hardcoded defaults until an editor populates the corresponding document in Studio, so no visual change ships until content is entered.
 
 ## Supabase
 
-**Not connected, per explicit instruction.** No tables, auth, or storage buckets exist. `.env.local.example` has commented-out placeholder variable names (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) so the shape is documented, but nothing is wired up. No Supabase project has been created or verified.
+**Schema/integration code now exists, but no project is connected yet.** `/api/leads` inserts into a `leads` table via `src/lib/leads-store.ts` using the service role key (server-only). The table definition is at `supabase/migrations/0001_create_leads.sql` — run it against a real Supabase project, then set `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` (see `.env.local.example`). Until those are set, storage is skipped (logged, not treated as an error) and the pipeline stays email-only, matching prior behavior.

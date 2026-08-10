@@ -60,7 +60,7 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, source, formRenderedAt }),
+        body: JSON.stringify({ ...values, source, formRenderedAt, pageUrl: window.location.href }),
       })
 
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
@@ -87,7 +87,7 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
       <TextField
         label="Full name"
         required
-        placeholder="Abhishek Patil"
+        placeholder="Full Name *"
         autoComplete="name"
         registration={register("name", { onChange: filterNameInput })}
         error={errors.name?.message}
@@ -97,7 +97,7 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
           label="Phone number"
           type="tel"
           required
-          placeholder="9876543210"
+          placeholder="Phone Number *"
           inputMode="numeric"
           autoComplete="tel"
           maxLength={10}
@@ -108,7 +108,7 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
           label="Email address"
           type="email"
           required
-          placeholder="you@example.com"
+          placeholder="Email Address *"
           autoComplete="email"
           registration={register("email")}
           error={errors.email?.message}
@@ -119,14 +119,14 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
         control={control}
         label="What are you interested in?"
         required
-        placeholder="Select a service"
+        placeholder="Service Interested In *"
         options={serviceOptions}
         error={errors.service?.message}
       />
       <TextareaField
         label="Message (optional)"
         rows={4}
-        placeholder="Tell us how we can help…"
+        placeholder="Message"
         registration={register("message")}
         error={errors.message?.message}
       />

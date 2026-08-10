@@ -45,11 +45,12 @@ export function CallbackRequestForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-      <TextField label="Full name" required registration={register("name")} error={errors.name?.message} />
+      <TextField label="Full name" required placeholder="Full Name *" registration={register("name")} error={errors.name?.message} />
       <TextField
         label="Phone number"
         type="tel"
         required
+        placeholder="Phone Number *"
         registration={register("phone")}
         error={errors.phone?.message}
       />
@@ -58,12 +59,13 @@ export function CallbackRequestForm() {
         control={control}
         label="Preferred callback time"
         required
-        placeholder="Select a time slot"
+        placeholder="Preferred Callback Time *"
         options={preferredTimeOptions}
         error={errors.preferredTime?.message}
       />
       <TextareaField
         label="What's this about? (optional)"
+        placeholder="What's This About?"
         rows={3}
         registration={register("reason")}
         error={errors.reason?.message}

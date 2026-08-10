@@ -73,6 +73,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           website: values.website,
           source,
           formRenderedAt,
+          pageUrl: window.location.href,
         }),
       })
 
@@ -101,6 +102,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
         <TextField
           label="Full name"
           required
+          placeholder="Full Name *"
           autoComplete="name"
           registration={register("name", { onChange: filterNameInput })}
           error={errors.name?.message}
@@ -109,6 +111,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           label="Email address"
           type="email"
           required
+          placeholder="Email Address *"
           autoComplete="email"
           registration={register("email")}
           error={errors.email?.message}
@@ -119,13 +122,19 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           label="Phone number"
           type="tel"
           required
+          placeholder="Phone Number *"
           inputMode="numeric"
           maxLength={10}
           autoComplete="tel"
           registration={register("phone", { onChange: filterPhoneInput })}
           error={errors.phone?.message}
         />
-        <TextField label="Company (optional)" registration={register("company")} error={errors.company?.message} />
+        <TextField
+          label="Company (optional)"
+          placeholder="Company Name"
+          registration={register("company")}
+          error={errors.company?.message}
+        />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <SelectField
@@ -133,7 +142,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           control={control}
           label="Service you're interested in"
           required
-          placeholder="Select a service"
+          placeholder="Service Interested In *"
           options={serviceOptions}
           error={errors.service?.message}
         />
@@ -142,7 +151,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
             name="hostingType"
             control={control}
             label="Hosting type"
-            placeholder="Select a tier"
+            placeholder="Hosting Type"
             options={hostingTypeOptions}
             error={errors.hostingType?.message}
           />
@@ -152,7 +161,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
         label="Requirements"
         required
         rows={5}
-        placeholder="Storage, traffic, budget, timeline — anything that helps us quote accurately."
+        placeholder="Requirements *"
         registration={register("requirements")}
         error={errors.requirements?.message}
       />

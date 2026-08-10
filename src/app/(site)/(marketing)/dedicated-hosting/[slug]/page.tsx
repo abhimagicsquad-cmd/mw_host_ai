@@ -10,53 +10,65 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/constants/dedicated-pages-data"
 import { dedicatedPlans } from "@/constants/pricing-plans"
 import { buildMetadata } from "@/lib/seo"
+import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
 
 type DedicatedSlugPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export function generateStaticParams() {
-  return dedicatedPages.map((page) => ({ slug: page.slug }))
+export async function generateStaticParams() {
+  const cmsSlugs = await getAllServicePageSlugs("dedicated")
+  const slugs = new Set([...dedicatedPages.map((page) => page.slug), ...cmsSlugs])
+  return [...slugs].map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: DedicatedSlugPageProps): Promise<Metadata> {
   const { slug } = await params
+  const cms = await getServicePage("dedicated", slug)
   const page = getDedicatedPage(slug)
 
-  if (!page) return {}
+  if (!cms && !page) return {}
 
   return buildMetadata({
-    title: page.title,
-    description: page.description,
-    path: `/dedicated-hosting/${page.slug}`,
+    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
+    description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
+    path: `/dedicated-hosting/${slug}`,
   })
 }
 
 export default async function DedicatedSlugPage({ params }: DedicatedSlugPageProps) {
   const { slug } = await params
-  const page = getDedicatedPage(slug)
+  const cms = await getServicePage("dedicated", slug)
+  const fallback = getDedicatedPage(slug)
 
-  if (!page) notFound()
+  if (!cms && !fallback) notFound()
+
+  const eyebrow = cms?.eyebrow ?? fallback!.eyebrow
+  const title = cms?.heroTitle ?? fallback!.title
+  const description = cms?.heroDescription ?? fallback!.description
+  const bullets = cms?.bullets ?? fallback!.bullets
+  const managed = cms?.managed ?? fallback!.managed
+  const faqs = cms?.faqs ?? fallback!.faqs
 
   return (
     <>
       <HeroSection
-        eyebrow={page.eyebrow}
-        title={page.title}
-        description={page.description}
-        bullets={page.bullets}
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
+        bullets={bullets}
         primaryCta={{ label: "View pricing", href: "#pricing" }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
         stats={[
-          { label: "Provisioning", value: page.managed ? "< 48 hrs" : "< 24 hrs" },
+          { label: "Provisioning", value: managed ? "< 48 hrs" : "< 24 hrs" },
           { label: "Support", value: "24/7" },
           { label: "Dedicated IPs", value: "5" },
         ]}
       />
 
       <FeaturesSection
-        eyebrow={page.managed ? "Fully managed" : "Full control"}
-        title={page.managed ? "What our team handles for you" : "What you get with full root access"}
+        eyebrow={managed ? "Fully managed" : "Full control"}
+        title={managed ? "What our team handles for you" : "What you get with full root access"}
         columns={3}
         background="alt"
         features={dedicatedTrustFeatures}
@@ -69,12 +81,12 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
           description="India data center pricing — ask our team about USA-based tiers."
           plans={dedicatedPlans.map((plan) => ({
             ...plan,
-            service: page.managed ? "managed-dedicated-server" : "dedicated-server",
+            service: managed ? "managed-dedicated-server" : "dedicated-server",
           }))}
         />
       </div>
 
-      <FAQSection eyebrow="FAQs" title={`${page.eyebrow} questions, answered`} items={page.faqs} />
+      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
         title="Ready to move to dedicated hardware?"

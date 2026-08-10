@@ -9,41 +9,52 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { domainIncludedFeatures, domainPages, getDomainPage, tldPricing } from "@/constants/domain-pages-data"
 import { buildMetadata } from "@/lib/seo"
+import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
 
 type DomainSlugPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export function generateStaticParams() {
-  return domainPages.map((page) => ({ slug: page.slug }))
+export async function generateStaticParams() {
+  const cmsSlugs = await getAllServicePageSlugs("domain")
+  const slugs = new Set([...domainPages.map((page) => page.slug), ...cmsSlugs])
+  return [...slugs].map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: DomainSlugPageProps): Promise<Metadata> {
   const { slug } = await params
+  const cms = await getServicePage("domain", slug)
   const page = getDomainPage(slug)
 
-  if (!page) return {}
+  if (!cms && !page) return {}
 
   return buildMetadata({
-    title: page.title,
-    description: page.description,
-    path: `/domain/${page.slug}`,
+    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
+    description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
+    path: `/domain/${slug}`,
   })
 }
 
 export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
   const { slug } = await params
-  const page = getDomainPage(slug)
+  const cms = await getServicePage("domain", slug)
+  const fallback = getDomainPage(slug)
 
-  if (!page) notFound()
+  if (!cms && !fallback) notFound()
+
+  const eyebrow = cms?.eyebrow ?? fallback!.eyebrow
+  const title = cms?.heroTitle ?? fallback!.title
+  const description = cms?.heroDescription ?? fallback!.description
+  const bullets = cms?.bullets ?? fallback!.bullets
+  const faqs = cms?.faqs ?? fallback!.faqs
 
   return (
     <>
       <HeroSection
-        eyebrow={page.eyebrow}
-        title={page.title}
-        description={page.description}
-        bullets={page.bullets}
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
+        bullets={bullets}
         primaryCta={{ label: "Get started", href: LEAD_CTA_HREF }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
       />
@@ -57,7 +68,7 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
         features={domainIncludedFeatures}
       />
 
-      <FAQSection eyebrow="FAQs" title={`${page.eyebrow} questions, answered`} items={page.faqs} />
+      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
         title="Ready to get your domain sorted?"

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { PortableText } from "@portabletext/react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -10,19 +11,31 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
 import { blogPosts, getBlogCategoryName, getBlogPost, getRelatedPosts } from "@/constants/blog-data"
 import { buildMetadata } from "@/lib/seo"
+import { getAllBlogPosts, getBlogPostBySlug } from "@/sanity/lib/queries"
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }))
+export async function generateStaticParams() {
+  const cmsPosts = await getAllBlogPosts()
+  const slugs = new Set([...blogPosts.map((post) => post.slug), ...cmsPosts.map((post) => post.slug)])
+  return [...slugs].map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = getBlogPost(slug)
+  const cmsPost = await getBlogPostBySlug(slug)
 
+  if (cmsPost) {
+    return buildMetadata({
+      title: cmsPost.seo?.metaTitle ?? cmsPost.title,
+      description: cmsPost.seo?.metaDescription ?? cmsPost.excerpt,
+      path: `/blog/${cmsPost.slug}`,
+    })
+  }
+
+  const post = getBlogPost(slug)
   if (!post) return {}
 
   return buildMetadata({
@@ -34,6 +47,63 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
+  const cmsPost = await getBlogPostBySlug(slug)
+
+  if (cmsPost) {
+    const breadcrumbs = [
+      { label: "Home", href: "/" },
+      { label: "Blog", href: "/blog" },
+      { label: cmsPost.title },
+    ]
+
+    return (
+      <>
+        <BreadcrumbJsonLd items={breadcrumbs} />
+        <BlogPostingJsonLd title={cmsPost.title} description={cmsPost.excerpt} slug={cmsPost.slug} authorName={cmsPost.author?.name ?? "MagicWorks Host Team"} />
+
+        <SectionContainer width="narrow" background="alt" className="py-12 sm:py-16">
+          <Reveal className="flex flex-col gap-4">
+            <Link href="/blog" className="flex items-center gap-1.5 text-sm font-medium text-brand-orange hover:underline">
+              <ArrowLeft className="size-4" />
+              Back to blog
+            </Link>
+            {cmsPost.category ? (
+              <span className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase">
+                {cmsPost.category.title}
+              </span>
+            ) : null}
+            <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{cmsPost.title}</h1>
+            <p className="text-lg text-body-text">{cmsPost.excerpt}</p>
+            {cmsPost.author ? (
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <span>{cmsPost.author.name}</span>
+                {cmsPost.readTime ? (
+                  <>
+                    <span aria-hidden="true">&middot;</span>
+                    <span>{cmsPost.readTime}</span>
+                  </>
+                ) : null}
+              </div>
+            ) : null}
+          </Reveal>
+        </SectionContainer>
+
+        <SectionContainer width="narrow">
+          <article className="prose prose-slate max-w-none">
+            <PortableText value={cmsPost.body} />
+          </article>
+        </SectionContainer>
+
+        <CTASection
+          title="Want help putting this into practice?"
+          description="Our support team can walk through any of this on your actual site."
+          primaryCta={{ label: "Talk to us", href: LEAD_CTA_HREF }}
+          background="navy"
+        />
+      </>
+    )
+  }
+
   const post = getBlogPost(slug)
 
   if (!post) notFound()

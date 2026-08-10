@@ -8,13 +8,18 @@ import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { buildMetadata } from "@/lib/seo"
+import { getAboutPage } from "@/sanity/lib/queries"
 
-export const metadata = buildMetadata({
-  title: "About Us",
-  description:
-    "MagicWorks Host is a division of MagicWorks IT Solutions, hosting businesses across India since 2012 with NVMe-powered infrastructure and 24/7 support.",
-  path: "/about-us",
-})
+export async function generateMetadata() {
+  const cms = await getAboutPage()
+  return buildMetadata({
+    title: cms?.seo?.metaTitle ?? "About Us",
+    description:
+      cms?.seo?.metaDescription ??
+      "MagicWorks Host is a division of MagicWorks IT Solutions, hosting businesses across India since 2012 with NVMe-powered infrastructure and 24/7 support.",
+    path: "/about-us",
+  })
+}
 
 export default function AboutUsPage() {
   return (

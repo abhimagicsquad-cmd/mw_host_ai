@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 
 import { siteConfig } from "@/constants/site-config"
 import { sendLeadNotificationEmail } from "@/lib/email"
+import { storeLead } from "@/lib/leads-store"
 import { leadApiPayloadSchema } from "@/schemas/lead-form.schema"
 
 export const runtime = "nodejs"
@@ -62,25 +63,47 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType } = parsed.data
+  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl } =
+    parsed.data
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
 
   const isDuplicate = markAndCheckDuplicate(`${email.toLowerCase()}:${phone}`)
 
-  if (!isLikelyBot && !isDuplicate) {
-    const result = await sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType })
+  if (isLikelyBot || isDuplicate) {
+    return NextResponse.json({
+      success: true,
+      message: "Thanks — we've received your details and will be in touch shortly.",
+    })
+  }
 
-    if (!result.sent && !result.skipped) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: `Something went wrong sending your request. Please call us directly at ${siteConfig.contact.phone} or try again.`,
-        },
-        { status: 502 }
-      )
-    }
+  const [storeResult, emailResult] = await Promise.all([
+    storeLead({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
+    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType }),
+  ])
+
+  if (!storeResult.stored && !storeResult.skipped) {
+    // Case C/D: the durable record failed to save — that's the one outcome we can't let
+    // silently succeed, even if the notification email went out (emailResult.sent).
+    console.error("[api/leads] Supabase insert failed; lead was not persisted.", {
+      email,
+      source,
+      emailSent: emailResult.sent,
+    })
+    return NextResponse.json(
+      {
+        success: false,
+        message: `Something went wrong saving your request. Please call us directly at ${siteConfig.contact.phone} or try again.`,
+      },
+      { status: 502 }
+    )
+  }
+
+  if (!emailResult.sent && !emailResult.skipped) {
+    // Case B: lead is safely stored (or Supabase isn't configured yet); only the
+    // notification email failed — log it, but don't fail the user's submission.
+    console.error("[api/leads] Notification email failed after the lead was stored.", { email, source })
   }
 
   return NextResponse.json({

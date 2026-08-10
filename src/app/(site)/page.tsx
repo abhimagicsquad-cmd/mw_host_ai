@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { HeadphonesIcon, Lock, Server, ShieldCheck, TrendingUp, Zap } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
@@ -14,10 +15,34 @@ import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
+import { PageBuilder } from "@/components/sanity/page-builder"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { trustHighlights } from "@/constants/trust-highlights-data"
+import { buildMetadata } from "@/lib/seo"
+import { getHomePage } from "@/sanity/lib/queries"
 
-export default function HomePage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const cms = await getHomePage()
+  if (!cms?.seo?.metaTitle) return {}
+  return buildMetadata({
+    title: cms.seo.metaTitle,
+    description: cms.seo.metaDescription ?? "",
+    path: "/",
+  })
+}
+
+export default async function HomePage() {
+  const cms = await getHomePage()
+
+  if (cms?.pageBuilder?.length) {
+    return (
+      <>
+        <OrganizationJsonLd />
+        <PageBuilder blocks={cms.pageBuilder} />
+      </>
+    )
+  }
+
   return (
     <>
       <OrganizationJsonLd />

@@ -25,7 +25,7 @@ export function FormFieldShell({
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       {label ? (
-        <Label htmlFor={htmlFor}>
+        <Label htmlFor={htmlFor} className="sr-only">
           {label}
           {required ? <span className="text-destructive">*</span> : null}
         </Label>

@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next"
 
-import { Footer } from "@/components/layout/footer/footer"
-import { Header } from "@/components/layout/header/header"
 import { siteConfig } from "@/constants/site-config"
 import { bodyFont, headingFont } from "@/lib/fonts"
 
@@ -41,11 +39,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${headingFont.variable} ${bodyFont.variable} antialiased`}>
-        <Header />
-        <main>{children}</main>
-        <Footer />
-      </body>
+      <body className={`${headingFont.variable} ${bodyFont.variable} antialiased`}>{children}</body>
     </html>
   )
 }

@@ -45,11 +45,12 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
       <div className="grid gap-4 sm:grid-cols-2">
-        <TextField label="Full name" required registration={register("name")} error={errors.name?.message} />
+        <TextField label="Full name" required placeholder="Full Name *" registration={register("name")} error={errors.name?.message} />
         <TextField
           label="Email address"
           type="email"
           required
+          placeholder="Email Address *"
           registration={register("email")}
           error={errors.email?.message}
         />
@@ -59,16 +60,17 @@ export function ContactForm() {
           label="Phone number"
           type="tel"
           required
+          placeholder="Phone Number *"
           registration={register("phone")}
           error={errors.phone?.message}
         />
-        <TextField label="Subject" registration={register("subject")} error={errors.subject?.message} />
+        <TextField label="Subject" placeholder="Subject" registration={register("subject")} error={errors.subject?.message} />
       </div>
       <TextareaField
         label="Message"
         required
         rows={5}
-        placeholder="Tell us how we can help…"
+        placeholder="Message *"
         registration={register("message")}
         error={errors.message?.message}
       />
