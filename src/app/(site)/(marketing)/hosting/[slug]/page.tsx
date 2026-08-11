@@ -12,7 +12,7 @@ import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 
 type HostingSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -51,6 +51,8 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
   const bullets = cms?.bullets ?? fallback!.bullets
   const features = cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? fallback!.features
   const faqs = cms?.faqs ?? fallback!.faqs
+  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (
     <>
@@ -76,7 +78,7 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
           eyebrow="Pricing"
           title="Select your plan"
           description="Every plan includes free SSL, cPanel, and JetBackup — no hidden setup fees."
-          plans={sharedHostingPlans}
+          plans={plans}
         />
       </div>
 

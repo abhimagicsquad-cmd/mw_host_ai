@@ -5,7 +5,8 @@ import { Logo } from "@/components/common/logo"
 import { resolveSocialIcon } from "@/components/common/social-icons"
 import { footerColumns } from "@/constants/nav-items"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
-import { getSiteSettings } from "@/sanity/lib/queries"
+import { toNavColumns } from "@/lib/nav-mapper"
+import { getNavigation, getSiteSettings } from "@/sanity/lib/queries"
 
 import { FooterColumn } from "./footer-column"
 import { FooterCTABlock } from "./footer-cta-block"
@@ -21,9 +22,11 @@ type FooterProps = {
   showCta?: boolean
 }
 
+const fallbackFooterColumns = [footerColumns.quickLinks, footerColumns.services, footerColumns.resources]
+
 export async function Footer({ showCta = true }: FooterProps) {
   const year = new Date().getFullYear()
-  const settings = await getSiteSettings()
+  const [settings, navigation] = await Promise.all([getSiteSettings(), getNavigation()])
 
   const siteName = settings?.siteName ?? siteConfig.name
   const description = settings?.description ?? siteConfig.description
@@ -31,6 +34,7 @@ export async function Footer({ showCta = true }: FooterProps) {
   const phoneHref = settings?.contactPhoneHref ?? siteConfig.contact.phoneHref
   const email = settings?.contactEmail ?? siteConfig.contact.email
   const address = settings?.contactAddress ?? siteConfig.contact.address
+  const columns = navigation?.footerColumns?.length ? toNavColumns(navigation.footerColumns) : fallbackFooterColumns
   const socials =
     settings?.socialLinks?.map((social) => ({
       label: social.platform,
@@ -72,9 +76,9 @@ export async function Footer({ showCta = true }: FooterProps) {
             </div>
           </div>
 
-          <FooterColumn heading={footerColumns.quickLinks.heading} links={footerColumns.quickLinks.links} />
-          <FooterColumn heading={footerColumns.services.heading} links={footerColumns.services.links} />
-          <FooterColumn heading={footerColumns.resources.heading} links={footerColumns.resources.links} />
+          {columns.map((column) => (
+            <FooterColumn key={column.heading} heading={column.heading ?? ""} links={column.links} />
+          ))}
 
           <div className="flex flex-col gap-3">
             <p className="text-sm font-semibold text-white">Contact Information</p>

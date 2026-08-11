@@ -9,6 +9,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { resolveIcon } from "@/lib/icon-map"
 import type { NavItem } from "@/types/nav"
 
 type NavMenuProps = {
@@ -33,22 +34,26 @@ export function NavMenu({ items }: NavMenuProps) {
                         </p>
                       ) : null}
                       <ul className="flex flex-col">
-                        {column.links.map((link) => (
-                          <li key={link.href}>
-                            <NavigationMenuLink render={<Link href={link.href} />}>
-                              {link.icon ? <link.icon className="text-brand-orange" /> : null}
-                              {link.label}
-                            </NavigationMenuLink>
-                          </li>
-                        ))}
+                        {column.links.map((link) => {
+                          const LinkIcon = resolveIcon(link.icon)
+                          return (
+                            <li key={link.href}>
+                              <NavigationMenuLink render={<Link href={link.href} />}>
+                                {LinkIcon ? <LinkIcon className="text-brand-orange" /> : null}
+                                {link.label}
+                              </NavigationMenuLink>
+                            </li>
+                          )
+                        })}
                       </ul>
                     </div>
                   ))}
                   {item.featured ? (
                     <div className="flex w-60 flex-col gap-2 rounded-lg bg-surface-alt p-4">
-                      {item.featured.icon ? (
-                        <item.featured.icon className="size-5 text-brand-orange" />
-                      ) : null}
+                      {(() => {
+                        const FeaturedIcon = resolveIcon(item.featured.icon)
+                        return FeaturedIcon ? <FeaturedIcon className="size-5 text-brand-orange" /> : null
+                      })()}
                       <p className="font-heading text-sm font-semibold text-brand-navy">
                         {item.featured.title}
                       </p>

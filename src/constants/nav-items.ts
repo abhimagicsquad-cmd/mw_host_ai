@@ -1,13 +1,3 @@
-import {
-  Globe,
-  Server,
-  Mail,
-  BookOpen,
-  Gauge,
-  Rocket,
-  Boxes,
-} from "lucide-react"
-
 import type { NavItem } from "@/types/nav"
 
 export const mainNav: NavItem[] = [
@@ -21,11 +11,11 @@ export const mainNav: NavItem[] = [
     columns: [
       {
         links: [
-          { label: "Domain Name Registration", href: "/domain/domain-name-registration", icon: Globe },
-          { label: "Indian Domain", href: "/domain/indian-domain", icon: Globe },
-          { label: "Domain Hosting", href: "/domain/domain-hosting", icon: Server },
-          { label: "Buy Domain Name", href: "/domain/buy-domain-name", icon: Globe },
-          { label: "Transfer Domain", href: "/domain/transfer-your-domain-name", icon: Globe },
+          { label: "Domain Name Registration", href: "/domain/domain-name-registration", icon: "Globe" },
+          { label: "Indian Domain", href: "/domain/indian-domain", icon: "Globe" },
+          { label: "Domain Hosting", href: "/domain/domain-hosting", icon: "Server" },
+          { label: "Buy Domain Name", href: "/domain/buy-domain-name", icon: "Globe" },
+          { label: "Transfer Domain", href: "/domain/transfer-your-domain-name", icon: "Globe" },
         ],
       },
     ],
@@ -37,21 +27,21 @@ export const mainNav: NavItem[] = [
       {
         heading: "Shared Hosting",
         links: [
-          { label: "SEO Hosting", href: "/hosting/seo-hosting", icon: Rocket },
-          { label: "Unlimited Hosting", href: "/hosting/unlimited-hosting", icon: Boxes },
-          { label: "Buy Web Hosting", href: "/hosting/buy-web-hosting", icon: Server },
-          { label: "Linux Hosting", href: "/hosting/linux-shared-hosting", icon: Server },
-          { label: "WordPress Hosting", href: "/hosting/wordpress-hosting", icon: Server },
+          { label: "SEO Hosting", href: "/hosting/seo-hosting", icon: "Rocket" },
+          { label: "Unlimited Hosting", href: "/hosting/unlimited-hosting", icon: "Boxes" },
+          { label: "Buy Web Hosting", href: "/hosting/buy-web-hosting", icon: "Server" },
+          { label: "Linux Hosting", href: "/hosting/linux-shared-hosting", icon: "Server" },
+          { label: "WordPress Hosting", href: "/hosting/wordpress-hosting", icon: "Server" },
         ],
       },
       {
         heading: "Servers",
         links: [
-          { label: "VPS Hosting", href: "/vps-hosting", icon: Gauge },
-          { label: "Dedicated Servers", href: "/dedicated-hosting/dedicated-server", icon: Server },
-          { label: "Managed Dedicated Server", href: "/dedicated-hosting/managed-dedicated-server", icon: Server },
-          { label: "Linux Dedicated Server", href: "/dedicated-hosting/linux-dedicated-server", icon: Server },
-          { label: "Compare Plans", href: "/compare-hosting-plans", icon: Boxes },
+          { label: "VPS Hosting", href: "/vps-hosting", icon: "Gauge" },
+          { label: "Dedicated Servers", href: "/dedicated-hosting/dedicated-server", icon: "Server" },
+          { label: "Managed Dedicated Server", href: "/dedicated-hosting/managed-dedicated-server", icon: "Server" },
+          { label: "Linux Dedicated Server", href: "/dedicated-hosting/linux-dedicated-server", icon: "Server" },
+          { label: "Compare Plans", href: "/compare-hosting-plans", icon: "Boxes" },
         ],
       },
     ],
@@ -59,7 +49,7 @@ export const mainNav: NavItem[] = [
       title: "New here?",
       description: "Compare every hosting tier side by side and find the right fit in minutes.",
       href: "/compare-hosting-plans",
-      icon: Gauge,
+      icon: "Gauge",
     },
   },
   {
@@ -72,8 +62,8 @@ export const mainNav: NavItem[] = [
     columns: [
       {
         links: [
-          { label: "Business Email Hosting", href: "/email-hosting/business", icon: Mail },
-          { label: "Enterprise Email Hosting", href: "/email-hosting/enterprise", icon: Mail },
+          { label: "Business Email Hosting", href: "/email-hosting/business", icon: "Mail" },
+          { label: "Enterprise Email Hosting", href: "/email-hosting/enterprise", icon: "Mail" },
         ],
       },
     ],
@@ -83,7 +73,7 @@ export const mainNav: NavItem[] = [
     href: "/blog",
     columns: [
       {
-        links: [{ label: "Blogs", href: "/blog", icon: BookOpen }],
+        links: [{ label: "Blogs", href: "/blog", icon: "BookOpen" }],
       },
     ],
   },

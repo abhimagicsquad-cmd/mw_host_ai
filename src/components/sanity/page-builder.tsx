@@ -1,16 +1,22 @@
+import type { ReactNode } from "react"
 import { PortableText } from "@portabletext/react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { AboutCredibilitySection } from "@/components/sections/about-credibility-section"
 import { BannerSection } from "@/components/sections/banner-section"
+import { ContentSection } from "@/components/sections/content-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
+import { HeroVisual } from "@/components/sections/hero-visual"
+import { PageHero } from "@/components/sections/page-hero"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
+import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { resolveIcon } from "@/lib/icon-map"
 import { urlForImage } from "@/sanity/lib/image"
 import type {
@@ -22,6 +28,20 @@ import type {
   TestimonialData,
 } from "@/sanity/types"
 import type { CTA, Feature, PricingPlan, ServiceItem, Stat, Testimonial } from "@/types/content"
+
+/** Renders `title` as plain text, unless `highlightText` names a substring to wrap in the brand gradient span (e.g. "10X faster"). */
+function renderHeroTitle(title: string, highlightText?: string): ReactNode {
+  if (!highlightText) return title
+  const parts = title.split(highlightText)
+  if (parts.length !== 2) return title
+  return (
+    <>
+      {parts[0]}
+      <span className="text-gradient-brand">{highlightText}</span>
+      {parts[1]}
+    </>
+  )
+}
 
 function toCta(cta?: { label: string; href: string; external?: boolean }): CTA | undefined {
   if (!cta) return undefined
@@ -88,12 +108,23 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
               <HeroSection
                 key={block._key}
                 eyebrow={block.eyebrow}
-                title={block.title}
+                title={renderHeroTitle(block.title, block.highlightText)}
                 description={block.description}
                 bullets={block.bullets}
                 primaryCta={toCta(block.primaryCta)}
                 secondaryCta={toCta(block.secondaryCta)}
                 stats={block.stats?.map(toStat)}
+                media={block.showDashboardVisual ? <HeroVisual /> : undefined}
+              />
+            )
+          case "pageHeroBlock":
+            return (
+              <PageHero
+                key={block._key}
+                title={block.title}
+                description={block.description}
+                breadcrumbs={block.breadcrumbs}
+                background={block.background === "alt" ? "alt" : "navy"}
               />
             )
           case "bannerBlock":
@@ -147,7 +178,12 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
                 services={block.services.map(toServiceItem)}
                 cta={
                   block.ctaLabel ? (
-                    <LeadCTAButton source="services" variant="outline">
+                    <LeadCTAButton
+                      source="services"
+                      variant="outline"
+                      dialogTitle={block.ctaDialogTitle}
+                      dialogDescription={block.ctaDialogDescription}
+                    >
                       {block.ctaLabel}
                     </LeadCTAButton>
                   ) : undefined
@@ -166,6 +202,32 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
                 highlights={block.highlights?.map(toStat) ?? []}
               />
             )
+          case "featureGridBlock": {
+            const items = block.items.map(toFeature)
+            if (block.variant === "cards") {
+              return (
+                <WhyChooseUs
+                  key={block._key}
+                  eyebrow={block.eyebrow}
+                  title={block.title}
+                  description={block.description}
+                  background={block.background === "alt" ? "alt" : "none"}
+                  reasons={items}
+                />
+              )
+            }
+            return (
+              <FeaturesSection
+                key={block._key}
+                eyebrow={block.eyebrow}
+                title={block.title}
+                description={block.description}
+                columns={block.columns ?? 3}
+                background={block.background === "alt" ? "alt" : "none"}
+                features={items}
+              />
+            )
+          }
           case "testimonialsBlock":
             return (
               <TestimonialsSection
@@ -206,12 +268,9 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
             )
           case "richTextBlock":
             return (
-              <div key={block._key} className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-                {block.title ? <h2 className="font-heading text-3xl font-bold text-brand-navy">{block.title}</h2> : null}
-                <div className="prose prose-slate mt-4 max-w-none">
-                  <PortableText value={block.content} />
-                </div>
-              </div>
+              <ContentSection key={block._key} eyebrow={block.eyebrow} title={block.title}>
+                <PortableText value={block.content} />
+              </ContentSection>
             )
           default:
             return null

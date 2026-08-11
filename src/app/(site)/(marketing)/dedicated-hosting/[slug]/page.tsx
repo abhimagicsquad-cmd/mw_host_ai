@@ -10,7 +10,7 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/constants/dedicated-pages-data"
 import { dedicatedPlans } from "@/constants/pricing-plans"
 import { buildMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 
 type DedicatedSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -49,6 +49,8 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
   const bullets = cms?.bullets ?? fallback!.bullets
   const managed = cms?.managed ?? fallback!.managed
   const faqs = cms?.faqs ?? fallback!.faqs
+  const cmsPlans = await getPricingPlansByService("dedicated-server")
+  const basePlans = cmsPlans.length ? cmsPlans : dedicatedPlans
 
   return (
     <>
@@ -79,7 +81,7 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
           eyebrow="Pricing"
           title="Dedicated server tiers"
           description="India data center pricing — ask our team about USA-based tiers."
-          plans={dedicatedPlans.map((plan) => ({
+          plans={basePlans.map((plan) => ({
             ...plan,
             service: managed ? "managed-dedicated-server" : "dedicated-server",
           }))}

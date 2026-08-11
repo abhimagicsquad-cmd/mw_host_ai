@@ -10,51 +10,69 @@ import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { getArticlesByCategory, getKBCategory, kbCategories } from "@/constants/knowledge-base-data"
 import { buildMetadata } from "@/lib/seo"
+import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/sanity/lib/queries"
 
 type KBCategoryPageProps = {
   params: Promise<{ slug: string }>
 }
 
-export function generateStaticParams() {
-  return kbCategories.map((category) => ({ slug: category.slug }))
+export async function generateStaticParams() {
+  const cmsCategories = await getAllKBCategories()
+  const slugs = new Set([...kbCategories.map((category) => category.slug), ...cmsCategories.map((c) => c.slug)])
+  return [...slugs].map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: KBCategoryPageProps): Promise<Metadata> {
   const { slug } = await params
-  const category = getKBCategory(slug)
+  const cms = await getKBCategoryBySlug(slug)
+  const fallback = getKBCategory(slug)
 
-  if (!category) return {}
+  if (!cms && !fallback) return {}
+
+  const name = cms?.name ?? fallback!.name
+  const description = cms?.description ?? fallback!.description
 
   return buildMetadata({
-    title: `${category.name} Help Articles`,
-    description: category.description,
-    path: `/knowledge-base/category/${category.slug}`,
+    title: `${name} Help Articles`,
+    description,
+    path: `/knowledge-base/category/${slug}`,
   })
 }
 
 export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
   const { slug } = await params
-  const category = getKBCategory(slug)
+  const [cms, cmsCategories] = await Promise.all([getKBCategoryBySlug(slug), getAllKBCategories()])
+  const fallback = getKBCategory(slug)
 
-  if (!category) notFound()
+  if (!cms && !fallback) notFound()
 
-  const articles = getArticlesByCategory(slug)
-  const otherCategories = kbCategories.filter((item) => item.slug !== slug)
+  const name = cms?.name ?? fallback!.name
+  const description = cms?.description ?? fallback!.description
+
+  const articles = cms
+    ? (await getKBArticlesByCategory(slug)).map((article) => ({
+        slug: article.slug,
+        title: article.title,
+        excerpt: article.excerpt,
+        readTime: article.readTime,
+      }))
+    : getArticlesByCategory(slug)
+
+  const otherCategories = cms
+    ? cmsCategories.filter((item) => item.slug !== slug).map(({ slug, name }) => ({ slug, name }))
+    : kbCategories.filter((item) => item.slug !== slug).map(({ slug, name }) => ({ slug, name }))
+
   const breadcrumbs = [
     { label: "Home", href: "/" },
     { label: "Knowledge Base", href: "/knowledge-base" },
-    { label: category.name },
+    { label: name },
   ]
 
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
 
-      <PageHero
-        title={category.name}
-        description={category.description}
-        breadcrumbs={breadcrumbs}
-      />
+      <PageHero title={name} description={description} breadcrumbs={breadcrumbs} />
 
       <SectionContainer width="wide">
         {articles.length > 0 ? (

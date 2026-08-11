@@ -22,6 +22,7 @@ import {
 import { CTAButton } from "@/components/common/cta-button"
 import { Logo } from "@/components/common/logo"
 import { siteConfig } from "@/constants/site-config"
+import { resolveIcon } from "@/lib/icon-map"
 import type { NavItem } from "@/types/nav"
 
 type MobileNavProps = {
@@ -52,22 +53,25 @@ export function MobileNav({ items }: MobileNavProps) {
                   <AccordionTrigger className="px-2">{item.label}</AccordionTrigger>
                   <AccordionContent className="px-2">
                     <ul className="flex flex-col gap-1">
-                      {item.columns.flatMap((column) => column.links).map((link) => (
-                        <li key={link.href}>
-                          <SheetClose
-                            nativeButton={false}
-                            render={
-                              <Link
-                                href={link.href}
-                                className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted"
-                              />
-                            }
-                          >
-                            {link.icon ? <link.icon className="size-4 text-brand-orange" /> : null}
-                            {link.label}
-                          </SheetClose>
-                        </li>
-                      ))}
+                      {item.columns.flatMap((column) => column.links).map((link) => {
+                        const LinkIcon = resolveIcon(link.icon)
+                        return (
+                          <li key={link.href}>
+                            <SheetClose
+                              nativeButton={false}
+                              render={
+                                <Link
+                                  href={link.href}
+                                  className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted"
+                                />
+                              }
+                            >
+                              {LinkIcon ? <LinkIcon className="size-4 text-brand-orange" /> : null}
+                              {link.label}
+                            </SheetClose>
+                          </li>
+                        )
+                      })}
                     </ul>
                   </AccordionContent>
                 </AccordionItem>

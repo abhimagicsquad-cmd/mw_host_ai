@@ -12,7 +12,7 @@ import { PageBuilder } from "@/components/sanity/page-builder"
 import { hostingHubIntro, hostingPageIcons, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { buildMetadata } from "@/lib/seo"
-import { getServicesPage } from "@/sanity/lib/queries"
+import { getPricingPlansByService, getServicesPage } from "@/sanity/lib/queries"
 
 const HUB_SLUG = "hosting"
 
@@ -36,6 +36,9 @@ export default async function HostingHubPage() {
   if (cms?.pageBuilder?.length) {
     return <PageBuilder blocks={cms.pageBuilder} />
   }
+
+  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (
     <>
@@ -63,7 +66,7 @@ export default async function HostingHubPage() {
           eyebrow="Pricing"
           title="One pricing grid, every hosting page"
           description="Every hosting plan below includes free SSL, cPanel, and JetBackup."
-          plans={sharedHostingPlans}
+          plans={plans}
         />
       </div>
 

@@ -33,6 +33,13 @@ export const pricingPlan = defineType({
       type: "string",
       description: "Matches a value in src/constants/service-options.ts — pre-selects this service in the lead form.",
     }),
+    defineField({
+      name: "order",
+      title: "Display order",
+      type: "number",
+      description: "Plans within the same service are sorted ascending by this value (tier order, e.g. Starter=1, Basic Plus=2...).",
+      validation: (rule) => rule.required(),
+    }),
   ],
   preview: {
     select: { title: "name", subtitle: "price" },

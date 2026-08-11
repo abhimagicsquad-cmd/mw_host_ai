@@ -1,6 +1,6 @@
 export type ComparisonRow = {
   label: string
-  values: [string, string, string, string]
+  values: string[]
 }
 
 /** Real per-tier specs behind the marketing feature strings in pricing-plans.ts (audit §5.2). */

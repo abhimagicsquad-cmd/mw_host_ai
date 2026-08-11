@@ -1,4 +1,4 @@
-import { BookOpen, Phone, Ticket } from "lucide-react"
+import type { Metadata } from "next"
 
 import { LeadForm } from "@/components/forms/lead-form"
 import { CTASection } from "@/components/sections/cta-section"
@@ -8,63 +8,97 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
+import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
+import { getSupportPage } from "@/sanity/lib/queries"
 
-export const metadata = buildMetadata({
-  title: "Support",
-  description: "Reach MagicWorks Host support by phone, ticket, or knowledge base — 24/7 support on every plan.",
-  path: "/support",
-})
-
-const supportChannels = [
+const fallbackChannels = [
   {
     title: "Call us",
     description: `Speak directly with support, ${siteConfig.contact.hours.support}.`,
-    icon: Phone,
-    cta: { label: siteConfig.contact.phone, href: siteConfig.contact.phoneHref },
+    icon: "Phone",
+    ctaLabel: siteConfig.contact.phone,
+    ctaHref: siteConfig.contact.phoneHref,
+    external: false,
   },
   {
     title: "Open a ticket",
     description: "Track and manage support tickets from your client area.",
-    icon: Ticket,
-    cta: { label: "Client area login", href: "https://clients.magicworkshost.com/clientarea.php", external: true },
+    icon: "Ticket",
+    ctaLabel: "Client area login",
+    ctaHref: "https://clients.magicworkshost.com/clientarea.php",
+    external: true,
   },
   {
     title: "Browse the knowledge base",
     description: "Self-serve answers on billing, hosting, domains, and SSL.",
-    icon: BookOpen,
-    cta: { label: "Search articles", href: "/knowledge-base" },
+    icon: "BookOpen",
+    ctaLabel: "Search articles",
+    ctaHref: "/knowledge-base",
+    external: false,
   },
 ]
 
-export default function SupportPage() {
+const fallbackFaqs = [
+  { question: "Is support really available 24/7?", answer: "Yes — support tickets and the phone line are monitored around the clock, every day of the year." },
+  { question: "How fast do you respond to tickets?", answer: "Most tickets receive a first response within a few hours; urgent live-site issues are prioritized." },
+  { question: "Where do I check on my invoice or billing?", answer: "Log into your client area to view invoices, update payment methods, or check your renewal date." },
+]
+
+export async function generateMetadata(): Promise<Metadata> {
+  const cms = await getSupportPage()
+  if (!cms?.seo?.metaTitle) {
+    return buildMetadata({
+      title: "Support",
+      description: "Reach MagicWorks Host support by phone, ticket, or knowledge base — 24/7 support on every plan.",
+      path: "/support",
+    })
+  }
+  return buildMetadata({
+    title: cms.seo.metaTitle,
+    description: cms.seo.metaDescription ?? "",
+    path: "/support",
+  })
+}
+
+export default async function SupportPage() {
+  const cms = await getSupportPage()
+
+  const heroTitle = cms?.heroTitle ?? "We're here 24/7, not just during business hours"
+  const heroDescription = cms?.heroDescription ?? "Pick whichever channel is fastest for you — phone, ticket, or self-serve."
+  const channels = cms?.channels ?? fallbackChannels
+  const faqs = cms?.faqs ?? fallbackFaqs
+
   return (
     <>
       <PageHero
-        title="We're here 24/7, not just during business hours"
-        description="Pick whichever channel is fastest for you — phone, ticket, or self-serve."
+        title={heroTitle}
+        description={heroDescription}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Support" }]}
       />
 
       <SectionContainer width="wide">
         <div className="grid gap-6 sm:grid-cols-3">
-          {supportChannels.map((channel) => (
-            <div key={channel.title} className="flex flex-col gap-3 rounded-2xl border border-border-alt bg-background p-6">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
-                <channel.icon className="size-5" />
-              </span>
-              <p className="font-heading text-base font-semibold text-brand-navy">{channel.title}</p>
-              <p className="text-sm text-body-text">{channel.description}</p>
-              <a
-                href={channel.cta.href}
-                target={channel.cta.external ? "_blank" : undefined}
-                rel={channel.cta.external ? "noopener noreferrer" : undefined}
-                className="mt-auto text-sm font-semibold text-brand-orange hover:underline"
-              >
-                {channel.cta.label}
-              </a>
-            </div>
-          ))}
+          {channels.map((channel) => {
+            const Icon = resolveIcon(channel.icon)
+            return (
+              <div key={channel.title} className="flex flex-col gap-3 rounded-2xl border border-border-alt bg-background p-6">
+                <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
+                  {Icon ? <Icon className="size-5" /> : null}
+                </span>
+                <p className="font-heading text-base font-semibold text-brand-navy">{channel.title}</p>
+                <p className="text-sm text-body-text">{channel.description}</p>
+                <a
+                  href={channel.ctaHref}
+                  target={channel.external ? "_blank" : undefined}
+                  rel={channel.external ? "noopener noreferrer" : undefined}
+                  className="mt-auto text-sm font-semibold text-brand-orange hover:underline"
+                >
+                  {channel.ctaLabel}
+                </a>
+              </div>
+            )
+          })}
         </div>
       </SectionContainer>
 
@@ -75,15 +109,7 @@ export default function SupportPage() {
         </div>
       </SectionContainer>
 
-      <FAQSection
-        eyebrow="FAQs"
-        title="Support questions, answered"
-        items={[
-          { question: "Is support really available 24/7?", answer: "Yes — support tickets and the phone line are monitored around the clock, every day of the year." },
-          { question: "How fast do you respond to tickets?", answer: "Most tickets receive a first response within a few hours; urgent live-site issues are prioritized." },
-          { question: "Where do I check on my invoice or billing?", answer: "Log into your client area to view invoices, update payment methods, or check your renewal date." },
-        ]}
-      />
+      <FAQSection eyebrow="FAQs" title="Support questions, answered" items={faqs} />
 
       <CTASection
         title="Still stuck?"

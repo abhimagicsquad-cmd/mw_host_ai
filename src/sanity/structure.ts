@@ -2,9 +2,15 @@ import type { StructureResolver } from "sanity/structure"
 
 const SINGLETONS = [
   { id: "siteSettings", title: "Site Settings" },
+  { id: "navigation", title: "Navigation" },
   { id: "homePage", title: "Home Page" },
   { id: "aboutPage", title: "About Page" },
   { id: "contactPage", title: "Contact Page" },
+  { id: "supportPage", title: "Support Page" },
+  { id: "affiliatePage", title: "Affiliate Page" },
+  { id: "comparisonPage", title: "Compare Hosting Plans Page" },
+  { id: "knowledgeBasePage", title: "Knowledge Base Page" },
+  { id: "thankYouPage", title: "Thank You Page" },
   { id: "blogListingPage", title: "Blog Listing Page" },
 ]
 

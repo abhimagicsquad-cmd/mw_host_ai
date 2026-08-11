@@ -10,7 +10,7 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { sslPlans } from "@/constants/pricing-plans"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
-import { getServicePage } from "@/sanity/lib/queries"
+import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
 const SLUG = "ssl-certificates"
@@ -62,6 +62,8 @@ export default async function SslPage() {
   const reasons: Feature[] =
     cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? defaultReasons
   const faqs = cms?.faqs ?? defaultFaqs
+  const cmsPlans = await getPricingPlansByService("ssl")
+  const plans = cmsPlans.length ? cmsPlans : sslPlans
 
   return (
     <>
@@ -81,7 +83,7 @@ export default async function SslPage() {
           eyebrow="Pricing"
           title="Choose your certificate"
           description="All tiers include 256-bit encryption — the difference is the level of identity verification."
-          plans={sslPlans}
+          plans={plans}
         />
       </div>
 

@@ -19,7 +19,7 @@ import { PageBuilder } from "@/components/sanity/page-builder"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { trustHighlights } from "@/constants/trust-highlights-data"
 import { buildMetadata } from "@/lib/seo"
-import { getHomePage } from "@/sanity/lib/queries"
+import { getHomePage, getPricingPlansByService } from "@/sanity/lib/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getHomePage()
@@ -42,6 +42,9 @@ export default async function HomePage() {
       </>
     )
   }
+
+  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (
     <>
@@ -95,7 +98,7 @@ export default async function HomePage() {
           eyebrow="Pricing"
           title="Select your web hosting package"
           description="Every plan includes free SSL, cPanel, and JetBackup — no hidden setup fees."
-          plans={sharedHostingPlans}
+          plans={plans}
         />
       </div>
 

@@ -12,7 +12,7 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { vpsPlans } from "@/constants/pricing-plans"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
-import { getServicePage } from "@/sanity/lib/queries"
+import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
 const SLUG = "vps-hosting"
@@ -62,6 +62,8 @@ export default async function VpsHostingPage() {
   const reasons: Feature[] =
     cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? defaultReasons
   const faqs = cms?.faqs ?? defaultFaqs
+  const cmsPlans = await getPricingPlansByService("vps-hosting")
+  const plans = cmsPlans.length ? cmsPlans : vpsPlans
 
   return (
     <>
@@ -96,7 +98,7 @@ export default async function VpsHostingPage() {
           eyebrow="Pricing"
           title="VPS tiers"
           description="India data center pricing — ask our team about USA-based tiers."
-          plans={vpsPlans}
+          plans={plans}
         />
       </div>
 
