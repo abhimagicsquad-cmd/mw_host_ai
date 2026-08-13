@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Search } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
@@ -48,13 +49,22 @@ export default async function DomainHubPage() {
         eyebrow="Domain services"
         title={domainHubIntro.title}
         description={domainHubIntro.description}
-        services={domainPages.map((page) => ({
-          slug: page.slug,
-          title: page.eyebrow,
-          description: page.description,
-          icon: domainPageIcons[page.slug],
-          href: `/domain/${page.slug}`,
-        }))}
+        services={[
+          {
+            slug: "search",
+            title: "Domain Search",
+            description: "Check availability across popular TLDs and see suggested alternatives instantly.",
+            icon: Search,
+            href: "/domain/search",
+          },
+          ...domainPages.map((page) => ({
+            slug: page.slug,
+            title: page.eyebrow,
+            description: page.description,
+            icon: domainPageIcons[page.slug],
+            href: `/domain/${page.slug}`,
+          })),
+        ]}
       />
 
       <FeaturesSection

@@ -2,13 +2,15 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { ProductJsonLd } from "@/components/common/json-ld"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
+import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/constants/dedicated-pages-data"
-import { dedicatedPlans } from "@/constants/pricing-plans"
+import { dedicatedPlans, dedicatedPlansUSA } from "@/constants/pricing-plans"
 import { buildMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 
@@ -50,10 +52,15 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
   const managed = cms?.managed ?? fallback!.managed
   const faqs = cms?.faqs ?? fallback!.faqs
   const cmsPlans = await getPricingPlansByService("dedicated-server")
-  const basePlans = cmsPlans.length ? cmsPlans : dedicatedPlans
+  const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : dedicatedPlans
+  const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : dedicatedPlansUSA
+  const withService = (plans: typeof dedicatedPlans) =>
+    plans.map((plan) => ({ ...plan, service: managed ? "managed-dedicated-server" : "dedicated-server" }))
 
   return (
     <>
+      <ProductJsonLd name={title} description={description} path={`/dedicated-hosting/${slug}`} plans={[...indiaPlans, ...usaPlans]} />
+
       <HeroSection
         eyebrow={eyebrow}
         title={title}
@@ -66,6 +73,8 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
           { label: "Support", value: "24/7" },
           { label: "Dedicated IPs", value: "5" },
         ]}
+        media={<HeroVisual variant="server" />}
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
 
       <FeaturesSection
@@ -80,11 +89,11 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
         <PricingSection
           eyebrow="Pricing"
           title="Dedicated server tiers"
-          description="India data center pricing — ask our team about USA-based tiers."
-          plans={basePlans.map((plan) => ({
-            ...plan,
-            service: managed ? "managed-dedicated-server" : "dedicated-server",
-          }))}
+          description="Choose the data-center region closest to your users."
+          tabs={[
+            { value: "india", label: "India", plans: withService(indiaPlans) },
+            { value: "usa", label: "USA", plans: withService(usaPlans) },
+          ]}
         />
       </div>
 

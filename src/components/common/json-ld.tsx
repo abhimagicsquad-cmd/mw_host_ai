@@ -28,6 +28,11 @@ export function OrganizationJsonLd() {
             "@type": "WebSite",
             name: siteConfig.name,
             url: siteConfig.url,
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `${siteConfig.url}/search?q={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
           },
         ],
       }}
@@ -88,6 +93,50 @@ export function BlogPostingJsonLd({ title, description, slug, authorName }: Blog
             url: `${siteConfig.url}/images/logo-magicworkshost-best-web-hosting-300.png`,
           },
         },
+      }}
+    />
+  )
+}
+
+function parsePriceNumber(price: string) {
+  const numeric = Number(price.replace(/[^\d.]/g, ""))
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined
+}
+
+type ProductJsonLdProps = {
+  name: string
+  description: string
+  path: string
+  plans: { name: string; price: string }[]
+}
+
+/** Product structured data for a pricing page — a single Offer for one plan, or an AggregateOffer across a tier grid. */
+export function ProductJsonLd({ name, description, path, plans }: ProductJsonLdProps) {
+  const prices = plans.map((plan) => parsePriceNumber(plan.price)).filter((value): value is number => typeof value === "number")
+  if (prices.length === 0) return null
+
+  const url = `${siteConfig.url}${path}`
+  const offers =
+    prices.length === 1
+      ? { "@type": "Offer", priceCurrency: "INR", price: prices[0], url, availability: "https://schema.org/InStock" }
+      : {
+          "@type": "AggregateOffer",
+          priceCurrency: "INR",
+          lowPrice: Math.min(...prices),
+          highPrice: Math.max(...prices),
+          offerCount: prices.length,
+          url,
+        }
+
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name,
+        description,
+        url,
+        offers,
       }}
     />
   )

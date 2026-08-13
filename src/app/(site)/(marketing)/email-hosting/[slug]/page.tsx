@@ -2,10 +2,12 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { ProductJsonLd } from "@/components/common/json-ld"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
+import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingCard } from "@/components/sections/pricing-card"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
@@ -56,6 +58,8 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
 
   return (
     <>
+      <ProductJsonLd name={title} description={description} path={`/email-hosting/${slug}`} plans={[plan]} />
+
       <HeroSection
         eyebrow={eyebrow}
         title={title}
@@ -63,6 +67,13 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
         bullets={bullets}
         primaryCta={{ label: "Get started", href: LEAD_CTA_HREF }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={[
+          { label: "Spam caught", value: "99.7%" },
+          { label: "Pricing", value: `${plan.price}${plan.priceSuffix ?? ""}` },
+          { label: "Support", value: "24/7" },
+        ]}
+        media={<HeroVisual variant="mail" />}
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Email Hosting", href: "/email-hosting" }, { label: eyebrow }]}
       />
 
       <SectionContainer width="narrow">

@@ -4,8 +4,10 @@ import { notFound } from "next/navigation"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { ProductJsonLd } from "@/components/common/json-ld"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
+import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { getHostingPage, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
@@ -56,6 +58,8 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
 
   return (
     <>
+      <ProductJsonLd name={title} description={description} path={`/hosting/${slug}`} plans={plans} />
+
       <HeroSection
         eyebrow={eyebrow}
         title={title}
@@ -63,6 +67,13 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
         bullets={bullets}
         primaryCta={{ label: "View pricing", href: "#pricing" }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={[
+          { label: "Avg. load time", value: "0.7s" },
+          { label: "Uptime SLA", value: "99.9%" },
+          { label: "Support", value: "24/7" },
+        ]}
+        media={<HeroVisual variant="dashboard" />}
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Hosting", href: "/hosting" }, { label: eyebrow }]}
       />
 
       <FeaturesSection

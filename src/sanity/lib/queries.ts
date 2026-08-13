@@ -185,7 +185,7 @@ export async function getNavigation() {
 }
 
 const pricingPlanProjection = /* groq */ `
-  name, "slug": slug.current, price, regularPrice, priceSuffix, billingLabel, discountLabel, description, features, cta, featured, service
+  name, "slug": slug.current, price, regularPrice, priceSuffix, billingLabel, discountLabel, description, features, cta, featured, service, region, billingCycles
 `
 
 export async function getPricingPlansByService(service: string) {

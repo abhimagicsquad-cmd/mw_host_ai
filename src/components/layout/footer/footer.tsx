@@ -3,6 +3,7 @@ import { CreditCard, Mail, MapPin, Phone, RotateCcw, ShieldCheck, Zap } from "lu
 
 import { Logo } from "@/components/common/logo"
 import { resolveSocialIcon } from "@/components/common/social-icons"
+import { NewsletterSection } from "@/components/sections/newsletter-section"
 import { footerColumns } from "@/constants/nav-items"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
 import { toNavColumns } from "@/lib/nav-mapper"
@@ -80,20 +81,24 @@ export async function Footer({ showCta = true }: FooterProps) {
             <FooterColumn key={column.heading} heading={column.heading ?? ""} links={column.links} />
           ))}
 
-          <div className="flex flex-col gap-3">
-            <p className="text-sm font-semibold text-white">Contact Information</p>
-            <a href={phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
-              <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-              {phone}
-            </a>
-            <a href={`mailto:${email}`} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
-              <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-              {email}
-            </a>
-            <p className="flex items-start gap-2.5 text-sm text-white/70">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-              {address}
-            </p>
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
+              <p className="text-sm font-semibold text-white">Contact Information</p>
+              <a href={phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
+                <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
+                {phone}
+              </a>
+              <a href={`mailto:${email}`} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
+                <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange" />
+                {email}
+              </a>
+              <p className="flex items-start gap-2.5 text-sm text-white/70">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />
+                {address}
+              </p>
+            </div>
+
+            <NewsletterSection className="relative border-t border-white/10 pt-5" />
           </div>
         </div>
       </div>

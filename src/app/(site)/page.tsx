@@ -17,6 +17,7 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
 import { PageBuilder } from "@/components/sanity/page-builder"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
 import { trustHighlights } from "@/constants/trust-highlights-data"
 import { buildMetadata } from "@/lib/seo"
 import { getHomePage, getPricingPlansByService } from "@/sanity/lib/queries"
@@ -177,29 +178,7 @@ export default async function HomePage() {
       <TestimonialsSection
         title="What our customers say"
         description="A few of the businesses running on MagicWorks Host infrastructure."
-        testimonials={[
-          {
-            name: "Anita Sharma",
-            title: "Founder",
-            company: "Craftly Studio",
-            quote: "Migration was seamless and our site has never been faster. Support responds within minutes, not days.",
-            rating: 5,
-          },
-          {
-            name: "Rohit Verma",
-            title: "CTO",
-            company: "Bharat Retail Co.",
-            quote: "NVMe hosting cut our page load time in half. Couldn't be happier with the switch.",
-            rating: 5,
-          },
-          {
-            name: "Priya Nair",
-            title: "Marketing Lead",
-            company: "Nair & Co.",
-            quote: "The cPanel setup is intuitive even for our non-technical team members. Zero learning curve.",
-            rating: 4,
-          },
-        ]}
+        testimonials={testimonials}
         cta={
           <LeadCTAButton source="testimonials" variant="outline">
             Join our happy customers

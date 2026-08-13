@@ -4,8 +4,12 @@ import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
+import { HeroVisual } from "@/components/sections/hero-visual"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
+import { SectionContainer } from "@/components/layout/section-container"
+import { SectionHeading } from "@/components/layout/section-heading"
+import { AffiliateEarningsCalculator } from "@/components/tools/affiliate-earnings-calculator"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
 import { getAffiliatePage } from "@/sanity/lib/queries"
@@ -73,6 +77,9 @@ export default async function BecomeOurAffiliatePage() {
         bullets={heroBullets}
         primaryCta={{ label: "Join the program", href: LEAD_CTA_HREF }}
         secondaryCta={{ label: "Ask a question", href: LEAD_CTA_HREF }}
+        stats={stats.slice(0, 3).map((stat) => ({ label: stat.label, value: stat.value }))}
+        media={<HeroVisual variant="affiliate" />}
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Become Our Affiliate" }]}
       />
 
       <StatsSection
@@ -80,6 +87,17 @@ export default async function BecomeOurAffiliatePage() {
         title="Built for partners who want recurring income, not one-off payouts"
         stats={stats.map((stat) => ({ label: stat.label, value: stat.value, icon: resolveIcon(stat.icon) }))}
       />
+
+      <SectionContainer width="narrow">
+        <SectionHeading
+          eyebrow="Estimate your earnings"
+          title="Your passive income, projected"
+          description="Adjust the numbers below to see what your recurring commission could look like."
+        />
+        <div className="mt-10">
+          <AffiliateEarningsCalculator />
+        </div>
+      </SectionContainer>
 
       <WhyChooseUs
         eyebrow="How it works"

@@ -2,14 +2,17 @@ import type { Metadata } from "next"
 import { Cpu, Gauge, HeadphonesIcon, Server, ShieldCheck, Zap } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { ProductJsonLd } from "@/components/common/json-ld"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { StatsSection } from "@/components/sections/stats-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
-import { vpsPlans } from "@/constants/pricing-plans"
+import { vpsPlans, vpsPlansUSA } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
 import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
@@ -63,10 +66,13 @@ export default async function VpsHostingPage() {
     cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? defaultReasons
   const faqs = cms?.faqs ?? defaultFaqs
   const cmsPlans = await getPricingPlansByService("vps-hosting")
-  const plans = cmsPlans.length ? cmsPlans : vpsPlans
+  const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : vpsPlans
+  const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : vpsPlansUSA
 
   return (
     <>
+      <ProductJsonLd name={title} description={description} path="/vps-hosting" plans={[...indiaPlans, ...usaPlans]} />
+
       <HeroSection
         eyebrow={eyebrow}
         title={title}
@@ -80,6 +86,7 @@ export default async function VpsHostingPage() {
           { label: "Support", value: "24/7" },
         ]}
         media={<HeroVisual />}
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
 
       <StatsSection
@@ -97,12 +104,21 @@ export default async function VpsHostingPage() {
         <PricingSection
           eyebrow="Pricing"
           title="VPS tiers"
-          description="India data center pricing — ask our team about USA-based tiers."
-          plans={plans}
+          description="Choose the data-center region closest to your users."
+          tabs={[
+            { value: "india", label: "India", plans: indiaPlans },
+            { value: "usa", label: "USA", plans: usaPlans },
+          ]}
         />
       </div>
 
       <WhyChooseUs eyebrow="What you get" title="Built for teams that need more control" background="alt" reasons={reasons} />
+
+      <TestimonialsSection
+        title="What our VPS customers say"
+        description="Feedback from teams running production workloads on our VPS tiers."
+        testimonials={testimonials}
+      />
 
       <FAQSection eyebrow="FAQs" title="VPS hosting questions, answered" items={faqs} />
 

@@ -96,6 +96,18 @@ export const domainPages: DomainPageData[] = [
       { question: "Will my website go down during the transfer?", answer: "No — DNS and hosting are unaffected by a domain transfer; only the registrar changes." },
     ],
   },
+  {
+    slug: "renew",
+    eyebrow: "Domain Renewal",
+    title: "Renew your domain before it lapses",
+    description: "Renewals are managed from your account dashboard — enable auto-renewal once and never think about it again.",
+    bullets: ["Renewal reminders sent well before expiry", "Auto-renewal available on every domain", "Grace period support if a renewal is missed", "One dashboard for every domain you own"],
+    faqs: [
+      { question: "How do I renew my domain?", answer: "Log in to your account dashboard and renew from the domains list, or enable auto-renewal so it happens automatically." },
+      { question: "What happens if I miss my renewal date?", answer: "Most TLDs have a grace period after expiry — contact support immediately if you've missed a renewal and we'll help you recover it." },
+      { question: "Can I renew for multiple years at once?", answer: "Yes, you can renew for 1-10 years at a time depending on the TLD." },
+    ],
+  },
 ]
 
 export function getDomainPage(slug: string) {
@@ -108,4 +120,5 @@ export const domainPageIcons: Record<string, LucideIcon> = {
   "domain-hosting": MousePointerClick,
   "buy-domain-name": Globe,
   "transfer-your-domain-name": ArrowRightLeft,
+  renew: RefreshCw,
 }

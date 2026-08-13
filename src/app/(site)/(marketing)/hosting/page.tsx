@@ -9,8 +9,10 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { PageBuilder } from "@/components/sanity/page-builder"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { hostingHubIntro, hostingPageIcons, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
 import { buildMetadata } from "@/lib/seo"
 import { getPricingPlansByService, getServicesPage } from "@/sanity/lib/queries"
 
@@ -69,6 +71,12 @@ export default async function HostingHubPage() {
           plans={plans}
         />
       </div>
+
+      <TestimonialsSection
+        title="What our hosting customers say"
+        description="Real feedback from businesses running on this same NVMe infrastructure."
+        testimonials={testimonials}
+      />
 
       <SectionContainer width="narrow" background="alt">
         <SectionHeading

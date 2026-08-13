@@ -12,11 +12,13 @@ import type { BlogCategory, BlogPost } from "@/constants/blog-data"
 type BlogExplorerProps = {
   categories: BlogCategory[]
   posts: BlogPost[]
+  /** Pre-selects a category (e.g. from a /blog/category/[category] route) instead of "all". */
+  initialCategory?: string
 }
 
-export function BlogExplorer({ categories, posts }: BlogExplorerProps) {
+export function BlogExplorer({ categories, posts, initialCategory = "all" }: BlogExplorerProps) {
   const [query, setQuery] = useState("")
-  const [activeCategory, setActiveCategory] = useState("all")
+  const [activeCategory, setActiveCategory] = useState(initialCategory)
 
   const categoryName = (slug: string) => categories.find((category) => category.slug === slug)?.name ?? slug
 

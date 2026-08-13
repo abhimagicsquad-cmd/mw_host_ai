@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { Search } from "lucide-react"
+
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { Logo } from "@/components/common/logo"
 import { mainNav } from "@/constants/nav-items"
@@ -22,6 +25,13 @@ export async function MainHeader() {
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <Link
+            href="/search"
+            aria-label="Search the site"
+            className="flex size-9 items-center justify-center rounded-full text-brand-navy transition-colors hover:bg-surface-alt"
+          >
+            <Search className="size-4.5" />
+          </Link>
           <LeadCTAButton source="header" size="sm">
             {headerCtaLabel}
           </LeadCTAButton>

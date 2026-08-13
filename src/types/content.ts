@@ -24,6 +24,13 @@ export type ServiceItem = {
   featured?: boolean
 }
 
+export type BillingCycleOption = {
+  cycle: "monthly" | "annually" | "biennially" | "triennially"
+  label: string
+  totalPrice: string
+  priceSuffix?: string
+}
+
 export type PricingPlan = {
   slug: string
   name: string
@@ -38,6 +45,10 @@ export type PricingPlan = {
   featured?: boolean
   /** Value from the centralized service-options list, used to pre-select the lead form's service field. */
   service?: string
+  /** India/USA data-center region, for product families sold in both (VPS, Dedicated). Absent = region-agnostic. */
+  region?: "india" | "usa"
+  /** Multi-year term pricing, for the mock checkout flow's configure step. Absent = monthly-only billing. */
+  billingCycles?: BillingCycleOption[]
 }
 
 export type Testimonial = {

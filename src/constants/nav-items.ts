@@ -55,6 +55,17 @@ export const mainNav: NavItem[] = [
   {
     label: "SSL",
     href: "/ssl",
+    columns: [
+      {
+        links: [
+          { label: "Domain Validated", href: "/ssl/domain-validated", icon: "ShieldCheck" },
+          { label: "Business Validated", href: "/ssl/business-validated", icon: "ShieldCheck" },
+          { label: "Domain Validated (SNI)", href: "/ssl/domain-validated-sni", icon: "ShieldCheck" },
+          { label: "Extended Validated", href: "/ssl/extended-validated", icon: "ShieldCheck" },
+          { label: "Wildcard", href: "/ssl/wildcard", icon: "ShieldCheck" },
+        ],
+      },
+    ],
   },
   {
     label: "Email",
@@ -73,7 +84,12 @@ export const mainNav: NavItem[] = [
     href: "/blog",
     columns: [
       {
-        links: [{ label: "Blogs", href: "/blog", icon: "BookOpen" }],
+        links: [
+          { label: "Blogs", href: "/blog", icon: "BookOpen" },
+          { label: "Bandwidth Calculator", href: "/tools/bandwidth-calculator", icon: "Gauge" },
+          { label: "Data Unit Calculator", href: "/tools/data-unit-calculator", icon: "Gauge" },
+          { label: "Transfer Time Calculator", href: "/tools/transfer-time-calculator", icon: "Gauge" },
+        ],
       },
     ],
   },
@@ -122,6 +138,7 @@ export const footerColumns = {
       { label: "Blog", href: "/blog" },
       { label: "Knowledgebase", href: "/knowledge-base" },
       { label: "Support", href: "/support" },
+      { label: "Bandwidth Calculator", href: "/tools/bandwidth-calculator" },
       { label: "Privacy Policy", href: "/legal/privacy-policy" },
       { label: "Terms of Service", href: "/legal/terms-of-service" },
       { label: "Service Level Agreement", href: "/legal/service-level-agreement" },

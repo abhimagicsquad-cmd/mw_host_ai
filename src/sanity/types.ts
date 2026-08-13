@@ -32,6 +32,13 @@ export type FaqItemData = {
   answer: string
 }
 
+export type BillingCycleOptionData = {
+  cycle: "monthly" | "annually" | "biennially" | "triennially"
+  label: string
+  totalPrice: string
+  priceSuffix?: string
+}
+
 export type PricingPlanData = {
   name: string
   slug: string
@@ -45,6 +52,8 @@ export type PricingPlanData = {
   cta?: CtaLinkData
   featured?: boolean
   service?: string
+  region?: "india" | "usa"
+  billingCycles?: BillingCycleOptionData[]
 }
 
 export type ServiceCardData = {

@@ -3,8 +3,10 @@ import { Check } from "lucide-react"
 
 import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { Eyebrow } from "@/components/common/eyebrow"
+import { BreadcrumbJsonLd } from "@/components/common/json-ld"
 import { SectionContainer } from "@/components/layout/section-container"
-import type { CTA, Stat } from "@/types/content"
+import { Breadcrumbs } from "@/components/sections/breadcrumbs"
+import type { BreadcrumbItem, CTA, Stat } from "@/types/content"
 
 type HeroSectionProps = {
   eyebrow?: string
@@ -15,6 +17,7 @@ type HeroSectionProps = {
   secondaryCta?: CTA
   stats?: Stat[]
   media?: ReactNode
+  breadcrumbs?: BreadcrumbItem[]
 }
 
 export function HeroSection({
@@ -26,6 +29,7 @@ export function HeroSection({
   secondaryCta,
   stats,
   media,
+  breadcrumbs,
 }: HeroSectionProps) {
   return (
     <SectionContainer width="wide" padded={false} className="relative overflow-hidden bg-background pt-14 pb-16 sm:pt-20 sm:pb-24">
@@ -33,9 +37,16 @@ export function HeroSection({
       <div className="pointer-events-none absolute -top-24 -left-32 size-96 rounded-full bg-brand-orange/15 blur-3xl" />
       <div className="pointer-events-none absolute top-10 -right-24 size-96 rounded-full bg-brand-cta-secondary/15 blur-3xl" />
 
+      {breadcrumbs?.length ? <BreadcrumbJsonLd items={breadcrumbs} /> : null}
+
       <div className="relative grid items-center gap-16 lg:grid-cols-2">
         <div className="flex flex-col gap-6">
           <div>
+            {breadcrumbs?.length ? (
+              <div className="mb-4">
+                <Breadcrumbs items={breadcrumbs} />
+              </div>
+            ) : null}
             {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
             <h1 className="mt-5 font-heading text-4xl font-bold text-brand-navy sm:text-5xl lg:text-[3.4rem] lg:leading-[1.08]">
               {title}

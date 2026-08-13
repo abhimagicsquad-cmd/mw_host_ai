@@ -530,31 +530,44 @@ const navigationDoc = {
 
 const pricingPlans = [
   // Shared hosting grid (service: shared-hosting)
-  { slug: "starter", name: "Starter NVMe", price: "₹145", priceSuffix: "/mo", regularPrice: "₹194", discountLabel: "15% off annually", features: ["1GB NVMe storage", "5GB bandwidth", "10 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 1 },
-  { slug: "basic-plus", name: "Basic Plus NVMe", price: "₹407", priceSuffix: "/mo", regularPrice: "₹542", discountLabel: "24% off annually", features: ["50GB NVMe storage", "20GB bandwidth", "30 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", featured: true, order: 2 },
-  { slug: "deluxe", name: "Deluxe NVMe", price: "₹814", priceSuffix: "/mo", regularPrice: "₹1,085", discountLabel: "30% off annually", features: ["150GB NVMe storage", "50GB bandwidth", "100 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 3 },
-  { slug: "unlimited", name: "Unlimited NVMe", price: "₹1,162", priceSuffix: "/mo", regularPrice: "₹1,550", discountLabel: "25% off annually", features: ["200GB NVMe storage", "200GB bandwidth", "Unlimited email", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 4 },
-  // VPS grid (service: vps-hosting)
-  { slug: "vps-starter", name: "VPS Starter", price: "₹4,372", priceSuffix: "/mo", features: ["2 vCPU", "4GB RAM", "80GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", order: 1 },
-  { slug: "vps-basic", name: "VPS Basic", price: "₹5,512", priceSuffix: "/mo", features: ["4 vCPU", "8GB RAM", "160GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", featured: true, order: 2 },
-  { slug: "vps-silver", name: "VPS Silver", price: "₹6,712", priceSuffix: "/mo", features: ["6 vCPU", "16GB RAM", "240GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", order: 3 },
+  { slug: "starter", name: "Starter NVMe", price: "₹145", priceSuffix: "/mo", regularPrice: "₹194", discountLabel: "15% off annually", features: ["1GB NVMe storage", "5GB bandwidth", "10 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 1, billingCycles: [{ cycle: "annually", label: "1 Year", totalPrice: "₹2,124" }, { cycle: "biennially", label: "2 Years", totalPrice: "₹3,798" }, { cycle: "triennially", label: "3 Years", totalPrice: "₹5,229" }] },
+  { slug: "basic", name: "Basic NVMe", price: "₹291", priceSuffix: "/mo", regularPrice: "₹387", discountLabel: "25% off annually", features: ["10GB NVMe storage", "10GB bandwidth", "20 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 2, billingCycles: [{ cycle: "annually", label: "1 Year", totalPrice: "₹4,249" }, { cycle: "biennially", label: "2 Years", totalPrice: "₹7,598" }, { cycle: "triennially", label: "3 Years", totalPrice: "₹10,460" }] },
+  { slug: "basic-plus", name: "Basic Plus NVMe", price: "₹407", priceSuffix: "/mo", regularPrice: "₹542", discountLabel: "24% off annually", features: ["50GB NVMe storage", "20GB bandwidth", "30 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", featured: true, order: 3, billingCycles: [{ cycle: "annually", label: "1 Year", totalPrice: "₹5,949" }, { cycle: "biennially", label: "2 Years", totalPrice: "₹10,638" }, { cycle: "triennially", label: "3 Years", totalPrice: "₹14,645" }] },
+  { slug: "economy", name: "Economy NVMe", price: "₹639", priceSuffix: "/mo", regularPrice: "₹852", discountLabel: "25% off annually", features: ["100GB NVMe storage", "30GB bandwidth", "100 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 4, billingCycles: [{ cycle: "annually", label: "1 Year", totalPrice: "₹9,349" }, { cycle: "biennially", label: "2 Years", totalPrice: "₹16,718" }, { cycle: "triennially", label: "3 Years", totalPrice: "₹23,015" }] },
+  { slug: "deluxe", name: "Deluxe NVMe", price: "₹814", priceSuffix: "/mo", regularPrice: "₹1,085", discountLabel: "30% off annually", features: ["150GB NVMe storage", "50GB bandwidth", "100 email accounts", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 5, billingCycles: [{ cycle: "annually", label: "1 Year", totalPrice: "₹11,899" }, { cycle: "biennially", label: "2 Years", totalPrice: "₹21,278" }, { cycle: "triennially", label: "3 Years", totalPrice: "₹29,293" }] },
+  { slug: "unlimited", name: "Unlimited NVMe", price: "₹1,162", priceSuffix: "/mo", regularPrice: "₹1,550", discountLabel: "25% off annually", features: ["200GB NVMe storage", "200GB bandwidth", "Unlimited email", "Free SSL"], cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", order: 6, billingCycles: [{ cycle: "annually", label: "1 Year", totalPrice: "₹16,999" }, { cycle: "biennially", label: "2 Years", totalPrice: "₹30,398" }, { cycle: "triennially", label: "3 Years", totalPrice: "₹41,848" }] },
+  // VPS grid (service: vps-hosting) — India region
+  { slug: "vps-starter", name: "VPS Starter", price: "₹4,372", priceSuffix: "/mo", features: ["2 vCPU", "4GB RAM", "80GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", order: 1, region: "india" },
+  { slug: "vps-basic", name: "VPS Basic", price: "₹5,512", priceSuffix: "/mo", features: ["4 vCPU", "8GB RAM", "160GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", featured: true, order: 2, region: "india" },
+  { slug: "vps-silver", name: "VPS Silver", price: "₹6,712", priceSuffix: "/mo", features: ["6 vCPU", "16GB RAM", "240GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", order: 3, region: "india" },
+  // VPS grid — USA region (estimated, see src/constants/pricing-plans.ts comment)
+  { slug: "vps-starter-usa", name: "VPS Starter", price: "₹3,982", priceSuffix: "/mo", features: ["2 vCPU", "4GB RAM", "80GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", order: 1, region: "usa" },
+  { slug: "vps-basic-usa", name: "VPS Basic", price: "₹4,880", priceSuffix: "/mo", features: ["4 vCPU", "8GB RAM", "160GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", featured: true, order: 2, region: "usa" },
+  { slug: "vps-silver-usa", name: "VPS Silver", price: "₹5,776", priceSuffix: "/mo", features: ["6 vCPU", "16GB RAM", "240GB NVMe storage", "Full root access"], cta: { label: "Buy Now", href: "#lead" }, service: "vps-hosting", order: 3, region: "usa" },
   // SSL grid (service: ssl)
   { slug: "domain-validated", name: "Domain Validated", price: "₹4,000", priceSuffix: "/yr", features: ["Domain ownership validation", "Issued within minutes", "256-bit encryption", "Browser padlock"], cta: { label: "Get started", href: "#lead" }, service: "ssl", order: 1 },
   { slug: "business-validated", name: "Business Validated", price: "₹9,000", priceSuffix: "/yr", features: ["Organization identity validated", "Higher customer trust signal", "256-bit encryption", "1-3 day issuance"], cta: { label: "Get started", href: "#lead" }, service: "ssl", featured: true, order: 2 },
   { slug: "wildcard", name: "Wildcard", price: "₹16,000", priceSuffix: "/yr", features: ["Secures unlimited subdomains", "Domain validation", "256-bit encryption", "One certificate to manage"], cta: { label: "Get started", href: "#lead" }, service: "ssl", order: 3 },
   { slug: "extended-validated", name: "Extended Validated", price: "₹25,000", priceSuffix: "/yr", features: ["Highest identity assurance", "Full legal entity verification", "256-bit encryption", "Best for financial/e-commerce sites"], cta: { label: "Get started", href: "#lead" }, service: "ssl", order: 4 },
-  // Dedicated grid (service: dedicated-server; managed-dedicated-server pages relabel this at render time)
-  { slug: "dedicated-starter", name: "Dedicated Starter", price: "₹13,769", priceSuffix: "/mo", features: ["4 cores / 8 threads", "16GB RAM", "1TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 1 },
-  { slug: "dedicated-basic", name: "Dedicated Basic", price: "₹18,469", priceSuffix: "/mo", features: ["8 cores / 16 threads", "32GB RAM", "2TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", featured: true, order: 2 },
-  { slug: "dedicated-silver", name: "Dedicated Silver", price: "₹21,969", priceSuffix: "/mo", features: ["12 cores / 24 threads", "64GB RAM", "4TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 3 },
-  { slug: "dedicated-gold", name: "Dedicated Gold", price: "₹25,469", priceSuffix: "/mo", features: ["16 cores / 32 threads", "128GB RAM", "8TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 4 },
+  // Dedicated grid (service: dedicated-server; managed-dedicated-server pages relabel this at render time) — India region
+  { slug: "dedicated-starter", name: "Dedicated Starter", price: "₹13,769", priceSuffix: "/mo", features: ["4 cores / 8 threads", "16GB RAM", "1TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 1, region: "india" },
+  { slug: "dedicated-basic", name: "Dedicated Basic", price: "₹18,469", priceSuffix: "/mo", features: ["8 cores / 16 threads", "32GB RAM", "2TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", featured: true, order: 2, region: "india" },
+  { slug: "dedicated-silver", name: "Dedicated Silver", price: "₹21,969", priceSuffix: "/mo", features: ["12 cores / 24 threads", "64GB RAM", "4TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 3, region: "india" },
+  { slug: "dedicated-gold", name: "Dedicated Gold", price: "₹25,469", priceSuffix: "/mo", features: ["16 cores / 32 threads", "128GB RAM", "8TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 4, region: "india" },
+  // Dedicated grid — USA region (estimated, see src/constants/pricing-plans.ts comment)
+  { slug: "dedicated-starter-usa", name: "Dedicated Starter", price: "₹12,989", priceSuffix: "/mo", features: ["4 cores / 8 threads", "16GB RAM", "1TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 1, region: "usa" },
+  { slug: "dedicated-basic-usa", name: "Dedicated Basic", price: "₹16,830", priceSuffix: "/mo", features: ["8 cores / 16 threads", "32GB RAM", "2TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", featured: true, order: 2, region: "usa" },
+  { slug: "dedicated-silver-usa", name: "Dedicated Silver", price: "₹19,310", priceSuffix: "/mo", features: ["12 cores / 24 threads", "64GB RAM", "4TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 3, region: "usa" },
+  { slug: "dedicated-gold-usa", name: "Dedicated Gold", price: "₹21,569", priceSuffix: "/mo", features: ["16 cores / 32 threads", "128GB RAM", "8TB storage", "5 dedicated IPs"], cta: { label: "Buy Now", href: "#lead" }, service: "dedicated-server", order: 4, region: "usa" },
   // Email tiers (single-plan services)
   { slug: "business-email", name: "Business Email", price: "₹45", priceSuffix: "/mailbox/mo", features: ["5GB storage per mailbox", "Webmail + IMAP/POP access", "Spam & malware filtering", "Your own domain"], cta: { label: "Get started", href: "#lead" }, service: "business-email", order: 1 },
   { slug: "enterprise-email", name: "Enterprise Email", price: "₹99", priceSuffix: "/mailbox/mo", features: ["25GB mailbox storage", "5GB file storage", "Shared calendars & collaboration tools", "Priority support"], cta: { label: "Get started", href: "#lead" }, service: "enterprise-email", featured: true, order: 1 },
-].map(({ slug, ...plan }) => ({
+].map(({ slug, cta, ...plan }) => ({
   _id: `pricingPlan.${slug}`,
   _type: "pricingPlan",
   ...plan,
+  // Every purchase CTA points at the mock-checkout order flow instead of the lead modal.
+  cta: { ...cta, href: `/order/${slug}` },
   slug: { _type: "slug", current: slug },
 }))
 
@@ -783,10 +796,17 @@ const siteSettingsDoc = {
 // --- Homepage testimonials & FAQs — referenced (not embedded) by homePage.pageBuilder, since
 // testimonialsBlock/faqBlock point at the reusable `testimonial`/`faq` document types. ---
 
+// Mirrors src/constants/testimonials.ts exactly — original, honestly-authored content,
+// not copied from the reference site (magicworkshost.com).
 const homeTestimonials = [
   { slug: "anita-sharma", name: "Anita Sharma", role: "Founder", company: "Craftly Studio", quote: "Migration was seamless and our site has never been faster. Support responds within minutes, not days.", rating: 5 },
   { slug: "rohit-verma", name: "Rohit Verma", role: "CTO", company: "Bharat Retail Co.", quote: "NVMe hosting cut our page load time in half. Couldn't be happier with the switch.", rating: 5 },
   { slug: "priya-nair", name: "Priya Nair", role: "Marketing Lead", company: "Nair & Co.", quote: "The cPanel setup is intuitive even for our non-technical team members. Zero learning curve.", rating: 4 },
+  { slug: "karan-mehta", name: "Karan Mehta", role: "Founder", company: "Mehta Digital Works", quote: "Full root access on the VPS plan means we can configure exactly what we need — no waiting on a support ticket for basic changes.", rating: 5 },
+  { slug: "sneha-kulkarni", name: "Sneha Kulkarni", role: "IT Manager", company: "Kulkarni Textiles", quote: "We've been on the same shared hosting plan for over a year now and haven't had a single unplanned outage. Uptime has genuinely matched the 99.9% commitment.", rating: 5 },
+  { slug: "arjun-rao", name: "Arjun Rao", role: "Founder", company: "Rao Consulting", quote: "Switching our team to business email on our own domain took less than an afternoon, and the spam filtering has been better than our old provider.", rating: 4 },
+  { slug: "deepika-joshi", name: "Deepika Joshi", role: "Operations Head", company: "Joshi Logistics", quote: "Getting SSL set up across our subdomains used to be a headache. The wildcard certificate and their team's help made it a one-time job.", rating: 5 },
+  { slug: "meera-iyer", name: "Meera Iyer", role: "CEO", company: "Iyer Creative Studio", quote: "We moved to a dedicated server as we grew and the difference in consistency during traffic spikes was immediate. Support has stayed just as responsive.", rating: 5 },
 ].map(({ slug, ...t }) => ({ _id: `testimonial.${slug}`, _type: "testimonial", ...t }))
 
 const homeFaqs = [
@@ -919,6 +939,11 @@ const homePageDoc = {
         { _key: "t1", _type: "reference", _ref: "testimonial.anita-sharma" },
         { _key: "t2", _type: "reference", _ref: "testimonial.rohit-verma" },
         { _key: "t3", _type: "reference", _ref: "testimonial.priya-nair" },
+        { _key: "t4", _type: "reference", _ref: "testimonial.karan-mehta" },
+        { _key: "t5", _type: "reference", _ref: "testimonial.sneha-kulkarni" },
+        { _key: "t6", _type: "reference", _ref: "testimonial.arjun-rao" },
+        { _key: "t7", _type: "reference", _ref: "testimonial.deepika-joshi" },
+        { _key: "t8", _type: "reference", _ref: "testimonial.meera-iyer" },
       ],
       ctaLabel: "Join our happy customers",
     },

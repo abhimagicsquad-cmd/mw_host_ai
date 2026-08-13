@@ -32,6 +32,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: cmsPost.seo?.metaTitle ?? cmsPost.title,
       description: cmsPost.seo?.metaDescription ?? cmsPost.excerpt,
       path: `/blog/${cmsPost.slug}`,
+      ogType: "article",
+      publishedTime: cmsPost.publishedAt,
     })
   }
 
@@ -42,7 +44,15 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     title: post.title,
     description: post.excerpt,
     path: `/blog/${post.slug}`,
+    ogType: "article",
+    publishedTime: publishedLabelToISO(post.publishedLabel),
   })
+}
+
+/** Approximates an ISO date from the human-readable "Jan 2026" label the local fallback posts use — accurate to the month, which is the same granularity already shown to readers. */
+function publishedLabelToISO(label: string): string | undefined {
+  const parsed = new Date(`1 ${label}`)
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString()
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -68,9 +78,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               Back to blog
             </Link>
             {cmsPost.category ? (
-              <span className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase">
+              <Link
+                href={`/blog/category/${cmsPost.category.slug}`}
+                className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/20"
+              >
                 {cmsPost.category.title}
-              </span>
+              </Link>
             ) : null}
             <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{cmsPost.title}</h1>
             <p className="text-lg text-body-text">{cmsPost.excerpt}</p>
@@ -126,9 +139,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <ArrowLeft className="size-4" />
             Back to blog
           </Link>
-          <span className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase">
+          <Link
+            href={`/blog/category/${post.categorySlug}`}
+            className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/20"
+          >
             {getBlogCategoryName(post.categorySlug)}
-          </span>
+          </Link>
           <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{post.title}</h1>
           <p className="text-lg text-body-text">{post.excerpt}</p>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">

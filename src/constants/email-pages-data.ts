@@ -37,7 +37,7 @@ export const emailPages: EmailPageData[] = [
       price: "₹45",
       priceSuffix: "/mailbox/mo",
       features: ["5GB storage per mailbox", "Webmail + IMAP/POP access", "Spam & malware filtering", "Your own domain"],
-      cta: { label: "Get started", href: "#lead" },
+      cta: { label: "Get started", href: "/order/business-email" },
       service: "business-email",
     },
     faqs: [
@@ -58,7 +58,7 @@ export const emailPages: EmailPageData[] = [
       price: "₹99",
       priceSuffix: "/mailbox/mo",
       features: ["25GB mailbox storage", "5GB file storage", "Shared calendars & collaboration tools", "Priority support"],
-      cta: { label: "Get started", href: "#lead" },
+      cta: { label: "Get started", href: "/order/enterprise-email" },
       service: "enterprise-email",
       featured: true,
     },

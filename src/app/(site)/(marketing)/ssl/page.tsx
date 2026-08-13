@@ -2,12 +2,16 @@ import type { Metadata } from "next"
 import { KeyRound, Lock, ScanSearch, ShieldCheck, ShoppingCart, TrendingUp } from "lucide-react"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { ProductJsonLd } from "@/components/common/json-ld"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
+import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
+import { ServiceGrid } from "@/components/sections/service-grid"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { sslPlans } from "@/constants/pricing-plans"
+import { sslPageIcons, sslPages } from "@/constants/ssl-pages-data"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildMetadata } from "@/lib/seo"
 import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
@@ -67,6 +71,8 @@ export default async function SslPage() {
 
   return (
     <>
+      <ProductJsonLd name={title} description={description} path="/ssl" plans={plans} />
+
       <HeroSection
         eyebrow={eyebrow}
         title={title}
@@ -74,9 +80,29 @@ export default async function SslPage() {
         bullets={bullets}
         primaryCta={{ label: "View certificates", href: "#pricing" }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={[
+          { label: "Encryption", value: "256-bit" },
+          { label: "Issuance", value: "< 5 min" },
+          { label: "SSL Labs grade", value: "A+" },
+        ]}
+        media={<HeroVisual variant="security" />}
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
 
       <WhyChooseUs eyebrow="Why SSL matters" title="What an SSL certificate actually protects" background="alt" reasons={reasons} />
+
+      <ServiceGrid
+        eyebrow="Certificate types"
+        title="Every certificate type, explained"
+        description="Each tier has its own dedicated page covering exactly who it's for and how it's issued."
+        services={sslPages.map((page) => ({
+          slug: page.slug,
+          title: page.eyebrow,
+          description: page.description,
+          icon: sslPageIcons[page.slug],
+          href: `/ssl/${page.slug}`,
+        }))}
+      />
 
       <div id="pricing">
         <PricingSection
