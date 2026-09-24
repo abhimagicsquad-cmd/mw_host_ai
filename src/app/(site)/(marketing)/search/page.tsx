@@ -59,7 +59,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 className="flex flex-col gap-1 rounded-2xl border border-border-alt bg-background p-5 transition-all hover:-translate-y-0.5 hover:border-brand-orange/30 hover:shadow-md"
               >
                 <span className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{result.group}</span>
-                <span className="font-heading font-semibold text-brand-navy">{result.title}</span>
+                <span className="font-semibold text-brand-navy">{result.title}</span>
                 <span className="text-sm text-body-text">{result.description}</span>
               </Link>
             </li>

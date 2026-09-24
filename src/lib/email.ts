@@ -74,7 +74,7 @@ export async function sendLeadNotificationEmail(payload: LeadEmailPayload): Prom
   ].filter((row): row is { label: string; value: string } => row !== null)
 
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
+    <div style="font-family:'Geist','Geist Fallback',sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
       <h2 style="margin:0 0 16px;color:#2a363f">New lead &mdash; ${escapeHtml(source)}</h2>
       <p style="margin:0 0 4px"><strong>Name:</strong> ${escapeHtml(name)}</p>
       <p style="margin:0 0 4px"><strong>Phone:</strong> ${escapeHtml(phone)}</p>
@@ -155,7 +155,7 @@ export async function sendOrderNotificationEmail(payload: OrderEmailPayload): Pr
   ].filter((row): row is { label: string; value: string } => row !== null)
 
   const html = `
-    <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
+    <div style="font-family:'Geist','Geist Fallback',sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
       <h2 style="margin:0 0 16px;color:#2a363f">New order (test mode) &mdash; ${escapeHtml(orderRef)}</h2>
       ${rows.map((row) => `<p style="margin:0 0 4px"><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.value)}</p>`).join("")}
       <p style="margin:16px 0 0;color:#727272">No live charge was made — this order was placed through the mock checkout flow.</p>

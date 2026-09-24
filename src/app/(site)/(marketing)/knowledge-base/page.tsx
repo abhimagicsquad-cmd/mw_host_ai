@@ -79,7 +79,7 @@ export default async function KnowledgeBasePage() {
       />
 
       <SectionContainer width="wide">
-        <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">Browse by category</p>
+        <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Browse by category</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => {
             const Icon = category.icon
@@ -93,7 +93,7 @@ export default async function KnowledgeBasePage() {
                   {Icon ? <Icon className="size-5" /> : null}
                 </span>
                 <div>
-                  <p className="font-heading text-sm font-semibold text-brand-navy group-hover:text-brand-orange">{category.name}</p>
+                  <p className="text-sm font-semibold text-brand-navy group-hover:text-brand-orange">{category.name}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{category.description}</p>
                   <p className="mt-1 text-xs font-medium text-brand-orange">{category.articleCount} articles</p>
                 </div>

@@ -128,7 +128,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
         <div className="mt-6 flex items-end justify-between">
           <div>
             <p className="text-xs font-medium tracking-wide text-white/50 uppercase">{config.metricLabel}</p>
-            <p className="mt-1 font-heading text-4xl font-bold text-white">{config.metricValue}</p>
+            <p className="mt-1 text-4xl font-bold text-white">{config.metricValue}</p>
           </div>
           <div className="flex items-end gap-1.5">
             {config.barValues.map((height, index) => (

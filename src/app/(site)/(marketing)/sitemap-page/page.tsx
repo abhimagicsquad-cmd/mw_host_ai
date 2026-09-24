@@ -77,7 +77,7 @@ export default function SitemapPage() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {sitemapGroups.map((group) => (
             <div key={group.heading}>
-              <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">{group.heading}</p>
+              <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">{group.heading}</p>
               <ul className="mt-4 flex flex-col gap-2.5">
                 {group.links.map((link) => (
                   <li key={link.href}>

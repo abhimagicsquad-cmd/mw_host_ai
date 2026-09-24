@@ -95,7 +95,7 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
                   </Badge>
                   {article.featured ? <Badge className="bg-brand-orange text-white">Featured</Badge> : null}
                 </div>
-                <p className="font-heading text-sm font-semibold text-brand-navy">{article.title}</p>
+                <p className="text-sm font-semibold text-brand-navy">{article.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>
                 <p className="mt-auto text-xs text-muted-foreground">{article.readTime}</p>
               </div>
@@ -103,7 +103,7 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border-alt bg-surface-alt px-6 py-14 text-center">
-            <p className="font-heading text-base font-semibold text-brand-navy">No articles match your search</p>
+            <p className="text-base font-semibold text-brand-navy">No articles match your search</p>
             <p className="max-w-sm text-sm text-body-text">
               We&apos;re still building out this section. Try a different term, or ask our support team directly.
             </p>
@@ -115,7 +115,7 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
       </div>
 
       <aside className="flex flex-col gap-4">
-        <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">Popular topics</p>
+        <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Popular topics</p>
         <ul className="flex flex-col gap-3">
           {popularArticles.map((article) => (
             <li key={article.slug} className="rounded-xl border border-border-alt bg-background p-4">

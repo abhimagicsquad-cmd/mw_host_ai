@@ -79,7 +79,7 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
           <div className="grid gap-4 sm:grid-cols-2">
             {articles.map((article) => (
               <div key={article.slug} className="flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-5">
-                <p className="font-heading text-sm font-semibold text-brand-navy">{article.title}</p>
+                <p className="text-sm font-semibold text-brand-navy">{article.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>
                 <p className="mt-auto text-xs text-muted-foreground">{article.readTime}</p>
               </div>
@@ -87,7 +87,7 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border-alt bg-surface-alt px-6 py-14 text-center">
-            <p className="font-heading text-base font-semibold text-brand-navy">No articles here yet</p>
+            <p className="text-base font-semibold text-brand-navy">No articles here yet</p>
             <p className="max-w-sm text-sm text-body-text">
               We&apos;re still writing this section. Ask our support team and we&apos;ll answer directly.
             </p>
@@ -99,7 +99,7 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
       </SectionContainer>
 
       <SectionContainer width="wide" background="alt">
-        <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">Other categories</p>
+        <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Other categories</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {otherCategories.map((other) => (
             <Link

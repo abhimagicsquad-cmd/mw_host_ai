@@ -48,11 +48,11 @@ export function AffiliateEarningsCalculator() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col items-center gap-1 rounded-xl bg-surface-alt py-6 text-center">
           <p className="text-sm font-medium text-muted-foreground">Your monthly income by month 12</p>
-          <p className="font-heading text-3xl font-bold text-brand-navy">{isValid ? `₹${formatNumber(month12Income)}` : "—"}</p>
+          <p className="text-3xl font-bold text-brand-navy">{isValid ? `₹${formatNumber(month12Income)}` : "—"}</p>
         </div>
         <div className="flex flex-col items-center gap-1 rounded-xl bg-surface-alt py-6 text-center">
           <p className="text-sm font-medium text-muted-foreground">Your passive income in year 1</p>
-          <p className="font-heading text-3xl font-bold text-brand-navy">{isValid ? `₹${formatNumber(yearTotal)}` : "—"}</p>
+          <p className="text-3xl font-bold text-brand-navy">{isValid ? `₹${formatNumber(yearTotal)}` : "—"}</p>
         </div>
       </div>
 

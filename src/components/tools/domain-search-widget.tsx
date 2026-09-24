@@ -86,7 +86,7 @@ export function DomainSearchWidget() {
                   <XCircle className="size-5 shrink-0 text-muted-foreground" />
                 )}
                 <div>
-                  <p className="font-heading font-semibold text-brand-navy">{result.domain}</p>
+                  <p className="font-semibold text-brand-navy">{result.domain}</p>
                   <p className="text-xs text-muted-foreground">
                     {result.available ? `Available — ${result.price}${result.suffix}` : "Not available"}
                   </p>

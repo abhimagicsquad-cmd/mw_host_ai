@@ -85,7 +85,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {cmsPost.category.title}
               </Link>
             ) : null}
-            <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{cmsPost.title}</h1>
+            <h1 className="text-3xl font-bold text-brand-navy sm:text-4xl">{cmsPost.title}</h1>
             <p className="text-lg text-body-text">{cmsPost.excerpt}</p>
             {cmsPost.author ? (
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -145,7 +145,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           >
             {getBlogCategoryName(post.categorySlug)}
           </Link>
-          <h1 className="font-heading text-3xl font-bold text-brand-navy sm:text-4xl">{post.title}</h1>
+          <h1 className="text-3xl font-bold text-brand-navy sm:text-4xl">{post.title}</h1>
           <p className="text-lg text-body-text">{post.excerpt}</p>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="flex size-8 items-center justify-center rounded-full bg-brand-navy/10 text-xs font-semibold text-brand-navy">
@@ -166,7 +166,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       <SectionContainer width="narrow">
         <div className="rounded-2xl border border-border-alt bg-surface-alt p-6">
-          <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">On this page</p>
+          <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">On this page</p>
           <ul className="mt-3 flex flex-col gap-2">
             {post.sections.map((section, index) => (
               <li key={section.heading}>
@@ -181,7 +181,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <article className="mt-10 flex flex-col gap-10">
           {post.sections.map((section) => (
             <div key={section.heading} id={slugifyHeading(section.heading)}>
-              <h2 className="font-heading text-xl font-semibold text-brand-navy">{section.heading}</h2>
+              <h2 className="text-xl font-semibold text-brand-navy">{section.heading}</h2>
               <div className="mt-3 flex flex-col gap-3 text-base leading-relaxed text-body-text">
                 {section.body.map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>
@@ -200,7 +200,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               .join("")}
           </span>
           <div>
-            <p className="font-heading text-sm font-semibold text-brand-navy">{post.author.name}</p>
+            <p className="text-sm font-semibold text-brand-navy">{post.author.name}</p>
             <p className="text-sm text-muted-foreground">{post.author.role} at MagicWorks Host</p>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {relatedPosts.length > 0 ? (
         <SectionContainer width="wide" background="alt">
-          <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">Related articles</p>
+          <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Related articles</p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
             {relatedPosts.map((related) => (
               <Link
@@ -217,7 +217,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 className="flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
                 <p className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{getBlogCategoryName(related.categorySlug)}</p>
-                <p className="font-heading text-sm font-semibold text-brand-navy">{related.title}</p>
+                <p className="text-sm font-semibold text-brand-navy">{related.title}</p>
                 <p className="text-sm text-body-text">{related.excerpt}</p>
               </Link>
             ))}

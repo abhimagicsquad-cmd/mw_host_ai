@@ -8,7 +8,7 @@ Phase output for the UI-foundation task: Next.js App Router + TypeScript + Tailw
 - **Shadcn UI is on its Base UI variant** (`@base-ui/react`), not Radix — this is the current shadcn default as of this build. Polymorphism uses a `render` prop (`<Button render={<Link href=... />} nativeButton={false}>`), not `asChild`.
 - **lucide-react dropped brand/social icons** in the installed version. `src/components/common/social-icons.tsx` hand-rolls Facebook/Twitter/LinkedIn/Instagram marks to fill the gap.
 - React Hook Form + Zod + `@hookform/resolvers` power every form. `framer-motion` is installed per the architecture doc but not yet imported anywhere — reserved for page-level animation work.
-- Brand tokens (from the audit) are wired into `globals.css`: `brand-orange` (#ff6600), `brand-navy` (#2a363f), `brand-navy-dark` (#1c2329), `brand-cta-secondary` cyan gradient, `brand-whatsapp`, plus `surface-alt`/`border-alt`/`body-text` grays. Fonts: Roboto (heading) + Open Sans (body) via `next/font/google`.
+- Brand tokens (from the audit) are wired into `globals.css`: `brand-orange` (#ff6600), `brand-navy` (#2a363f), `brand-navy-dark` (#1c2329), `brand-cta-secondary` cyan gradient, `brand-whatsapp`, plus `surface-alt`/`border-alt`/`body-text` grays. Font: Geist only (single variable font via `next/font/google`, exposed as `--font-geist` and mapped once to `--font-sans` in `globals.css`; Tailwind's other font tokens are cleared, so components never set a font).
 
 ## Folder structure
 

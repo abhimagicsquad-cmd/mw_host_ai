@@ -31,7 +31,7 @@ export function AboutCredibilitySection({
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <Reveal className="flex flex-col gap-5">
           {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-          <h2 className="font-heading text-3xl font-bold text-brand-navy">{title}</h2>
+          <h2 className="text-3xl font-bold text-brand-navy">{title}</h2>
           {description ? <p className="text-body-text leading-relaxed">{description}</p> : null}
           {bullets?.length ? (
             <ul className="flex flex-col gap-2.5">
@@ -55,7 +55,7 @@ export function AboutCredibilitySection({
         <Reveal delay={0.1} className="relative">
           <div className="relative overflow-hidden rounded-3xl border border-border-alt bg-gradient-to-br from-brand-navy to-brand-navy-dark p-8">
             <div className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-[0.08]" />
-            <p className="relative font-heading text-sm font-semibold tracking-wide text-white/60 uppercase">
+            <p className="relative text-sm font-semibold tracking-wide text-white/60 uppercase">
               Since 2012
             </p>
             <p className="relative mt-2 max-w-xs text-lg font-medium text-white/90">
@@ -64,7 +64,7 @@ export function AboutCredibilitySection({
             <div className="relative mt-8 grid grid-cols-2 gap-4">
               {highlights.map((stat) => (
                 <div key={stat.label} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
-                  <p className="font-heading text-2xl font-bold text-white">{stat.value}</p>
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
                   <p className="mt-1 text-xs text-white/60">{stat.label}</p>
                 </div>
               ))}

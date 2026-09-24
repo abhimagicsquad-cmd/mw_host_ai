@@ -1,20 +1,12 @@
 import { Geist } from "next/font/google"
 
 /**
- * Geist — Vercel's typeface, chosen for a premium, modern SaaS/dev-tool feel.
- * One variable family for both heading and body (weight does the differentiating),
- * the same pattern top-tier SaaS products (Linear, Vercel) use.
+ * Geist — the single typeface used across the whole site (headings, body, forms,
+ * CMS content, etc.). Loaded once as a variable font; weight does the differentiating.
+ * Exposed as `--font-geist` and consumed by the font tokens in globals.css.
  */
-export const headingFont = Geist({
+export const geist = Geist({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-heading",
-  display: "swap",
-})
-
-export const bodyFont = Geist({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
+  variable: "--font-geist",
   display: "swap",
 })

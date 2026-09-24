@@ -38,7 +38,7 @@ export function FeaturesSection({
               {feature.icon ? (
                 <IconBadge icon={feature.icon} className="transition-colors group-hover:bg-brand-orange/10 group-hover:text-brand-orange" />
               ) : null}
-              <p className="font-heading text-base font-semibold text-brand-navy">{feature.title}</p>
+              <p className="text-base font-semibold text-brand-navy">{feature.title}</p>
               <p className="text-sm leading-relaxed text-body-text">{feature.description}</p>
             </div>
           </Reveal>

@@ -24,12 +24,12 @@ export function PricingCard({ plan }: PricingCardProps) {
       ) : null}
 
       <div>
-        <p className="font-heading text-sm font-bold tracking-wide text-brand-navy uppercase">{plan.name}</p>
+        <p className="text-sm font-bold tracking-wide text-brand-navy uppercase">{plan.name}</p>
         {plan.description ? <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p> : null}
       </div>
 
       <div className="flex items-end gap-2">
-        <span className="font-heading text-3xl font-bold text-brand-navy">{plan.price}</span>
+        <span className="text-3xl font-bold text-brand-navy">{plan.price}</span>
         {plan.priceSuffix ? <span className="text-sm text-muted-foreground">{plan.priceSuffix}</span> : null}
       </div>
       {plan.regularPrice ? (

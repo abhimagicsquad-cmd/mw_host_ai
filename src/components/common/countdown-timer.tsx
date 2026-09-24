@@ -43,7 +43,7 @@ export function CountdownTimer({ targetDate, className }: CountdownTimerProps) {
       <div className="flex items-center justify-center gap-3 sm:gap-4" role="timer" aria-live="off">
         {units.map((unit) => (
           <div key={unit.key} className="flex min-w-16 flex-col items-center gap-1 rounded-xl bg-white/10 px-3 py-3 sm:min-w-20 sm:px-4">
-            <span className="font-heading text-2xl font-bold text-white sm:text-3xl tabular-nums">
+            <span className="text-2xl font-bold text-white sm:text-3xl tabular-nums">
               {hasEnded ? "0" : String(unit.value).padStart(2, "0")}
             </span>
             <span className="text-[11px] font-medium tracking-wide text-white/60 uppercase">{unit.label}</span>

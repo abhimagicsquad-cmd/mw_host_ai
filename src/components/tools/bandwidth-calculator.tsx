@@ -42,7 +42,7 @@ export function BandwidthCalculator() {
 
       <div className="mt-8 flex flex-col items-center gap-1 rounded-xl bg-surface-alt py-8 text-center">
         <p className="text-sm font-medium text-muted-foreground">Estimated monthly bandwidth</p>
-        <p className="font-heading text-4xl font-bold text-brand-navy">
+        <p className="text-4xl font-bold text-brand-navy">
           {isValid ? formatNumber(totalGB) : "—"} <span className="text-lg font-medium text-muted-foreground">GB / month</span>
         </p>
         {isValid ? <p className="text-xs text-muted-foreground">({formatNumber(totalMB)} MB / month)</p> : null}

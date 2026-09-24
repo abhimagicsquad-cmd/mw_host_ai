@@ -26,7 +26,7 @@ export function WhyChooseUs({ eyebrow, title, description, reasons, background =
               {reason.icon ? (
                 <IconBadge icon={reason.icon} tone="navy" className="transition-colors group-hover:bg-brand-orange/10 group-hover:text-brand-orange" />
               ) : null}
-              <p className="mt-4 font-heading text-base font-semibold text-brand-navy">{reason.title}</p>
+              <p className="mt-4 text-base font-semibold text-brand-navy">{reason.title}</p>
               <p className="mt-1.5 text-sm leading-relaxed text-body-text">{reason.description}</p>
             </div>
           </Reveal>

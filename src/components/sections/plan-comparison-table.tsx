@@ -28,12 +28,12 @@ export function PlanComparisonTable({ plans, rows }: PlanComparisonTableProps) {
         <table className="w-full min-w-[720px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-border-alt bg-surface-alt">
-              <th className="p-4 text-left font-heading text-sm font-semibold text-brand-navy">Feature</th>
+              <th className="p-4 text-left text-sm font-semibold text-brand-navy">Feature</th>
               {plans.map((plan) => (
                 <th
                   key={plan.slug}
                   className={cn(
-                    "p-4 text-center font-heading text-sm font-semibold",
+                    "p-4 text-center text-sm font-semibold",
                     plan.featured ? "bg-brand-orange/10 text-brand-orange" : "text-brand-navy"
                   )}
                 >

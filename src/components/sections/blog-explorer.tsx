@@ -86,7 +86,7 @@ export function BlogExplorer({ categories, posts, initialCategory = "all" }: Blo
 
       {!isFiltering && featuredPosts.length > 0 ? (
         <div className="flex flex-col gap-4">
-          <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">Featured articles</p>
+          <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Featured articles</p>
           <div className="grid gap-5 sm:grid-cols-3">
             {featuredPosts.map((post) => (
               <Link
@@ -95,7 +95,7 @@ export function BlogExplorer({ categories, posts, initialCategory = "all" }: Blo
                 className="group flex flex-col gap-2 rounded-2xl border border-brand-orange/30 bg-gradient-to-b from-brand-orange/8 to-background p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
               >
                 <Badge className="w-fit bg-brand-orange text-white">Featured</Badge>
-                <p className="font-heading text-base font-semibold text-brand-navy">{post.title}</p>
+                <p className="text-base font-semibold text-brand-navy">{post.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{post.excerpt}</p>
                 <p className="mt-auto text-xs text-muted-foreground">{post.publishedLabel} &middot; {post.readTime}</p>
               </Link>
@@ -107,7 +107,7 @@ export function BlogExplorer({ categories, posts, initialCategory = "all" }: Blo
       {filteredPosts.length > 0 ? (
         <div className="flex flex-col gap-4">
           {!isFiltering ? (
-            <p className="font-heading text-sm font-semibold tracking-wide text-brand-navy uppercase">All articles</p>
+            <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">All articles</p>
           ) : null}
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filteredPosts.map((post) => (
@@ -117,7 +117,7 @@ export function BlogExplorer({ categories, posts, initialCategory = "all" }: Blo
                 className="group flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
                 <p className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{categoryName(post.categorySlug)}</p>
-                <p className="font-heading text-base font-semibold text-brand-navy group-hover:text-brand-orange">{post.title}</p>
+                <p className="text-base font-semibold text-brand-navy group-hover:text-brand-orange">{post.title}</p>
                 <p className="text-sm leading-relaxed text-body-text">{post.excerpt}</p>
                 <p className="mt-auto flex items-center gap-2 text-xs text-muted-foreground">
                   <span>{post.publishedLabel}</span>
@@ -130,7 +130,7 @@ export function BlogExplorer({ categories, posts, initialCategory = "all" }: Blo
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border-alt bg-surface-alt px-6 py-14 text-center">
-          <p className="font-heading text-base font-semibold text-brand-navy">No articles match your search</p>
+          <p className="text-base font-semibold text-brand-navy">No articles match your search</p>
           <p className="max-w-sm text-sm text-body-text">
             We publish new articles regularly. In the meantime, ask our support team directly.
           </p>

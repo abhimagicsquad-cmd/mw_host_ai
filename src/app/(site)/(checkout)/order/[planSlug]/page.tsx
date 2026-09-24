@@ -33,8 +33,8 @@ export default async function OrderPage({ params }: OrderPageProps) {
   return (
     <SectionContainer width="wide" background="alt" className="min-h-[70vh]">
       <div className="mx-auto mb-8 max-w-5xl text-center">
-        <p className="font-heading text-sm font-bold tracking-wide text-brand-orange uppercase">Checkout</p>
-        <h1 className="mt-1 font-heading text-2xl font-bold text-brand-navy sm:text-3xl">Set up your {plan.name} plan</h1>
+        <p className="text-sm font-bold tracking-wide text-brand-orange uppercase">Checkout</p>
+        <h1 className="mt-1 text-2xl font-bold text-brand-navy sm:text-3xl">Set up your {plan.name} plan</h1>
       </div>
       <Suspense>
         <OrderFlow plan={plan} />

@@ -48,7 +48,7 @@ export function HeroSection({
               </div>
             ) : null}
             {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-            <h1 className="mt-5 font-heading text-4xl font-bold text-brand-navy sm:text-5xl lg:text-[3.4rem] lg:leading-[1.08]">
+            <h1 className="mt-5 text-4xl font-bold text-brand-navy sm:text-5xl lg:text-[3.4rem] lg:leading-[1.08]">
               {title}
             </h1>
             {description ? <p className="mt-5 max-w-xl text-lg leading-relaxed text-body-text">{description}</p> : null}
@@ -87,7 +87,7 @@ export function HeroSection({
             <div className="mt-4 flex flex-wrap gap-x-8 gap-y-3 border-t border-border-alt pt-6">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex items-baseline gap-2">
-                  <span className="font-heading text-2xl font-bold text-brand-navy">{stat.value}</span>
+                  <span className="text-2xl font-bold text-brand-navy">{stat.value}</span>
                   <span className="text-xs text-muted-foreground">{stat.label}</span>
                 </div>
               ))}

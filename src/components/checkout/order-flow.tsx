@@ -175,7 +175,7 @@ export function OrderFlow({ plan }: OrderFlowProps) {
           {step === "configure" ? (
             <div className="flex flex-col gap-4 rounded-2xl border border-border-alt p-6">
               <div>
-                <h2 className="font-heading text-lg font-bold text-brand-navy">Choose your billing term</h2>
+                <h2 className="text-lg font-bold text-brand-navy">Choose your billing term</h2>
                 <p className="text-sm text-muted-foreground">Longer terms lock in a lower effective monthly rate.</p>
               </div>
 
@@ -198,7 +198,7 @@ export function OrderFlow({ plan }: OrderFlowProps) {
                         <RadioGroupItem id={`cycle-${option.cycle}`} value={option.cycle} />
                         <span className="font-medium text-brand-navy">{option.label}</span>
                       </span>
-                      <span className="font-heading font-bold text-brand-navy">
+                      <span className="font-bold text-brand-navy">
                         {option.totalPrice}
                         {option.priceSuffix ? <span className="ml-1 text-xs font-normal text-muted-foreground">{option.priceSuffix}</span> : null}
                       </span>
@@ -208,7 +208,7 @@ export function OrderFlow({ plan }: OrderFlowProps) {
               ) : (
                 <div className="flex items-center justify-between rounded-xl border border-brand-orange bg-brand-orange/5 p-4">
                   <span className="font-medium text-brand-navy">Monthly billing</span>
-                  <span className="font-heading font-bold text-brand-navy">
+                  <span className="font-bold text-brand-navy">
                     {plan.price}
                     <span className="ml-1 text-xs font-normal text-muted-foreground">{plan.priceSuffix}</span>
                   </span>
@@ -220,7 +220,7 @@ export function OrderFlow({ plan }: OrderFlowProps) {
           {step === "account" ? (
             <div className="flex flex-col gap-4 rounded-2xl border border-border-alt p-6">
               <div>
-                <h2 className="font-heading text-lg font-bold text-brand-navy">Account details</h2>
+                <h2 className="text-lg font-bold text-brand-navy">Account details</h2>
                 <p className="text-sm text-muted-foreground">We&apos;ll use these to set up and confirm your order.</p>
               </div>
 
@@ -273,7 +273,7 @@ export function OrderFlow({ plan }: OrderFlowProps) {
 
           {step === "review" ? (
             <div className="flex flex-col gap-4 rounded-2xl border border-border-alt p-6">
-              <h2 className="font-heading text-lg font-bold text-brand-navy">Review your order</h2>
+              <h2 className="text-lg font-bold text-brand-navy">Review your order</h2>
               <dl className="flex flex-col divide-y divide-border-alt text-sm">
                 <div className="flex items-center justify-between py-3">
                   <dt className="text-muted-foreground">Plan</dt>

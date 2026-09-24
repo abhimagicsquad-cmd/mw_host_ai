@@ -21,7 +21,7 @@ export function FooterCTABlock({
   return (
     <div className="flex flex-col items-center justify-between gap-6 rounded-2xl bg-brand-navy-dark px-6 py-8 text-center sm:flex-row sm:text-left">
       <div>
-        <p className="font-heading text-xl font-bold text-white">{title}</p>
+        <p className="text-xl font-bold text-white">{title}</p>
         <p className="mt-1 text-sm text-white/70">{description}</p>
       </div>
       <div className="flex flex-col items-center gap-3 sm:flex-row">

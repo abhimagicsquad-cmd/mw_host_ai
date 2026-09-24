@@ -54,7 +54,7 @@ export function TrustHighlights({ eyebrow, title, description, highlights, backg
               >
                 <highlight.icon className="size-5" />
               </span>
-              <p className={cn("font-heading text-base font-semibold", isDark ? "text-white" : "text-brand-navy")}>
+              <p className={cn("text-base font-semibold", isDark ? "text-white" : "text-brand-navy")}>
                 {highlight.title}
               </p>
               <p className={cn("text-sm leading-relaxed", isDark ? "text-white/70" : "text-body-text")}>

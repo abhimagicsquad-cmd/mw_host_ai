@@ -43,7 +43,7 @@ export function DataUnitCalculator() {
       <div className="mt-8 grid gap-3 sm:grid-cols-5">
         {byteUnits.map((targetUnit) => (
           <div key={targetUnit} className="flex flex-col items-center gap-1 rounded-xl bg-surface-alt py-5 text-center">
-            <p className="font-heading text-lg font-bold text-brand-navy">{isValid ? formatNumber(fromBytes(bytes, targetUnit), 4) : "—"}</p>
+            <p className="text-lg font-bold text-brand-navy">{isValid ? formatNumber(fromBytes(bytes, targetUnit), 4) : "—"}</p>
             <p className="text-xs font-medium text-muted-foreground">{targetUnit}</p>
           </div>
         ))}

@@ -58,7 +58,7 @@ export default async function LegalPage({ params }: LegalPageProps) {
         <div className="flex flex-col gap-8">
           {sections.map((section) => (
             <div key={section.heading}>
-              <h2 className="font-heading text-xl font-semibold text-brand-navy">{section.heading}</h2>
+              <h2 className="text-xl font-semibold text-brand-navy">{section.heading}</h2>
               <div className="mt-3 flex flex-col gap-3 text-base leading-relaxed text-body-text">
                 {section.body.map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>

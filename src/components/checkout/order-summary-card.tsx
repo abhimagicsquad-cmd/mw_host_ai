@@ -26,7 +26,7 @@ export function OrderSummaryCard({ planName, billingLabel, amount, className }: 
         </div>
         <div className="flex items-center justify-between border-t border-border-alt pt-3 text-base">
           <span className="font-medium text-brand-navy">Total due today</span>
-          <span className="font-heading text-xl font-bold text-brand-navy">{amount}</span>
+          <span className="text-xl font-bold text-brand-navy">{amount}</span>
         </div>
         <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-brand-orange" />

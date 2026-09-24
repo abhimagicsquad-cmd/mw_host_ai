@@ -54,7 +54,7 @@ export function NavMenu({ items }: NavMenuProps) {
                         const FeaturedIcon = resolveIcon(item.featured.icon)
                         return FeaturedIcon ? <FeaturedIcon className="size-5 text-brand-orange" /> : null
                       })()}
-                      <p className="font-heading text-sm font-semibold text-brand-navy">
+                      <p className="text-sm font-semibold text-brand-navy">
                         {item.featured.title}
                       </p>
                       {item.featured.description ? (

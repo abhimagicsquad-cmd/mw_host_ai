@@ -37,7 +37,7 @@ export function ImageContentSection({
         </div>
         <div className={cn("flex flex-col gap-5", imagePosition === "left" ? "lg:order-2" : "lg:order-1")}>
           {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-          <h2 className="font-heading text-3xl font-bold text-brand-navy">{title}</h2>
+          <h2 className="text-3xl font-bold text-brand-navy">{title}</h2>
           {description ? <p className="text-body-text">{description}</p> : null}
           {bullets?.length ? (
             <ul className="flex flex-col gap-2.5">

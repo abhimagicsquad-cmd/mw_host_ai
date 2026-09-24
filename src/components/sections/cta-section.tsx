@@ -32,7 +32,7 @@ export function CTASection({ title, description, primaryCta, secondaryCta, backg
         </>
       ) : null}
       <Reveal className="relative flex flex-col items-center gap-6 py-16 text-center sm:py-20">
-        <h2 className="font-heading text-3xl font-bold sm:text-4xl">{title}</h2>
+        <h2 className="text-3xl font-bold sm:text-4xl">{title}</h2>
         {description ? (
           <p className={isDark ? "max-w-2xl text-white/80" : "max-w-2xl text-body-text"}>{description}</p>
         ) : null}

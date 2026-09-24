@@ -28,7 +28,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
         {service.featured ? <Badge className="bg-brand-orange text-white">Popular</Badge> : null}
       </div>
       <div>
-        <p className="font-heading text-lg font-semibold text-brand-navy">{service.title}</p>
+        <p className="text-lg font-semibold text-brand-navy">{service.title}</p>
         <p className="mt-1.5 text-sm leading-relaxed text-body-text">{service.description}</p>
       </div>
       {service.price ? (

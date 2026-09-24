@@ -7,8 +7,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-body), sans-serif;
-  --font-heading: var(--font-heading), sans-serif;
+  /* Typography: Geist only. `--font-geist` comes from src/lib/fonts.ts and resolves to
+     "Geist", "Geist Fallback". Tailwind's serif/mono tokens are cleared so no other
+     family can be reached; preflight applies --font-sans to <html> and everything inherits. */
+  --font-*: initial;
+  --font-sans: var(--font-geist), sans-serif;
   --color-brand-orange: var(--brand-orange);
   --color-brand-orange-hover: var(--brand-orange-hover);
   --color-brand-navy: var(--brand-navy);
@@ -152,8 +155,12 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  html {
-    @apply font-sans;
+  /* Preflight gives these a monospace stack; keep them on Geist too. */
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: inherit;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -173,7 +180,7 @@
   h4,
   h5,
   h6 {
-    @apply font-heading tracking-tight;
+    @apply tracking-tight;
     line-height: 1.15;
   }
   @media (prefers-reduced-motion: no-preference) {

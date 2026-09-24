@@ -78,7 +78,7 @@ export function TransferTimeCalculator() {
 
       <div className="mt-8 flex flex-col items-center gap-1 rounded-xl bg-surface-alt py-8 text-center">
         <p className="text-sm font-medium text-muted-foreground">Estimated transfer time</p>
-        <p className="font-heading text-4xl font-bold text-brand-navy">{isValid ? formatDuration(durationSeconds) : "—"}</p>
+        <p className="text-4xl font-bold text-brand-navy">{isValid ? formatDuration(durationSeconds) : "—"}</p>
       </div>
     </div>
   )

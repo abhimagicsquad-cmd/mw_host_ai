@@ -44,7 +44,7 @@ export function StatsSection({ eyebrow, title, description, stats, background = 
                     <stat.icon className="size-5" />
                   </span>
                 ) : null}
-                <p className={isDark ? "font-heading text-3xl font-bold text-white" : "font-heading text-3xl font-bold text-brand-navy"}>
+                <p className={isDark ? "text-3xl font-bold text-white" : "text-3xl font-bold text-brand-navy"}>
                   {stat.value}
                 </p>
                 <p className={isDark ? "text-sm text-white/70" : "text-sm text-muted-foreground"}>{stat.label}</p>

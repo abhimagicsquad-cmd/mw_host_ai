@@ -1,9 +1,18 @@
+import { readFile } from "node:fs/promises"
+import { join } from "node:path"
+
 import { ImageResponse } from "next/og"
 
 import { siteConfig } from "@/constants/site-config"
 
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
+
+const fontDir = join(process.cwd(), "src/assets/fonts")
+const [geistRegular, geistBold] = await Promise.all([
+  readFile(join(fontDir, "Geist-Regular.ttf")),
+  readFile(join(fontDir, "Geist-Bold.ttf")),
+])
 
 export default async function OpengraphImage() {
   return new ImageResponse(
@@ -18,7 +27,7 @@ export default async function OpengraphImage() {
           padding: "80px",
           backgroundColor: "#1c2329",
           backgroundImage: "linear-gradient(135deg, #2a363f 0%, #1c2329 70%)",
-          fontFamily: "sans-serif",
+          fontFamily: "Geist",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
@@ -50,6 +59,12 @@ export default async function OpengraphImage() {
         </div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: [
+        { name: "Geist", data: geistRegular, weight: 400, style: "normal" },
+        { name: "Geist", data: geistBold, weight: 700, style: "normal" },
+      ],
+    }
   )
 }

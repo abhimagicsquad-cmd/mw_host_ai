@@ -22,7 +22,7 @@ export function SectionHeading({ eyebrow, title, description, align = "center", 
       )}
     >
       {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-      <h2 className="font-heading text-3xl font-bold text-balance text-brand-navy sm:text-4xl dark:text-foreground">
+      <h2 className="text-3xl font-bold text-balance text-brand-navy sm:text-4xl dark:text-foreground">
         {title}
       </h2>
       {description ? (

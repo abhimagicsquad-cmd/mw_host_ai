@@ -35,7 +35,7 @@ export function PageHero({ title, description, breadcrumbs, cta, ctaSource = "pa
       ) : null}
       <div className="relative flex flex-col gap-4">
         {breadcrumbs?.length ? <Breadcrumbs items={breadcrumbs} tone={isDark ? "light" : "dark"} /> : null}
-        <h1 className={isDark ? "font-heading text-3xl font-bold sm:text-4xl" : "font-heading text-3xl font-bold text-brand-navy sm:text-4xl"}>
+        <h1 className={isDark ? "text-3xl font-bold sm:text-4xl" : "text-3xl font-bold text-brand-navy sm:text-4xl"}>
           {title}
         </h1>
         {description ? (

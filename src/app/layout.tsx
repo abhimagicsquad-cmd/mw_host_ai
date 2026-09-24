@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next"
 
 import { siteConfig } from "@/constants/site-config"
-import { bodyFont, headingFont } from "@/lib/fonts"
+import { geist } from "@/lib/fonts"
 
 import "./globals.css"
 
@@ -38,8 +38,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${headingFont.variable} ${bodyFont.variable} antialiased`}>{children}</body>
+    <html lang="en" className={geist.variable}>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

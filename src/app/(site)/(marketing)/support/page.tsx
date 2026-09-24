@@ -86,7 +86,7 @@ export default async function SupportPage() {
                 <span className="flex size-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
                   {Icon ? <Icon className="size-5" /> : null}
                 </span>
-                <p className="font-heading text-base font-semibold text-brand-navy">{channel.title}</p>
+                <p className="text-base font-semibold text-brand-navy">{channel.title}</p>
                 <p className="text-sm text-body-text">{channel.description}</p>
                 <a
                   href={channel.ctaHref}

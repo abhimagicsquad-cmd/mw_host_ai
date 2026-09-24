@@ -54,7 +54,7 @@ export default async function PromoPage({ params }: PromoPageProps) {
           <Breadcrumbs items={breadcrumbs} tone="light" />
 
           <span className="rounded-full bg-brand-orange px-4 py-1.5 text-xs font-bold tracking-wide uppercase">{page.eyebrow}</span>
-          <h1 className="max-w-2xl font-heading text-3xl font-bold sm:text-5xl">{page.title}</h1>
+          <h1 className="max-w-2xl text-3xl font-bold sm:text-5xl">{page.title}</h1>
           <p className="max-w-xl text-white/70">{page.description}</p>
 
           <ul className="mt-2 grid gap-2.5 text-left sm:grid-cols-2">
