@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Menu, Phone } from "lucide-react"
 
 import {
@@ -23,6 +24,8 @@ import { CTAButton } from "@/components/common/cta-button"
 import { Logo } from "@/components/common/logo"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
+import { getActiveNav } from "@/lib/nav-active"
+import { cn } from "@/lib/utils"
 import type { NavItem } from "@/types/nav"
 
 type MobileNavProps = {
@@ -31,6 +34,8 @@ type MobileNavProps = {
 
 export function MobileNav({ items }: MobileNavProps) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+  const active = useMemo(() => getActiveNav(items, pathname), [items, pathname])
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -46,15 +51,22 @@ export function MobileNav({ items }: MobileNavProps) {
         </SheetHeader>
 
         <nav className="flex-1 overflow-y-auto px-2 py-2">
-          <Accordion multiple>
+          {/* The group holding the current page starts expanded so its active link is visible. */}
+          <Accordion multiple defaultValue={active.linkHref && active.itemLabel ? [active.itemLabel] : []}>
             {items.map((item) =>
               item.columns ? (
                 <AccordionItem key={item.label} value={item.label}>
-                  <AccordionTrigger className="px-2">{item.label}</AccordionTrigger>
+                  <AccordionTrigger
+                    className={cn("px-2", active.itemLabel === item.label && "text-brand-orange")}
+                  >
+                    {item.label}
+                  </AccordionTrigger>
                   <AccordionContent className="px-2">
                     <ul className="flex flex-col gap-1">
                       {item.columns.flatMap((column) => column.links).map((link) => {
                         const LinkIcon = resolveIcon(link.icon)
+                        const isActive =
+                          active.itemLabel === item.label && active.linkHref === link.href
                         return (
                           <li key={link.href}>
                             <SheetClose
@@ -62,7 +74,12 @@ export function MobileNav({ items }: MobileNavProps) {
                               render={
                                 <Link
                                   href={link.href}
-                                  className="flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted"
+                                  aria-current={isActive ? "page" : undefined}
+                                  className={cn(
+                                    "flex items-center gap-2 rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted",
+                                    // `!` beats AccordionContent's `[&_a]:hover:text-foreground`.
+                                    isActive && "font-medium text-brand-orange hover:text-brand-orange!"
+                                  )}
                                 />
                               }
                             >
@@ -84,7 +101,11 @@ export function MobileNav({ items }: MobileNavProps) {
                         href={item.href ?? "#"}
                         target={item.external ? "_blank" : undefined}
                         rel={item.external ? "noopener noreferrer" : undefined}
-                        className="block px-2 py-2.5 text-sm font-medium"
+                        aria-current={active.itemLabel === item.label ? "page" : undefined}
+                        className={cn(
+                          "block px-2 py-2.5 text-sm font-medium",
+                          active.itemLabel === item.label && "text-brand-orange"
+                        )}
                       />
                     }
                   >

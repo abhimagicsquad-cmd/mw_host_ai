@@ -1,4 +1,8 @@
+"use client"
+
+import { useMemo } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 import {
   NavigationMenu,
@@ -10,6 +14,8 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { resolveIcon } from "@/lib/icon-map"
+import { getActiveNav } from "@/lib/nav-active"
+import { cn } from "@/lib/utils"
 import type { NavItem } from "@/types/nav"
 
 type NavMenuProps = {
@@ -17,13 +23,20 @@ type NavMenuProps = {
 }
 
 export function NavMenu({ items }: NavMenuProps) {
+  const pathname = usePathname()
+  const active = useMemo(() => getActiveNav(items, pathname), [items, pathname])
+
   return (
     <NavigationMenu className="max-w-none">
       <NavigationMenuList>
         {items.map((item) =>
           item.columns ? (
             <NavigationMenuItem key={item.label}>
-              <NavigationMenuTrigger>{item.label}</NavigationMenuTrigger>
+              <NavigationMenuTrigger
+                className={cn(active.itemLabel === item.label && "text-brand-orange")}
+              >
+                {item.label}
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="flex gap-6 p-6">
                   {item.columns.map((column, columnIndex) => (
@@ -36,9 +49,15 @@ export function NavMenu({ items }: NavMenuProps) {
                       <ul className="flex flex-col">
                         {column.links.map((link) => {
                           const LinkIcon = resolveIcon(link.icon)
+                          const isActive =
+                            active.itemLabel === item.label && active.linkHref === link.href
                           return (
                             <li key={link.href}>
-                              <NavigationMenuLink render={<Link href={link.href} />}>
+                              <NavigationMenuLink
+                                active={isActive}
+                                render={<Link href={link.href} />}
+                                className={cn(isActive && "font-medium text-brand-orange")}
+                              >
                                 {LinkIcon ? <LinkIcon className="text-brand-orange" /> : null}
                                 {link.label}
                               </NavigationMenuLink>
@@ -81,7 +100,11 @@ export function NavMenu({ items }: NavMenuProps) {
                     rel={item.external ? "noopener noreferrer" : undefined}
                   />
                 }
-                className={navigationMenuTriggerStyle()}
+                active={active.itemLabel === item.label}
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  active.itemLabel === item.label && "text-brand-orange"
+                )}
               >
                 {item.label}
               </NavigationMenuLink>
