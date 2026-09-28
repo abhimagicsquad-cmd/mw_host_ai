@@ -92,7 +92,7 @@ function toTestimonial(testimonial: TestimonialData): Testimonial {
     title: testimonial.role,
     company: testimonial.company,
     quote: testimonial.quote,
-    avatarUrl: urlForImage(testimonial.avatar)?.width(96).height(96).url(),
+    avatarUrl: testimonial.avatarUrl || urlForImage(testimonial.avatar)?.width(96).height(96).url(),
     rating: testimonial.rating,
   }
 }

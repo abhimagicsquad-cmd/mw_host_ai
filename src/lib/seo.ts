@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { siteConfig } from "@/constants/site-config"
+import { getSeoOverride } from "@/lib/cms/content"
 
 type BuildMetadataOptions = {
   /** Short page title, e.g. "About Us" — the root layout's title template appends " | MagicWorks Host". */
@@ -71,4 +72,49 @@ export function buildMetadata({
     },
     ...(noIndex ? { robots: { index: false, follow: false } } : {}),
   }
+}
+
+/**
+ * Layers the per-path SEO saved in the admin (/admin/seo) over a page's computed metadata.
+ * The path is read from `alternates.canonical`, which `buildMetadata` always sets, so any
+ * page can opt in by wrapping its metadata. Empty admin fields leave the page's own values.
+ */
+export async function applySeoOverrides(metadata: Metadata): Promise<Metadata> {
+  const canonical = metadata.alternates?.canonical
+  const path = typeof canonical === "string" ? canonical : "/"
+  const seo = await getSeoOverride(path)
+  if (!seo) return metadata
+
+  const title = seo.meta_title?.trim()
+  const description = seo.meta_description?.trim()
+  const ogTitle = seo.og_title?.trim() || title
+  const ogDescription = seo.og_description?.trim() || description
+  const ogImage = seo.og_image?.trim()
+  const twitterImage = seo.twitter_image?.trim() || ogImage
+
+  return {
+    ...metadata,
+    ...(title ? { title: { absolute: title } } : {}),
+    ...(description ? { description } : {}),
+    alternates: { ...metadata.alternates, canonical: seo.canonical_url?.trim() || path },
+    openGraph: {
+      ...metadata.openGraph,
+      ...(ogTitle ? { title: ogTitle } : {}),
+      ...(ogDescription ? { description: ogDescription } : {}),
+      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
+    },
+    twitter: {
+      ...metadata.twitter,
+      ...(seo.twitter_card ? { card: seo.twitter_card } : {}),
+      ...(seo.twitter_title?.trim() || ogTitle ? { title: seo.twitter_title?.trim() || ogTitle } : {}),
+      ...(seo.twitter_description?.trim() || ogDescription ? { description: seo.twitter_description?.trim() || ogDescription } : {}),
+      ...(twitterImage ? { images: [twitterImage] } : {}),
+    },
+    ...(seo.no_index ? { robots: { index: false, follow: false } } : {}),
+  }
+}
+
+/** `buildMetadata` + admin SEO overrides. Use from `generateMetadata`. */
+export async function buildPageMetadata(options: BuildMetadataOptions): Promise<Metadata> {
+  return applySeoOverrides(buildMetadata(options))
 }

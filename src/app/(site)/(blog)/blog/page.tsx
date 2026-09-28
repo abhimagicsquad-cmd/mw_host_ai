@@ -4,7 +4,7 @@ import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { type BlogCategory, blogCategories, type BlogPost, blogPosts } from "@/constants/blog-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllBlogPosts, getBlogListingPage } from "@/sanity/lib/queries"
 import type { BlogPostData } from "@/sanity/types"
 
@@ -27,7 +27,7 @@ function toBlogPost(post: BlogPostData): BlogPost {
 
 export async function generateMetadata() {
   const cms = await getBlogListingPage()
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.title ?? "Blog",
     description: cms?.description ?? "Hosting performance, security, and WordPress articles from the MagicWorks Host team.",
     path: "/blog",

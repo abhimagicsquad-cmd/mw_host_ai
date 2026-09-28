@@ -1,6 +1,7 @@
 import { Eye, Gauge, HeadphonesIcon, HeartHandshake, ShieldCheck, Target, Users, Zap } from "lucide-react"
 
 import { CTASection } from "@/components/sections/cta-section"
+import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
 import { ContentSection } from "@/components/sections/content-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
@@ -8,12 +9,12 @@ import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { PageBuilder } from "@/components/sanity/page-builder"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAboutPage } from "@/sanity/lib/queries"
 
 export async function generateMetadata() {
   const cms = await getAboutPage()
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? "About Us",
     description:
       cms?.seo?.metaDescription ??
@@ -26,7 +27,12 @@ export default async function AboutUsPage() {
   const cms = await getAboutPage()
 
   if (cms?.pageBuilder?.length) {
-    return <PageBuilder blocks={cms.pageBuilder} />
+    return (
+      <>
+        <CmsSchemaJsonLd path="/about-us" />
+        <PageBuilder blocks={cms.pageBuilder} />
+      </>
+    )
   }
 
   return (

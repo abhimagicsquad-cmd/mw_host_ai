@@ -72,6 +72,8 @@ export type TestimonialData = {
   company?: string
   quote: string
   avatar?: SanityImage
+  /** Plain image URL — set by the custom CMS (media library) instead of a Sanity image. */
+  avatarUrl?: string
   rating?: number
 }
 

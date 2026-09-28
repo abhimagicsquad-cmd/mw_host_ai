@@ -14,7 +14,7 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { vpsPlans, vpsPlansUSA } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -38,7 +38,7 @@ const defaultFaqs: FAQItem[] = [
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicePage("vps", SLUG)
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? "VPS Hosting",
     description:
       cms?.seo?.metaDescription ??

@@ -1,3 +1,4 @@
+import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
 import { GetQuoteForm } from "@/components/forms/get-quote-form"
 import { LeadForm } from "@/components/forms/lead-form"
 import { ContactSection } from "@/components/sections/contact-section"
@@ -9,12 +10,12 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { PageBuilder } from "@/components/sanity/page-builder"
 import { siteConfig } from "@/constants/site-config"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getContactPage } from "@/sanity/lib/queries"
 
 export async function generateMetadata() {
   const cms = await getContactPage()
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? "Contact Us",
     description:
       cms?.seo?.metaDescription ??
@@ -37,6 +38,7 @@ export default async function ContactUsPage() {
       {/* CMS-editable supplementary content only — the lead-capture forms below stay
           hardcoded on purpose, since pageBuilder has no form block and a full-page
           takeover (like the homepage does) would delete them entirely. */}
+      <CmsSchemaJsonLd path="/contact-us" />
       {cms?.pageBuilder?.length ? <PageBuilder blocks={cms.pageBuilder} /> : null}
 
       <ContactSection

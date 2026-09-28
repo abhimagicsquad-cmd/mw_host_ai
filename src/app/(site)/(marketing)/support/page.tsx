@@ -9,7 +9,7 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getSupportPage } from "@/sanity/lib/queries"
 
 const fallbackChannels = [
@@ -48,13 +48,13 @@ const fallbackFaqs = [
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getSupportPage()
   if (!cms?.seo?.metaTitle) {
-    return buildMetadata({
+    return buildPageMetadata({
       title: "Support",
       description: "Reach MagicWorks Host support by phone, ticket, or knowledge base — 24/7 support on every plan.",
       path: "/support",
     })
   }
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms.seo.metaTitle,
     description: cms.seo.metaDescription ?? "",
     path: "/support",

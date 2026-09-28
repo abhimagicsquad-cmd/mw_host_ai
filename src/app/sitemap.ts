@@ -8,8 +8,9 @@ import { hostingPages } from "@/constants/hosting-pages-data"
 import { kbCategories } from "@/constants/knowledge-base-data"
 import { legalSlugs } from "@/constants/legal-content"
 import { siteConfig } from "@/constants/site-config"
+import { getPublishedCmsPaths } from "@/lib/cms/content"
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
   const url = (path: string) => `${siteConfig.url}${path}`
 
@@ -73,7 +74,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }))
 
-  return [
+  const builtIn = [
     ...staticRoutes,
     ...hostingRoutes,
     ...domainRoutes,
@@ -83,4 +84,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...blogRoutes,
     ...kbCategoryRoutes,
   ]
+
+  // Pages created in the admin CMS (built-in URLs they override are already listed above).
+  const known = new Set(builtIn.map((entry) => entry.url))
+  const cmsRoutes = (await getPublishedCmsPaths())
+    .map((page) => ({
+      url: page.path === "/" ? url("/") : url(page.path),
+      changeFrequency: "monthly" as const,
+      priority: page.page_type === "blog" ? 0.5 : 0.6,
+      lastModified: new Date(page.updated_at),
+    }))
+    .filter((entry) => !known.has(entry.url))
+
+  return [...builtIn, ...cmsRoutes]
 }

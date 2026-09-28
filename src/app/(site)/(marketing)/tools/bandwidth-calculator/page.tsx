@@ -1,13 +1,11 @@
-import type { Metadata } from "next"
-
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { BandwidthCalculator } from "@/components/tools/bandwidth-calculator"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = buildMetadata({
+export const generateMetadata = () => buildPageMetadata({
   title: "Bandwidth Calculator",
   description: "Estimate the monthly bandwidth your website needs based on page size, visitors, and pages per visit.",
   path: "/tools/bandwidth-calculator",

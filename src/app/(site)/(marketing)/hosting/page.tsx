@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 
+import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
 import { GetQuoteForm } from "@/components/forms/get-quote-form"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
@@ -13,7 +14,7 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { hostingHubIntro, hostingPageIcons, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getPricingPlansByService, getServicesPage } from "@/sanity/lib/queries"
 
 const HUB_SLUG = "hosting"
@@ -25,7 +26,7 @@ const fallbackMetadata = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicesPage(HUB_SLUG)
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? fallbackMetadata.title,
     description: cms?.seo?.metaDescription ?? fallbackMetadata.description,
     path: "/hosting",
@@ -36,7 +37,12 @@ export default async function HostingHubPage() {
   const cms = await getServicesPage(HUB_SLUG)
 
   if (cms?.pageBuilder?.length) {
-    return <PageBuilder blocks={cms.pageBuilder} />
+    return (
+      <>
+        <CmsSchemaJsonLd path="/hosting" />
+        <PageBuilder blocks={cms.pageBuilder} />
+      </>
+    )
   }
 
   const cmsPlans = await getPricingPlansByService("shared-hosting")

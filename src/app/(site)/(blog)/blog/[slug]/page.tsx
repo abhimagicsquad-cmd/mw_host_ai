@@ -10,7 +10,7 @@ import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
 import { blogPosts, getBlogCategoryName, getBlogPost, getRelatedPosts } from "@/constants/blog-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllBlogPosts, getBlogPostBySlug } from "@/sanity/lib/queries"
 
 type BlogPostPageProps = {
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const cmsPost = await getBlogPostBySlug(slug)
 
   if (cmsPost) {
-    return buildMetadata({
+    return buildPageMetadata({
       title: cmsPost.seo?.metaTitle ?? cmsPost.title,
       description: cmsPost.seo?.metaDescription ?? cmsPost.excerpt,
       path: `/blog/${cmsPost.slug}`,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = getBlogPost(slug)
   if (!post) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: post.title,
     description: post.excerpt,
     path: `/blog/${post.slug}`,

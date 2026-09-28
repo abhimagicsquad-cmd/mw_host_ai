@@ -5,9 +5,9 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
 import { hostingPages } from "@/constants/hosting-pages-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 
-export const metadata = buildMetadata({
+export const generateMetadata = () => buildPageMetadata({
   title: "Sitemap",
   description: "A full index of every MagicWorks Host page — hosting, domains, SSL, email, and company pages.",
   path: "/sitemap-page",

@@ -9,19 +9,19 @@ import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { getArticlesByCategory, kbArticles, kbCategories } from "@/constants/knowledge-base-data"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllKBArticles, getAllKBCategories, getKnowledgeBasePage } from "@/sanity/lib/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getKnowledgeBasePage()
   if (!cms?.seo?.metaTitle) {
-    return buildMetadata({
+    return buildPageMetadata({
       title: "Knowledge Base",
       description: "Search MagicWorks Host help articles on billing, domains, hosting, SSL, and email — or ask our support team directly.",
       path: "/knowledge-base",
     })
   }
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms.seo.metaTitle,
     description: cms.seo.metaDescription ?? "",
     path: "/knowledge-base",
