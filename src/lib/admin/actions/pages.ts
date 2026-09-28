@@ -8,6 +8,7 @@ import { actorId, authorizeAction } from "@/lib/admin/auth"
 import { cmsAdminDb } from "@/lib/cms/db"
 import { normalizePath, validatePagePath } from "@/lib/cms/paths"
 import { isSectionType, sectionSchemaMap } from "@/lib/cms/section-schemas"
+import { templateForPath, templates, templateSectionType } from "@/lib/cms/templates"
 import type { ActionState, PageRow, PageSectionRow, PageStatus, PageType } from "@/lib/cms/types"
 
 import { refreshWebsite, toActionError } from "./utils"
@@ -36,7 +37,10 @@ function parseDetails(formData: FormData) {
   const path = normalizePath(parsed.data.path)
   const pathError = validatePagePath(path, parsed.data.page_type)
   if (pathError) return { error: { error: pathError, fieldErrors: { path: pathError } } as ActionState }
-  return { data: { ...parsed.data, path, excerpt: parsed.data.excerpt || null, featured_image: parsed.data.featured_image || null } }
+  // Template URLs dictate their page type (e.g. /legal/* is always a static template page).
+  const template = templateForPath(path)
+  const page_type = template ? templates[template].pageType : parsed.data.page_type
+  return { template, data: { ...parsed.data, page_type, path, excerpt: parsed.data.excerpt || null, featured_image: parsed.data.featured_image || null } }
 }
 
 export async function createPageAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -55,10 +59,9 @@ export async function createPageAction(_prev: ActionState, formData: FormData): 
     if (error) throw error
     pageId = data.id
 
-    const starterSections =
-      starter === "blog"
-        ? [{ type: "richTextBlock", data: { content: "" } }]
-        : starter === "landing"
+    const starterSections = result.template
+      ? [{ type: templateSectionType(result.template), data: structuredClone(templates[result.template].defaults) }]
+      : starter === "landing"
           ? [
               { type: "pageHeroBlock", data: { ...sectionSchemaMap.pageHeroBlock.defaults, title: data.title } },
               { type: "featureGridBlock", data: sectionSchemaMap.featureGridBlock.defaults },
@@ -89,6 +92,15 @@ export async function updatePageDetailsAction(pageId: string, _prev: ActionState
     const admin = await authorizeAction("pages.edit")
     const result = parseDetails(formData)
     if (result.error) return result.error
+
+    // A template page's content only fits the route family it was made for.
+    const { data: current } = await db().from("pages").select("path").eq("id", pageId).single()
+    if (current && templateForPath(current.path) !== result.template) {
+      const message = templateForPath(current.path)
+        ? `This ${templates[templateForPath(current.path)!].label.toLowerCase()} must keep a URL of the same kind.`
+        : "Page-builder pages can't move to a URL that uses a fixed template."
+      return { error: message, fieldErrors: { path: message } }
+    }
 
     const { data, error } = await db()
       .from("pages")
@@ -222,6 +234,9 @@ export async function duplicatePageAction(pageId: string): Promise<ActionState> 
     const pageType: PageType = page.page_type === "home" ? "landing" : page.page_type
     const pathError = validatePagePath(path, pageType)
     if (pathError) return { error: `Can't duplicate: ${pathError}` }
+    if (templateForPath(path) !== templateForPath(page.path)) {
+      return { error: "This page has a single fixed URL, so it can't be duplicated." }
+    }
 
     const { data: copy, error: insertError } = await db()
       .from("pages")
@@ -252,4 +267,36 @@ export async function duplicatePageAction(pageId: string): Promise<ActionState> 
     return toActionError(error)
   }
   redirect(`/admin/pages/${newId}?duplicated=1`)
+}
+
+/**
+ * Saves the content of a structured template page (its single `template:<key>` section).
+ * The template is derived from the page URL, so content always matches the route rendering it.
+ */
+export async function saveTemplateAction(pageId: string, payload: string): Promise<ActionState> {
+  try {
+    const admin = await authorizeAction("pages.edit")
+    const { data: page, error: pageError } = await db().from("pages").select("title, path").eq("id", pageId).single()
+    if (pageError) throw pageError
+    const template = templateForPath(page.path)
+    if (!template) return { error: "This page is not a template page." }
+
+    const data = JSON.parse(payload) as unknown
+    if (!data || typeof data !== "object" || Array.isArray(data)) return { error: "Invalid content." }
+
+    const type = templateSectionType(template)
+    const now = new Date().toISOString()
+    const { data: existing } = await db().from("page_sections").select("id").eq("page_id", pageId).eq("type", type).maybeSingle()
+    const { error } = existing
+      ? await db().from("page_sections").update({ data, updated_at: now }).eq("id", existing.id)
+      : await db().from("page_sections").insert({ page_id: pageId, type, position: 0, data })
+    if (error) throw error
+
+    await db().from("pages").update({ updated_by: actorId(admin), updated_at: now }).eq("id", pageId)
+    await logActivity({ admin, action: "content.updated", entityType: "page", entityId: pageId, description: `Edited content of “${page.title}” (${templates[template].label})` })
+    refreshWebsite()
+    return { ok: true, message: "Content saved." }
+  } catch (error) {
+    return toActionError(error)
+  }
 }

@@ -65,6 +65,7 @@ export default async function VpsHostingPage() {
   const reasons: Feature[] =
     cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? defaultReasons
   const faqs = cms?.faqs ?? defaultFaqs
+  const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("vps-hosting")
   const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : vpsPlans
   const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : vpsPlansUSA
@@ -78,13 +79,17 @@ export default async function VpsHostingPage() {
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "View pricing", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: "Provisioning", value: "< 1 hr" },
-          { label: "Uptime SLA", value: "99.9%" },
-          { label: "Support", value: "24/7" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "View pricing", href: "#pricing" }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: "Provisioning", value: "< 1 hr" },
+                { label: "Uptime SLA", value: "99.9%" },
+                { label: "Support", value: "24/7" },
+              ]
+        }
         media={<HeroVisual />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
@@ -102,9 +107,9 @@ export default async function VpsHostingPage() {
 
       <div id="pricing">
         <PricingSection
-          eyebrow="Pricing"
-          title="VPS tiers"
-          description="Choose the data-center region closest to your users."
+          eyebrow={copy?.pricingEyebrow || "Pricing"}
+          title={copy?.pricingTitle || "VPS tiers"}
+          description={copy?.pricingDescription || "Choose the data-center region closest to your users."}
           tabs={[
             { value: "india", label: "India", plans: indiaPlans },
             { value: "usa", label: "USA", plans: usaPlans },
@@ -112,7 +117,12 @@ export default async function VpsHostingPage() {
         />
       </div>
 
-      <WhyChooseUs eyebrow="What you get" title="Built for teams that need more control" background="alt" reasons={reasons} />
+      <WhyChooseUs
+        eyebrow={copy?.featuresEyebrow || "What you get"}
+        title={copy?.featuresTitle || "Built for teams that need more control"}
+        background="alt"
+        reasons={reasons}
+      />
 
       <TestimonialsSection
         title="What our VPS customers say"
@@ -120,12 +130,13 @@ export default async function VpsHostingPage() {
         testimonials={testimonials}
       />
 
-      <FAQSection eyebrow="FAQs" title="VPS hosting questions, answered" items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || "VPS hosting questions, answered"} items={faqs} />
 
       <CTASection
-        title="Ready to move up to VPS?"
-        description="Our team will help you pick the right tier for your workload."
-        primaryCta={{ label: "Talk to sales", href: LEAD_CTA_HREF }}
+        title={copy?.ctaTitle || "Ready to move up to VPS?"}
+        description={copy?.ctaDescription || "Our team will help you pick the right tier for your workload."}
+        primaryCta={copy?.ctaPrimary ?? { label: "Talk to sales", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.ctaSecondary}
         background="navy"
       />
     </>

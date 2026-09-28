@@ -10,8 +10,9 @@ import { Breadcrumbs } from "@/components/sections/breadcrumbs"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { PricingSection } from "@/components/sections/pricing-section"
-import { getPromoPage, promoPages } from "@/constants/promo-pages-data"
+import { getPromoPage, type PromoPageData, promoPages } from "@/constants/promo-pages-data"
 import { promoSharedHostingPlans } from "@/constants/pricing-plans"
+import { getCmsTemplate, getCmsTemplatePages } from "@/lib/cms/content"
 import { buildPageMetadata } from "@/lib/seo"
 
 type PromoPageProps = {
@@ -19,12 +20,19 @@ type PromoPageProps = {
 }
 
 export async function generateStaticParams() {
-  return promoPages.map((page) => ({ campaignSlug: page.slug }))
+  const cmsSlugs = (await getCmsTemplatePages("promoPage")).map((page) => page.path.replace(/^\/promo\//, ""))
+  return [...new Set([...promoPages.map((page) => page.slug), ...cmsSlugs])].map((campaignSlug) => ({ campaignSlug }))
+}
+
+/** CMS promotion first, then the built-in campaign. */
+async function resolvePromo(slug: string): Promise<PromoPageData | undefined> {
+  const cms = await getCmsTemplate<Omit<PromoPageData, "slug">>("promoPage", `/promo/${slug}`)
+  return cms ? { ...cms, slug } : getPromoPage(slug)
 }
 
 export async function generateMetadata({ params }: PromoPageProps): Promise<Metadata> {
   const { campaignSlug } = await params
-  const page = getPromoPage(campaignSlug)
+  const page = await resolvePromo(campaignSlug)
   if (!page) return {}
 
   return buildPageMetadata({
@@ -36,7 +44,7 @@ export async function generateMetadata({ params }: PromoPageProps): Promise<Meta
 
 export default async function PromoPage({ params }: PromoPageProps) {
   const { campaignSlug } = await params
-  const page = getPromoPage(campaignSlug)
+  const page = await resolvePromo(campaignSlug)
 
   if (!page) notFound()
 

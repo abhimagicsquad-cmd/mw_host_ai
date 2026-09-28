@@ -2,9 +2,14 @@ import type { ReactNode } from "react"
 import { PortableText } from "@portabletext/react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
+import { GetQuoteForm } from "@/components/forms/get-quote-form"
+import { LeadForm } from "@/components/forms/lead-form"
+import { SectionContainer } from "@/components/layout/section-container"
+import { SectionHeading } from "@/components/layout/section-heading"
 import { AboutCredibilitySection } from "@/components/sections/about-credibility-section"
 import { BannerSection } from "@/components/sections/banner-section"
 import { ContentSection } from "@/components/sections/content-section"
+import { ContactSection } from "@/components/sections/contact-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { FeaturesSection } from "@/components/sections/features-section"
@@ -15,6 +20,7 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
+import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { resolveIcon } from "@/lib/icon-map"
@@ -271,6 +277,29 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
               <ContentSection key={block._key} eyebrow={block.eyebrow} title={block.title}>
                 <PortableText value={block.content} />
               </ContentSection>
+            )
+          case "tldPricingBlock":
+            return <TldPricingStrip key={block._key} items={block.items.map((item) => ({ ...item, suffix: item.suffix ?? "" }))} />
+          case "quoteFormBlock":
+            return (
+              <SectionContainer key={block._key} width="narrow" background={block.background === "none" ? "none" : "alt"}>
+                <SectionHeading eyebrow={block.eyebrow} title={block.title} description={block.description} />
+                <div className="mx-auto mt-10 max-w-xl">
+                  <GetQuoteForm source={block.source || "page-builder:quote"} defaultService={block.defaultService || undefined} />
+                </div>
+              </SectionContainer>
+            )
+          case "leadFormBlock":
+            return (
+              <ContactSection
+                key={block._key}
+                eyebrow={block.eyebrow}
+                title={block.title}
+                description={block.description}
+                background={block.background === "alt" ? "alt" : "none"}
+              >
+                <LeadForm source={block.source || "page-builder:lead"} submitLabel={block.submitLabel || undefined} />
+              </ContactSection>
             )
           default:
             return null

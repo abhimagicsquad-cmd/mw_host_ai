@@ -9,6 +9,7 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { domainIncludedFeatures, domainPages, getDomainPage, tldPricing } from "@/constants/domain-pages-data"
+import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
 
@@ -48,6 +49,10 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
   const description = cms?.heroDescription ?? fallback!.description
   const bullets = cms?.bullets ?? fallback!.bullets
   const faqs = cms?.faqs ?? fallback!.faqs
+  const copy = cms?.copy
+  const features = cms?.features?.length
+    ? cms.features.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) }))
+    : domainIncludedFeatures
 
   return (
     <>
@@ -56,13 +61,17 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "Get started", href: LEAD_CTA_HREF }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: ".com from", value: "₹1,099" },
-          { label: "Propagation", value: "< 24 hrs" },
-          { label: "WHOIS privacy", value: "Free" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: ".com from", value: "₹1,099" },
+                { label: "Propagation", value: "< 24 hrs" },
+                { label: "WHOIS privacy", value: "Free" },
+              ]
+        }
         media={<HeroVisual variant="domain" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Domains", href: "/domain" }, { label: eyebrow }]}
       />
@@ -70,18 +79,19 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
       <TldPricingStrip items={tldPricing} />
 
       <FeaturesSection
-        eyebrow="Included"
-        title="What you get with every domain"
+        eyebrow={copy?.featuresEyebrow || "Included"}
+        title={copy?.featuresTitle || "What you get with every domain"}
         columns={3}
-        features={domainIncludedFeatures}
+        features={features}
       />
 
-      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
-        title="Ready to get your domain sorted?"
-        description="Our team can register, host, or transfer it for you today."
-        primaryCta={{ label: "Get started", href: LEAD_CTA_HREF }}
+        title={copy?.ctaTitle || "Ready to get your domain sorted?"}
+        description={copy?.ctaDescription || "Our team can register, host, or transfer it for you today."}
+        primaryCta={copy?.ctaPrimary ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.ctaSecondary}
         background="navy"
       />
     </>

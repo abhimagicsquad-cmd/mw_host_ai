@@ -1,10 +1,11 @@
+import { templateForPath } from "./templates"
 import type { PageType } from "./types"
 
 /** Built-in routes whose content comes from the page builder when a published CMS page exists. */
 export const CMS_INTEGRATED_PATHS: Record<string, string> = {
   "/": "Home page",
   "/about-us": "About Us",
-  "/contact-us": "Contact Us (sections appear above the contact forms, which always stay)",
+  "/contact-us": "Contact Us (keep the Contact form and Quote request form sections so visitors can still get in touch)",
   "/hosting": "Hosting hub",
   "/domain": "Domain hub",
   "/email-hosting": "Email hosting hub",
@@ -67,10 +68,9 @@ export function slugify(input: string): string {
 export function validatePagePath(path: string, pageType: PageType): string | null {
   if (!/^\/[a-z0-9/_-]*$/.test(path)) return "URL may only contain lowercase letters, numbers, dashes and slashes."
   if (path.length > 200) return "URL is too long."
-  if (pageType === "blog") {
-    return /^\/blog\/[a-z0-9_-]+$/.test(path) ? null : "Blog post URLs must look like /blog/your-post-slug."
-  }
-  if (path === "/blog" || path.startsWith("/blog/")) return "/blog URLs are reserved for blog posts (choose page type “Blog post”)."
+  // Template URLs (service, legal, blog post, promo…) are always allowed; the template sets the page type.
+  if (templateForPath(path)) return null
+  if (pageType === "blog") return "Blog post URLs must look like /blog/your-post-slug."
   if (pageType === "home" && path !== "/") return "The home page must use the URL “/”."
   if (path in CMS_INTEGRATED_PATHS) return null
   const reserved = RESERVED_PREFIXES.find((prefix) =>

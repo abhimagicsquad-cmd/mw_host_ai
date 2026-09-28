@@ -56,6 +56,7 @@ export default async function SslSlugPage({ params }: SslSlugPageProps) {
   const description = cms?.heroDescription ?? fallback!.description
   const bullets = cms?.bullets ?? fallback!.bullets
   const faqs = cms?.faqs ?? fallback!.faqs
+  const copy = cms?.copy
   const plan: PricingPlan = cms?.plan
     ? { ...cms.plan, features: cms.plan.features ?? [], cta: cms.plan.cta ?? { label: "Get started", href: "#lead" } }
     : (sslPlans.find((sslPlan) => sslPlan.slug === fallback!.planSlug) ?? sslPlans[0])
@@ -69,31 +70,39 @@ export default async function SslSlugPage({ params }: SslSlugPageProps) {
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "View pricing", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: "Encryption", value: "256-bit" },
-          { label: "Price", value: `${plan.price}${plan.priceSuffix ?? ""}` },
-          { label: "Support", value: "24/7" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "View pricing", href: "#pricing" }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: "Encryption", value: "256-bit" },
+                { label: "Price", value: `${plan.price}${plan.priceSuffix ?? ""}` },
+                { label: "Support", value: "24/7" },
+              ]
+        }
         media={<HeroVisual variant="security" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "SSL Certificates", href: "/ssl" }, { label: eyebrow }]}
       />
 
       <SectionContainer width="narrow" id="pricing">
-        <SectionHeading eyebrow="Pricing" title={`${eyebrow} certificate`} />
+        <SectionHeading
+          eyebrow={copy?.pricingEyebrow || "Pricing"}
+          title={copy?.pricingTitle || `${eyebrow} certificate`}
+          description={copy?.pricingDescription || undefined}
+        />
         <div className="mx-auto mt-10 max-w-sm">
           <PricingCard plan={plan} />
         </div>
       </SectionContainer>
 
-      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
-        title="Not sure this is the right certificate for you?"
-        description="Tell us about your site and we'll recommend the right tier."
-        primaryCta={{ label: "Ask us", href: LEAD_CTA_HREF }}
-        secondaryCta={{ label: "Compare all certificates", href: "/ssl" }}
+        title={copy?.ctaTitle || "Not sure this is the right certificate for you?"}
+        description={copy?.ctaDescription || "Tell us about your site and we'll recommend the right tier."}
+        primaryCta={copy?.ctaPrimary ?? { label: "Ask us", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.ctaSecondary ?? { label: "Compare all certificates", href: "/ssl" }}
         background="navy"
       />
     </>

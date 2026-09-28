@@ -6,7 +6,7 @@ The website's content is now managed from a built-in admin at **`/admin`**, back
 
 1. **Run the migration.** Open the Supabase SQL editor for project `apozsxenyhrgwlhycxcp` and run [`supabase/migrations/0004_create_cms.sql`](../supabase/migrations/0004_create_cms.sql). It creates the CMS tables, seeds the `abhiadmin` super admin and the empty header/footer menus and settings rows. It is idempotent — safe to re-run. It also creates `orders` / `newsletter_subscribers` if `0002`/`0003` were never applied.
 2. **Sign in** at `/admin/login` as `abhiadmin`, then **change the password** at `/admin/profile` (the dashboard nags until you do).
-3. **Import existing content.** Dashboard → *Migration & maintenance* → **Import from Sanity**. This copies the Home, About, Contact and Hosting/Domain/Email hub pages (with their SEO), both menus and the site settings. Leave "publish immediately" unticked to review drafts first; the site keeps serving Sanity until each page is published.
+3. **Import existing content.** Content Migration → **Import pages as drafts** copies every page (plus pricing plans) from Sanity / built-in content; preview and publish from the same screen. See [12-content-migration.md](12-content-migration.md).
 4. Optional: set `ADMIN_SESSION_SECRET` on Vercel (see `.env.local.example`). Without it, the session key is derived from `SUPABASE_SERVICE_ROLE_KEY`.
 
 The Storage bucket `cms-media` (public, 20 MB, JPG/PNG/SVG/WEBP/PDF) is created automatically on first upload.

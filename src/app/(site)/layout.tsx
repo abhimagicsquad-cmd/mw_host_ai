@@ -1,3 +1,4 @@
+import { PreviewBanner } from "@/components/common/preview-banner"
 import { Footer } from "@/components/layout/footer/footer"
 import { Header } from "@/components/layout/header/header"
 import { MainHeader } from "@/components/layout/header/main-header"
@@ -12,6 +13,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </Header>
       <main>{children}</main>
       <Footer />
+      <PreviewBanner />
     </>
   )
 }

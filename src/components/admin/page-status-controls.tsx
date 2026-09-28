@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Copy, ExternalLink, Eye, EyeOff, Trash2 } from "lucide-react"
+import { Copy, ExternalLink, Eye, EyeOff, MonitorSmartphone, Trash2 } from "lucide-react"
 
 import { buttonVariants } from "@/components/ui/button"
 import { deletePageAction, duplicatePageAction, setPageStatusAction } from "@/lib/admin/actions/pages"
@@ -23,6 +23,16 @@ export function PageStatusControls({ page, canEdit, canPublish, canDelete }: Pro
 
   return (
     <>
+      {/* Opens the real website template in draft preview (latest saved content, even unpublished). */}
+      <a
+        href={`/admin/preview?path=${encodeURIComponent(page.path)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={buttonVariants({ variant: "outline" })}
+      >
+        <MonitorSmartphone />
+        Preview
+      </a>
       {page.status === "published" ? (
         <a href={page.path} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "outline" })}>
           <ExternalLink />

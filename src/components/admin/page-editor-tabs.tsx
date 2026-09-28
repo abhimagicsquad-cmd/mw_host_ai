@@ -13,7 +13,7 @@ export function PageEditorTabs({ tabs }: { tabs: { id: string; label: string; co
 
   return (
     <div>
-      <div role="tablist" aria-label="Page editor" className="mb-5 flex gap-1 overflow-x-auto border-b">
+      <div role="tablist" aria-label="Page editor" className="mb-5 flex gap-1 overflow-x-auto overflow-y-hidden border-b">
         {tabs.map((tab) => (
           <button
             key={tab.id}

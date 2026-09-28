@@ -66,6 +66,7 @@ export default async function SslPage() {
   const reasons: Feature[] =
     cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? defaultReasons
   const faqs = cms?.faqs ?? defaultFaqs
+  const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("ssl")
   const plans = cmsPlans.length ? cmsPlans : sslPlans
 
@@ -78,18 +79,27 @@ export default async function SslPage() {
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "View certificates", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: "Encryption", value: "256-bit" },
-          { label: "Issuance", value: "< 5 min" },
-          { label: "SSL Labs grade", value: "A+" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "View certificates", href: "#pricing" }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: "Encryption", value: "256-bit" },
+                { label: "Issuance", value: "< 5 min" },
+                { label: "SSL Labs grade", value: "A+" },
+              ]
+        }
         media={<HeroVisual variant="security" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
 
-      <WhyChooseUs eyebrow="Why SSL matters" title="What an SSL certificate actually protects" background="alt" reasons={reasons} />
+      <WhyChooseUs
+        eyebrow={copy?.featuresEyebrow || "Why SSL matters"}
+        title={copy?.featuresTitle || "What an SSL certificate actually protects"}
+        background="alt"
+        reasons={reasons}
+      />
 
       <ServiceGrid
         eyebrow="Certificate types"
@@ -106,19 +116,20 @@ export default async function SslPage() {
 
       <div id="pricing">
         <PricingSection
-          eyebrow="Pricing"
-          title="Choose your certificate"
-          description="All tiers include 256-bit encryption — the difference is the level of identity verification."
+          eyebrow={copy?.pricingEyebrow || "Pricing"}
+          title={copy?.pricingTitle || "Choose your certificate"}
+          description={copy?.pricingDescription || "All tiers include 256-bit encryption — the difference is the level of identity verification."}
           plans={plans}
         />
       </div>
 
-      <FAQSection eyebrow="FAQs" title="SSL questions, answered" items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || "SSL questions, answered"} items={faqs} />
 
       <CTASection
-        title="Not sure which certificate you need?"
-        description="Tell us about your site and we'll recommend the right tier."
-        primaryCta={{ label: "Ask us", href: LEAD_CTA_HREF }}
+        title={copy?.ctaTitle || "Not sure which certificate you need?"}
+        description={copy?.ctaDescription || "Tell us about your site and we'll recommend the right tier."}
+        primaryCta={copy?.ctaPrimary ?? { label: "Ask us", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.ctaSecondary}
         background="navy"
       />
     </>

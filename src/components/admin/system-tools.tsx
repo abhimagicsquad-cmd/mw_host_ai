@@ -1,36 +1,31 @@
 "use client"
 
-import { useActionState, useState } from "react"
-import { DownloadCloud, RefreshCw } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
+import { ArrowRight, RefreshCw } from "lucide-react"
 
-import { clearWebsiteCacheAction, importFromSanityAction } from "@/lib/admin/actions/settings"
+import { buttonVariants } from "@/components/ui/button"
+import { clearWebsiteCacheAction } from "@/lib/admin/actions/settings"
 import type { ActionState } from "@/lib/cms/types"
 
-import { ActionButton, checkboxClassName, FormMessage, SubmitButton } from "./form-controls"
+import { ActionButton, FormMessage } from "./form-controls"
 import { Panel } from "./ui"
 
 export function SystemTools() {
-  const [importState, importAction] = useActionState(importFromSanityAction, {})
   const [cacheState, setCacheState] = useState<ActionState>()
 
   return (
-    <Panel title="Migration & maintenance" description="One-time Sanity import and cache controls">
+    <Panel title="Migration & maintenance" description="Content migration from Sanity and cache controls">
       <div className="grid gap-6 lg:grid-cols-2">
-        <form action={importAction} className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           <p className="text-sm text-muted-foreground">
-            Copies the Home, About, Contact and hosting/domain/email hub pages, their SEO, the header & footer menus and site settings
-            from Sanity into this CMS. Existing CMS content is never overwritten, so it&apos;s safe to run again.
+            See where every page&apos;s content comes from today, import it all into the CMS as drafts, preview it, and publish when it&apos;s been checked.
           </p>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="publish" className={checkboxClassName} />
-            Publish imported pages immediately (otherwise they import as drafts and Sanity keeps serving them)
-          </label>
-          <FormMessage state={importState} />
-          <SubmitButton variant="outline" className="self-start" pendingLabel="Importing…">
-            <DownloadCloud />
-            Import from Sanity
-          </SubmitButton>
-        </form>
+          <Link href="/admin/migration" className={buttonVariants({ variant: "outline", className: "self-start" })}>
+            Open content migration
+            <ArrowRight />
+          </Link>
+        </div>
         <div className="flex flex-col gap-3">
           <p className="text-sm text-muted-foreground">
             Saving anything in the admin already refreshes the website. Use this only if you edited the database directly.

@@ -18,7 +18,9 @@ export type FieldDef =
   | { kind: "image"; name: string; label: string }
   | { kind: "stringList"; name: string; label: string; help?: string }
   | { kind: "cta"; name: string; label: string }
-  | { kind: "objectList"; name: string; label: string; itemLabel: string; fields: FieldDef[] }
+  | { kind: "objectList"; name: string; label: string; itemLabel: string; fields: FieldDef[]; help?: string }
+  /** A nested group of fields stored as one object, e.g. a template's optional "headings & buttons". */
+  | { kind: "object"; name: string; label: string; fields: FieldDef[]; help?: string; collapsed?: boolean }
 
 export type SectionSchema = {
   type: SectionType
@@ -126,9 +128,22 @@ export const sectionSchemas: SectionSchema[] = [
       { kind: "text", name: "title", label: "Heading", required: true },
       { kind: "textarea", name: "description", label: "Paragraph" },
       {
+        kind: "select",
+        name: "service",
+        label: "Show plans from Pricing Plans",
+        options: [
+          { value: "shared-hosting", label: "Shared hosting" },
+          { value: "vps-hosting", label: "VPS hosting" },
+          { value: "dedicated-server", label: "Dedicated server" },
+          { value: "ssl", label: "SSL certificates" },
+          { value: "business-email", label: "Business email" },
+          { value: "enterprise-email", label: "Enterprise email" },
+        ],
+      },
+      {
         kind: "objectList",
         name: "plans",
-        label: "Plans",
+        label: "Custom plans (only used when no service is selected above)",
         itemLabel: "Plan",
         fields: [
           { kind: "text", name: "name", label: "Plan name", required: true },
@@ -303,6 +318,56 @@ export const sectionSchemas: SectionSchema[] = [
       },
     ],
     defaults: { content: "" },
+  },
+  {
+    type: "tldPricingBlock",
+    label: "Domain prices strip",
+    description: "Row of domain extensions with their yearly prices.",
+    group: "Conversion",
+    fields: [
+      {
+        kind: "objectList",
+        name: "items",
+        label: "Domain extensions",
+        itemLabel: "Extension",
+        fields: [
+          { kind: "text", name: "tld", label: "Extension", required: true, placeholder: ".com" },
+          { kind: "text", name: "price", label: "Price", required: true, placeholder: "₹1,099" },
+          { kind: "text", name: "suffix", label: "Suffix", placeholder: "/yr" },
+        ],
+      },
+    ],
+    defaults: { items: [{ tld: ".com", price: "", suffix: "/yr" }] },
+  },
+  {
+    type: "leadFormBlock",
+    label: "Contact form",
+    description: "Heading plus the short enquiry form (name, email, phone, message).",
+    group: "Conversion",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "text", name: "title", label: "Heading", required: true },
+      { kind: "textarea", name: "description", label: "Paragraph" },
+      { kind: "text", name: "submitLabel", label: "Button label", placeholder: "Send message" },
+      { kind: "text", name: "source", label: "Lead source tag", help: "Shown on each lead under Forms → Leads so you know which form it came from." },
+      { kind: "select", name: "background", label: "Background", options: [{ value: "none", label: "Default" }, { value: "alt", label: "Light grey" }] },
+    ],
+    defaults: { title: "Send us your details", submitLabel: "Send message", source: "contact-page" },
+  },
+  {
+    type: "quoteFormBlock",
+    label: "Quote request form",
+    description: "Heading plus the detailed quote form (service, hosting type, requirements).",
+    group: "Conversion",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "text", name: "title", label: "Heading", required: true },
+      { kind: "textarea", name: "description", label: "Paragraph" },
+      { kind: "text", name: "defaultService", label: "Pre-selected service", placeholder: "shared-hosting", help: "Optional service value the form starts with." },
+      { kind: "text", name: "source", label: "Lead source tag" },
+      { kind: "select", name: "background", label: "Background", options: [{ value: "alt", label: "Light grey" }, { value: "none", label: "Default" }] },
+    ],
+    defaults: { title: "Request a detailed quote", background: "alt", source: "page-builder:quote" },
   },
 ]
 

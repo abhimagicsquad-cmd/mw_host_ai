@@ -6,12 +6,14 @@ import { PageStatusControls } from "@/components/admin/page-status-controls"
 import { PageDetailsForm } from "@/components/admin/page-details-form"
 import { PageEditorTabs } from "@/components/admin/page-editor-tabs"
 import { SectionBuilder } from "@/components/admin/section-builder"
+import { TemplateEditor } from "@/components/admin/template-editor"
 import { SeoForm } from "@/components/admin/seo-form"
 import { formatDate, PAGE_TYPE_LABELS, PageHeader, Panel, Pill, ProblemNotice, StatusBadge } from "@/components/admin/ui"
 import { requireAdmin } from "@/lib/admin/auth"
 import { can } from "@/lib/admin/permissions"
 import { getPageWithSections, getSeo } from "@/lib/admin/queries"
 import { CMS_INTEGRATED_PATHS } from "@/lib/cms/paths"
+import { templateForPath, templates, templateSectionType } from "@/lib/cms/templates"
 
 export const metadata: Metadata = { title: "Edit page" }
 
@@ -40,6 +42,8 @@ export default async function EditPagePage({
   const seo = await getSeo(page.path)
   const canEdit = can(admin.role, "pages.edit")
   const builtIn = CMS_INTEGRATED_PATHS[page.path]
+  const template = templateForPath(page.path)
+  const templateData = template ? page.sections.find((s) => s.type === templateSectionType(template))?.data : undefined
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,8 +88,10 @@ export default async function EditPagePage({
         tabs={[
           {
             id: "content",
-            label: `Content (${page.sections.length})`,
-            content: (
+            label: template ? "Content" : `Content (${page.sections.length})`,
+            content: template ? (
+              <TemplateEditor pageId={page.id} template={template} initialData={templateData ?? templates[template].defaults} canEdit={canEdit} />
+            ) : (
               <SectionBuilder
                 pageId={page.id}
                 canEdit={canEdit}

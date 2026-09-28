@@ -12,6 +12,8 @@ export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
   const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value)
   const isLoginPage = pathname === "/admin/login"
+  // Leaving draft preview must work even after the admin session has expired.
+  if (pathname === "/admin/preview/exit") return NextResponse.next()
 
   if (!session && !isLoginPage) {
     const loginUrl = new URL("/admin/login", request.url)
