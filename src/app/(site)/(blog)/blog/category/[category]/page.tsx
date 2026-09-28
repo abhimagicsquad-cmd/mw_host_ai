@@ -7,7 +7,7 @@ import { BlogExplorer } from "@/components/sections/blog-explorer"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { type BlogCategory, type BlogPost, blogCategories, blogPosts } from "@/constants/blog-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllBlogPosts, getBlogListingPage } from "@/sanity/lib/queries"
 import type { BlogPostData } from "@/sanity/types"
 
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: BlogCategoryPageProps): Promi
   const match = combinedCategories.find((c) => c.slug === category)
   if (!match) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: `${match.name} Articles`,
     description: `${match.name} articles from the MagicWorks Host blog — practical guidance for people who run websites.`,
     path: `/blog/category/${category}`,

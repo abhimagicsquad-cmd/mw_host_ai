@@ -11,7 +11,7 @@ import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/constants/dedicated-pages-data"
 import { dedicatedPlans, dedicatedPlansUSA } from "@/constants/pricing-plans"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 
 type DedicatedSlugPageProps = {
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: DedicatedSlugPageProps): Prom
 
   if (!cms && !page) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/dedicated-hosting/${slug}`,

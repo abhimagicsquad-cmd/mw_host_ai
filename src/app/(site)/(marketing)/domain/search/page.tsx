@@ -1,13 +1,11 @@
-import type { Metadata } from "next"
-
 import { SectionContainer } from "@/components/layout/section-container"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { DomainSearchWidget } from "@/components/tools/domain-search-widget"
 import { domainIncludedFeatures } from "@/constants/domain-pages-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = buildMetadata({
+export const generateMetadata = () => buildPageMetadata({
   title: "Domain Search",
   description: "Check domain name availability across popular TLDs and see suggested alternatives instantly.",
   path: "/domain/search",

@@ -9,7 +9,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { comparisonRows } from "@/constants/compare-hosting-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getComparisonPage, getPricingPlansByService } from "@/sanity/lib/queries"
 
 const fallbackFaqs = [
@@ -21,13 +21,13 @@ const fallbackFaqs = [
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getComparisonPage()
   if (!cms?.seo?.metaTitle) {
-    return buildMetadata({
+    return buildPageMetadata({
       title: "Compare Hosting Plans",
       description: "A side-by-side feature comparison of every MagicWorks Host NVMe shared hosting tier — storage, bandwidth, email, and more.",
       path: "/compare-hosting-plans",
     })
   }
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms.seo.metaTitle,
     description: cms.seo.metaDescription ?? "",
     path: "/compare-hosting-plans",

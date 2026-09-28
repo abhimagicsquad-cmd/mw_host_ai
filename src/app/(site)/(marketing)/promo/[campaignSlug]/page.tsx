@@ -12,7 +12,7 @@ import { FAQSection } from "@/components/sections/faq-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { getPromoPage, promoPages } from "@/constants/promo-pages-data"
 import { promoSharedHostingPlans } from "@/constants/pricing-plans"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 
 type PromoPageProps = {
   params: Promise<{ campaignSlug: string }>
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PromoPageProps): Promise<Meta
   const page = getPromoPage(campaignSlug)
   if (!page) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: page.title,
     description: page.description,
     path: `/promo/${campaignSlug}`,

@@ -11,7 +11,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { AffiliateEarningsCalculator } from "@/components/tools/affiliate-earnings-calculator"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAffiliatePage } from "@/sanity/lib/queries"
 
 const fallbackStats = [
@@ -37,13 +37,13 @@ const fallbackFaqs = [
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getAffiliatePage()
   if (!cms?.seo?.metaTitle) {
-    return buildMetadata({
+    return buildPageMetadata({
       title: "Become Our Affiliate",
       description: "Earn 20% recurring commission referring businesses to MagicWorks Host — 90-day cookie, low minimum withdrawal, no cap.",
       path: "/become-our-affiliate",
     })
   }
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms.seo.metaTitle,
     description: cms.seo.metaDescription ?? "",
     path: "/become-our-affiliate",

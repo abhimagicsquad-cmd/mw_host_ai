@@ -9,7 +9,7 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { domainIncludedFeatures, domainPages, getDomainPage, tldPricing } from "@/constants/domain-pages-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
 
 type DomainSlugPageProps = {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: DomainSlugPageProps): Promise
 
   if (!cms && !page) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/domain/${slug}`,

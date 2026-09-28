@@ -12,7 +12,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { sslPlans } from "@/constants/pricing-plans"
 import { getSslPage, sslPages } from "@/constants/ssl-pages-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
 import type { PricingPlan } from "@/types/content"
 
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: SslSlugPageProps): Promise<Me
 
   if (!cms && !page) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/ssl/${slug}`,

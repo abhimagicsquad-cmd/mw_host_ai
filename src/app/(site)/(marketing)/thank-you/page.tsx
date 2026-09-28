@@ -6,10 +6,10 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getThankYouPage } from "@/sanity/lib/queries"
 
-export const metadata = buildMetadata({
+export const generateMetadata = () => buildPageMetadata({
   title: "Thank You",
   description: "Your message was received — here's what happens next.",
   path: "/thank-you",

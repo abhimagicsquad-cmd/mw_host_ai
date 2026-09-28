@@ -1,13 +1,11 @@
-import type { Metadata } from "next"
-
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { TransferTimeCalculator } from "@/components/tools/transfer-time-calculator"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = buildMetadata({
+export const generateMetadata = () => buildPageMetadata({
   title: "Download/Upload Time Calculator",
   description: "Estimate how long a file transfer will take at a given internet speed.",
   path: "/tools/transfer-time-calculator",

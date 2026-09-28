@@ -220,3 +220,79 @@
     color: transparent;
   }
 }
+/* ---------------------------------------------------------------------------
+   Admin CMS theme — scoped to .admin-theme (set on the /admin wrapper and on <html>
+   while the admin is mounted, so portalled dialogs/menus pick it up too). Never
+   applies to the public website.
+   --------------------------------------------------------------------------- */
+.admin-theme {
+  --admin-primary: #0b3b68;
+  --admin-secondary: #f47c45;
+  --admin-dark: #0f172a;
+  --admin-text: #334155;
+  --admin-sidebar: #0b3b68;
+  --admin-sidebar-foreground: #dbe7f3;
+  --admin-sidebar-muted: #8fb0cf;
+  --admin-sidebar-hover: rgb(255 255 255 / 0.08);
+  --admin-sidebar-active: rgb(255 255 255 / 0.14);
+  --admin-chart: #0b3b68;
+
+  --background: #f5f7fb;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #0b3b68;
+  --primary-foreground: #ffffff;
+  --secondary: #eef2f7;
+  --secondary-foreground: #0f172a;
+  --muted: #eef2f7;
+  --muted-foreground: #5b6b80;
+  --accent: #eef2f7;
+  --accent-foreground: #0f172a;
+  --border: #e2e8f0;
+  --input: #d5dde8;
+  --ring: #0b3b68;
+  --body-text: #334155;
+}
+
+.admin-theme.dark {
+  --admin-primary: #7fb2e5;
+  --admin-sidebar: #0a1628;
+  --admin-sidebar-foreground: #d4deea;
+  --admin-sidebar-muted: #7d91a8;
+  --admin-chart: #7fb2e5;
+
+  --background: #0b1220;
+  --foreground: #e5ebf2;
+  --card: #111a2b;
+  --card-foreground: #e5ebf2;
+  --popover: #141f33;
+  --popover-foreground: #e5ebf2;
+  --primary: #7fb2e5;
+  --primary-foreground: #0b1220;
+  --secondary: #1b2740;
+  --secondary-foreground: #e5ebf2;
+  --muted: #1b2740;
+  --muted-foreground: #95a3b8;
+  --accent: #1b2740;
+  --accent-foreground: #e5ebf2;
+  --border: rgb(255 255 255 / 0.09);
+  --input: rgb(255 255 255 / 0.14);
+  --ring: #7fb2e5;
+  --body-text: #c3cedb;
+}
+
+@theme inline {
+  --color-admin-primary: var(--admin-primary);
+  --color-admin-secondary: var(--admin-secondary);
+  --color-admin-dark: var(--admin-dark);
+  --color-admin-text: var(--admin-text);
+  --color-admin-sidebar: var(--admin-sidebar);
+  --color-admin-sidebar-foreground: var(--admin-sidebar-foreground);
+  --color-admin-sidebar-muted: var(--admin-sidebar-muted);
+  --color-admin-sidebar-hover: var(--admin-sidebar-hover);
+  --color-admin-sidebar-active: var(--admin-sidebar-active);
+  --color-admin-chart: var(--admin-chart);
+}

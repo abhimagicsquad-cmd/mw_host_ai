@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { HeadphonesIcon, Lock, Server, ShieldCheck, TrendingUp, Zap } from "lucide-react"
 
+import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { OrganizationJsonLd } from "@/components/common/json-ld"
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
@@ -19,13 +20,13 @@ import { PageBuilder } from "@/components/sanity/page-builder"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { trustHighlights } from "@/constants/trust-highlights-data"
-import { buildMetadata } from "@/lib/seo"
+import { applySeoOverrides, buildPageMetadata } from "@/lib/seo"
 import { getHomePage, getPricingPlansByService } from "@/sanity/lib/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getHomePage()
-  if (!cms?.seo?.metaTitle) return {}
-  return buildMetadata({
+  if (!cms?.seo?.metaTitle) return applySeoOverrides({ alternates: { canonical: "/" } })
+  return buildPageMetadata({
     title: cms.seo.metaTitle,
     description: cms.seo.metaDescription ?? "",
     path: "/",
@@ -39,6 +40,7 @@ export default async function HomePage() {
     return (
       <>
         <OrganizationJsonLd />
+        <CmsSchemaJsonLd path="/" />
         <PageBuilder blocks={cms.pageBuilder} />
       </>
     )
@@ -50,6 +52,7 @@ export default async function HomePage() {
   return (
     <>
       <OrganizationJsonLd />
+        <CmsSchemaJsonLd path="/" />
 
       <BannerSection
         message="Save up to 30% on annual NVMe hosting plans — limited time."

@@ -6,7 +6,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { legalDocuments, legalSlugs } from "@/constants/legal-content"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllLegalSlugs, getLegalPage } from "@/sanity/lib/queries"
 
 type LegalPageProps = {
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: LegalPageProps): Promise<Meta
 
   if (!cms && !fallback) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.title ?? fallback!.title,
     description: cms?.summary ?? fallback!.summary,
     path: `/legal/${slug}`,

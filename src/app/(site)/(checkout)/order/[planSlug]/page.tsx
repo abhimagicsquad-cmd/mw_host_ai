@@ -5,7 +5,7 @@ import { notFound } from "next/navigation"
 import { OrderFlow } from "@/components/checkout/order-flow"
 import { SectionContainer } from "@/components/layout/section-container"
 import { getPricingPlanBySlug } from "@/constants/pricing-plans"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 
 type OrderPageProps = {
   params: Promise<{ planSlug: string }>
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: OrderPageProps): Promise<Meta
   const plan = getPricingPlanBySlug(planSlug)
   if (!plan) return {}
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: `Order ${plan.name}`,
     description: `Complete your ${plan.name} order — test-mode checkout, no live charge is made.`,
     path: `/order/${planSlug}`,

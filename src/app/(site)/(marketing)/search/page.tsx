@@ -1,18 +1,17 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { Search as SearchIcon } from "lucide-react"
 
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { Input } from "@/components/ui/input"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { searchSite } from "@/lib/search-index"
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string }>
 }
 
-export const metadata: Metadata = buildMetadata({
+export const generateMetadata = () => buildPageMetadata({
   title: "Search",
   description: "Search hosting plans, domains, SSL, email hosting, blog posts, and knowledge base articles.",
   path: "/search",

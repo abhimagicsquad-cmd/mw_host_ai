@@ -13,7 +13,7 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { sslPlans } from "@/constants/pricing-plans"
 import { sslPageIcons, sslPages } from "@/constants/ssl-pages-data"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -39,7 +39,7 @@ const defaultFaqs: FAQItem[] = [
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicePage("ssl", SLUG)
-  return buildMetadata({
+  return buildPageMetadata({
     title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? "SSL Certificates",
     description:
       cms?.seo?.metaDescription ??

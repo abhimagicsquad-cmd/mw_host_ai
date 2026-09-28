@@ -1,3 +1,11 @@
+import {
+  getCmsBlogPosts,
+  getCmsFooterMenu,
+  getCmsGeneralSettings,
+  getCmsHeaderMenu,
+  getCmsPageDocument,
+  getCmsWebsiteSettings,
+} from "@/lib/cms/content"
 import { sanityFetch } from "@/sanity/lib/client"
 import type {
   AffiliatePageData,
@@ -46,7 +54,34 @@ const pageBuilderProjection = /* groq */ `
   }
 `
 
+/** Copies only non-empty values so a blank CMS field never wipes out the Sanity/default value. */
+function mergeDefined<T extends object>(base: T, overrides: Partial<T>): T {
+  const result = { ...base }
+  for (const [key, value] of Object.entries(overrides) as [keyof T, T[keyof T]][]) {
+    if (value === undefined || value === null || value === "") continue
+    if (Array.isArray(value) && value.length === 0) continue
+    result[key] = value
+  }
+  return result
+}
+
+/**
+ * Content precedence everywhere in this file: custom CMS (Supabase, managed at /admin) →
+ * Sanity (legacy, read-only until its content is imported) → hardcoded page defaults.
+ */
 export async function getSiteSettings() {
+  const [sanity, general, website] = await Promise.all([getSanitySiteSettings(), getCmsGeneralSettings(), getCmsWebsiteSettings()])
+  const cmsValues: Partial<SiteSettingsData> = {
+    ...general,
+    headerCta: website.headerCta?.label ? website.headerCta : undefined,
+    globalCta: website.globalCta?.label ? website.globalCta : undefined,
+    socialLinks: website.socialLinks?.filter((link) => link.platform && link.url),
+  }
+  if (!sanity && !Object.values(cmsValues).some(Boolean)) return null
+  return mergeDefined<SiteSettingsData>(sanity ?? {}, cmsValues)
+}
+
+export async function getSanitySiteSettings() {
   return sanityFetch<SiteSettingsData>(
     /* groq */ `*[_type == "siteSettings"][0]{
       siteName, tagline, description, logo, favicon, headerCta, footerContent,
@@ -57,18 +92,34 @@ export async function getSiteSettings() {
 }
 
 export async function getHomePage() {
+  return (await getCmsPageDocument("/")) ?? getSanityHomePage()
+}
+
+export async function getSanityHomePage() {
   return sanityFetch<PageDocument>(/* groq */ `*[_type == "homePage"][0]{ seo, ${pageBuilderProjection} }`)
 }
 
 export async function getAboutPage() {
+  return (await getCmsPageDocument("/about-us")) ?? getSanityAboutPage()
+}
+
+export async function getSanityAboutPage() {
   return sanityFetch<PageDocument>(/* groq */ `*[_type == "aboutPage"][0]{ seo, ${pageBuilderProjection} }`)
 }
 
 export async function getContactPage() {
+  return (await getCmsPageDocument("/contact-us")) ?? getSanityContactPage()
+}
+
+export async function getSanityContactPage() {
   return sanityFetch<PageDocument>(/* groq */ `*[_type == "contactPage"][0]{ seo, ${pageBuilderProjection} }`)
 }
 
 export async function getServicesPage(slug: string) {
+  return (await getCmsPageDocument(`/${slug}`)) ?? getSanityServicesPage(slug)
+}
+
+export async function getSanityServicesPage(slug: string) {
   return sanityFetch<PageDocument>(
     /* groq */ `*[_type == "servicesPage" && slug.current == $slug][0]{ seo, ${pageBuilderProjection} }`,
     { slug }
@@ -178,7 +229,16 @@ export async function getThankYouPage() {
   )
 }
 
-export async function getNavigation() {
+export async function getNavigation(): Promise<NavigationData | null> {
+  const [sanity, header, footer] = await Promise.all([getSanityNavigation(), getCmsHeaderMenu(), getCmsFooterMenu()])
+  if (!sanity && !header && !footer) return null
+  return {
+    mainMenu: header ?? sanity?.mainMenu ?? [],
+    footerColumns: footer ?? sanity?.footerColumns ?? [],
+  }
+}
+
+export async function getSanityNavigation() {
   return sanityFetch<NavigationData>(
     /* groq */ `*[_type == "navigation"][0]{ mainMenu, footerColumns }`
   )
@@ -214,6 +274,12 @@ const blogPostProjection = /* groq */ `
 `
 
 export async function getAllBlogPosts() {
+  const [cmsPosts, sanityPosts] = await Promise.all([getCmsBlogPosts(), getSanityBlogPosts()])
+  const cmsSlugs = new Set(cmsPosts.map((post) => post.slug))
+  return [...cmsPosts, ...sanityPosts.filter((post) => !cmsSlugs.has(post.slug))]
+}
+
+async function getSanityBlogPosts() {
   return (
     (await sanityFetch<BlogPostData[]>(
       /* groq */ `*[_type == "blogPost"] | order(publishedAt desc){ ${blogPostProjection} }`
@@ -222,6 +288,11 @@ export async function getAllBlogPosts() {
 }
 
 export async function getBlogPostBySlug(slug: string) {
+  const cmsPost = (await getCmsBlogPosts()).find((post) => post.slug === slug)
+  return cmsPost ?? getSanityBlogPostBySlug(slug)
+}
+
+async function getSanityBlogPostBySlug(slug: string) {
   return sanityFetch<BlogPostData>(
     /* groq */ `*[_type == "blogPost" && slug.current == $slug][0]{ ${blogPostProjection} }`,
     { slug }

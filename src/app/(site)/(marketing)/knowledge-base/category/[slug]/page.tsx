@@ -9,7 +9,7 @@ import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { getArticlesByCategory, getKBCategory, kbCategories } from "@/constants/knowledge-base-data"
-import { buildMetadata } from "@/lib/seo"
+import { buildPageMetadata } from "@/lib/seo"
 import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/sanity/lib/queries"
 
 type KBCategoryPageProps = {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: KBCategoryPageProps): Promise
   const name = cms?.name ?? fallback!.name
   const description = cms?.description ?? fallback!.description
 
-  return buildMetadata({
+  return buildPageMetadata({
     title: `${name} Help Articles`,
     description,
     path: `/knowledge-base/category/${slug}`,
