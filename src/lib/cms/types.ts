@@ -143,6 +143,9 @@ export type SectionType =
   | "faqBlock"
   | "ctaBannerBlock"
   | "richTextBlock"
+  | "tldPricingBlock"
+  | "quoteFormBlock"
+  | "leadFormBlock"
 
 export type CtaValue = { label: string; href: string; external?: boolean }
 

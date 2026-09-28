@@ -53,6 +53,7 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
   const bullets = cms?.bullets ?? fallback!.bullets
   const features = cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? fallback!.features
   const faqs = cms?.faqs ?? fallback!.faqs
+  const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("shared-hosting")
   const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
@@ -65,20 +66,24 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "View pricing", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: "Avg. load time", value: "0.7s" },
-          { label: "Uptime SLA", value: "99.9%" },
-          { label: "Support", value: "24/7" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "View pricing", href: "#pricing" }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: "Avg. load time", value: "0.7s" },
+                { label: "Uptime SLA", value: "99.9%" },
+                { label: "Support", value: "24/7" },
+              ]
+        }
         media={<HeroVisual variant="dashboard" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Hosting", href: "/hosting" }, { label: eyebrow }]}
       />
 
       <FeaturesSection
-        eyebrow="Why this hosting"
-        title={`What makes ${eyebrow.toLowerCase()} different`}
+        eyebrow={copy?.featuresEyebrow || "Why this hosting"}
+        title={copy?.featuresTitle || `What makes ${eyebrow.toLowerCase()} different`}
         columns={3}
         background="alt"
         features={features}
@@ -86,20 +91,20 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
 
       <div id="pricing">
         <PricingSection
-          eyebrow="Pricing"
-          title="Select your plan"
-          description="Every plan includes free SSL, cPanel, and JetBackup — no hidden setup fees."
+          eyebrow={copy?.pricingEyebrow || "Pricing"}
+          title={copy?.pricingTitle || "Select your plan"}
+          description={copy?.pricingDescription || "Every plan includes free SSL, cPanel, and JetBackup — no hidden setup fees."}
           plans={plans}
         />
       </div>
 
-      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
-        title={`Ready to move your site to ${siteConfig.name}?`}
-        description="Free migration assistance included on every annual plan."
-        primaryCta={{ label: "View plans", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to sales", href: LEAD_CTA_HREF }}
+        title={copy?.ctaTitle || `Ready to move your site to ${siteConfig.name}?`}
+        description={copy?.ctaDescription || "Free migration assistance included on every annual plan."}
+        primaryCta={copy?.ctaPrimary ?? { label: "View plans", href: "#pricing" }}
+        secondaryCta={copy?.ctaSecondary ?? { label: "Talk to sales", href: LEAD_CTA_HREF }}
         background="navy"
       />
     </>

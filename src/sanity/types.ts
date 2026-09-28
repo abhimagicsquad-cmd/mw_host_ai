@@ -86,7 +86,7 @@ export type HeroBlockData = { _type: "heroBlock"; _key: string; eyebrow?: string
 export type PageHeroBlockData = { _type: "pageHeroBlock"; _key: string; title: string; description?: string; breadcrumbs?: BreadcrumbItemData[]; background?: "navy" | "alt" }
 export type BannerBlockData = { _type: "bannerBlock"; _key: string; message: string; cta?: CtaLinkData; dismissible?: boolean }
 export type StatsBlockData = { _type: "statsBlock"; _key: string; eyebrow?: string; title: string; description?: string; stats: StatItemData[] }
-export type PricingBlockData = { _type: "pricingBlock"; _key: string; eyebrow?: string; title: string; description?: string; plans: PricingPlanData[] }
+export type PricingBlockData = { _type: "pricingBlock"; _key: string; eyebrow?: string; title: string; description?: string; plans: PricingPlanData[]; /** CMS only: show the current plans of this service from the Pricing Plans collection. */ service?: string }
 export type TrustHighlightsBlockData = { _type: "trustHighlightsBlock"; _key: string; eyebrow?: string; title: string; description?: string; background?: "default" | "alt" | "navy"; highlights: FeatureItemData[] }
 export type ServiceGridBlockData = { _type: "serviceGridBlock"; _key: string; eyebrow?: string; title: string; description?: string; services: ServiceCardData[]; ctaLabel?: string; ctaDialogTitle?: string; ctaDialogDescription?: string }
 export type AboutCredibilityBlockData = { _type: "aboutCredibilityBlock"; _key: string; eyebrow?: string; title: string; description?: string; bullets?: string[]; cta?: CtaLinkData; highlights?: StatItemData[] }
@@ -94,6 +94,9 @@ export type FeatureGridBlockData = { _type: "featureGridBlock"; _key: string; ey
 export type TestimonialsBlockData = { _type: "testimonialsBlock"; _key: string; title: string; description?: string; testimonials: TestimonialData[]; ctaLabel?: string }
 export type FaqBlockData = { _type: "faqBlock"; _key: string; eyebrow?: string; title: string; description?: string; contactCta?: boolean; faqs: FaqItemData[] }
 export type CtaBannerBlockData = { _type: "ctaBannerBlock"; _key: string; title: string; description?: string; primaryCta?: CtaLinkData; secondaryCta?: CtaLinkData; background?: "default" | "alt" | "navy" }
+export type TldPricingBlockData = { _type: "tldPricingBlock"; _key: string; items: { tld: string; price: string; suffix?: string }[] }
+export type QuoteFormBlockData = { _type: "quoteFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; defaultService?: string; background?: "none" | "alt" }
+export type LeadFormBlockData = { _type: "leadFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; submitLabel?: string; background?: "none" | "alt" }
 export type RichTextBlockData = { _type: "richTextBlock"; _key: string; eyebrow?: string; title?: string; content: PortableTextBlock[] }
 
 export type PageBuilderBlock =
@@ -110,6 +113,9 @@ export type PageBuilderBlock =
   | FaqBlockData
   | CtaBannerBlockData
   | RichTextBlockData
+  | TldPricingBlockData
+  | QuoteFormBlockData
+  | LeadFormBlockData
 
 export type PageDocument = {
   seo?: Seo
@@ -156,6 +162,28 @@ export type BlogListingPageData = {
   seo?: Seo
 }
 
+/**
+ * Optional per-page overrides for the headings, buttons and stats the service-page
+ * templates otherwise hardcode. Set only by the custom CMS; every empty field falls back
+ * to the template's built-in copy.
+ */
+export type ServicePageCopy = {
+  heroStats?: StatItemData[]
+  primaryCta?: CtaLinkData
+  secondaryCta?: CtaLinkData
+  featuresEyebrow?: string
+  featuresTitle?: string
+  pricingEyebrow?: string
+  pricingTitle?: string
+  pricingDescription?: string
+  faqEyebrow?: string
+  faqTitle?: string
+  ctaTitle?: string
+  ctaDescription?: string
+  ctaPrimary?: CtaLinkData
+  ctaSecondary?: CtaLinkData
+}
+
 export type ServicePageData = {
   category: "hosting" | "domain" | "dedicated" | "email" | "ssl" | "vps"
   slug: string
@@ -168,6 +196,7 @@ export type ServicePageData = {
   plan?: PricingPlanData
   faqs?: FaqItemData[]
   seo?: Seo
+  copy?: ServicePageCopy
 }
 
 export type LegalSectionData = {

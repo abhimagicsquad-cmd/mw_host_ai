@@ -11,6 +11,7 @@ import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/constants/dedicated-pages-data"
 import { dedicatedPlans, dedicatedPlansUSA } from "@/constants/pricing-plans"
+import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
 
@@ -51,6 +52,10 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
   const bullets = cms?.bullets ?? fallback!.bullets
   const managed = cms?.managed ?? fallback!.managed
   const faqs = cms?.faqs ?? fallback!.faqs
+  const copy = cms?.copy
+  const features = cms?.features?.length
+    ? cms.features.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) }))
+    : dedicatedTrustFeatures
   const cmsPlans = await getPricingPlansByService("dedicated-server")
   const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : dedicatedPlans
   const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : dedicatedPlansUSA
@@ -66,30 +71,34 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "View pricing", href: "#pricing" }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: "Provisioning", value: managed ? "< 48 hrs" : "< 24 hrs" },
-          { label: "Support", value: "24/7" },
-          { label: "Dedicated IPs", value: "5" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "View pricing", href: "#pricing" }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: "Provisioning", value: managed ? "< 48 hrs" : "< 24 hrs" },
+                { label: "Support", value: "24/7" },
+                { label: "Dedicated IPs", value: "5" },
+              ]
+        }
         media={<HeroVisual variant="server" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
 
       <FeaturesSection
-        eyebrow={managed ? "Fully managed" : "Full control"}
-        title={managed ? "What our team handles for you" : "What you get with full root access"}
+        eyebrow={copy?.featuresEyebrow || (managed ? "Fully managed" : "Full control")}
+        title={copy?.featuresTitle || (managed ? "What our team handles for you" : "What you get with full root access")}
         columns={3}
         background="alt"
-        features={dedicatedTrustFeatures}
+        features={features}
       />
 
       <div id="pricing">
         <PricingSection
-          eyebrow="Pricing"
-          title="Dedicated server tiers"
-          description="Choose the data-center region closest to your users."
+          eyebrow={copy?.pricingEyebrow || "Pricing"}
+          title={copy?.pricingTitle || "Dedicated server tiers"}
+          description={copy?.pricingDescription || "Choose the data-center region closest to your users."}
           tabs={[
             { value: "india", label: "India", plans: withService(indiaPlans) },
             { value: "usa", label: "USA", plans: withService(usaPlans) },
@@ -97,12 +106,13 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
         />
       </div>
 
-      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
-        title="Ready to move to dedicated hardware?"
-        description="Our team will help you pick the right tier for your workload."
-        primaryCta={{ label: "Talk to sales", href: LEAD_CTA_HREF }}
+        title={copy?.ctaTitle || "Ready to move to dedicated hardware?"}
+        description={copy?.ctaDescription || "Our team will help you pick the right tier for your workload."}
+        primaryCta={copy?.ctaPrimary ?? { label: "Talk to sales", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.ctaSecondary}
         background="navy"
       />
     </>

@@ -11,7 +11,7 @@ import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { PageBuilder } from "@/components/sanity/page-builder"
 import { siteConfig } from "@/constants/site-config"
 import { buildPageMetadata } from "@/lib/seo"
-import { getContactPage } from "@/sanity/lib/queries"
+import { getCmsBuilderDocument, getContactPage } from "@/sanity/lib/queries"
 
 export async function generateMetadata() {
   const cms = await getContactPage()
@@ -25,6 +25,18 @@ export async function generateMetadata() {
 }
 
 export default async function ContactUsPage() {
+  // A CMS contact page replaces the whole layout (its blocks include the forms);
+  // otherwise the built-in layout renders with any Sanity blocks as extra content.
+  const cmsPage = await getCmsBuilderDocument("/contact-us")
+  if (cmsPage?.pageBuilder?.length) {
+    return (
+      <>
+        <CmsSchemaJsonLd path="/contact-us" />
+        <PageBuilder blocks={cmsPage.pageBuilder} />
+      </>
+    )
+  }
+
   const cms = await getContactPage()
 
   return (
@@ -35,9 +47,7 @@ export default async function ContactUsPage() {
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Contact Us" }]}
       />
 
-      {/* CMS-editable supplementary content only — the lead-capture forms below stay
-          hardcoded on purpose, since pageBuilder has no form block and a full-page
-          takeover (like the homepage does) would delete them entirely. */}
+      {/* Sanity supplementary content (legacy fallback). */}
       <CmsSchemaJsonLd path="/contact-us" />
       {cms?.pageBuilder?.length ? <PageBuilder blocks={cms.pageBuilder} /> : null}
 

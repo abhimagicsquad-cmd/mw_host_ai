@@ -5,18 +5,8 @@ import { z } from "zod"
 import { logActivity } from "@/lib/admin/activity"
 import { actorId, authorizeAction } from "@/lib/admin/auth"
 import { cmsAdminDb } from "@/lib/cms/db"
-import { portableTextToMarkdown } from "@/lib/cms/rich-text"
 import type { ActionState, GeneralSettings, WebsiteSettings } from "@/lib/cms/types"
-import { urlForImage } from "@/sanity/lib/image"
-import {
-  getSanityAboutPage,
-  getSanityContactPage,
-  getSanityHomePage,
-  getSanityNavigation,
-  getSanityServicesPage,
-  getSanitySiteSettings,
-} from "@/sanity/lib/queries"
-import type { PageBuilderBlock, PageDocument, TestimonialData } from "@/sanity/types"
+import { getSanityNavigation, getSanitySiteSettings } from "@/sanity/lib/queries"
 
 import { refreshWebsite, toActionError } from "./utils"
 
@@ -100,79 +90,16 @@ export async function clearWebsiteCacheAction(): Promise<ActionState> {
   }
 }
 
-/** Sanity block → CMS section data (drops Sanity-only keys, converts rich text + images). */
-function blockToSectionData(block: PageBuilderBlock): Record<string, unknown> {
-  const { _type, _key, ...data } = block as PageBuilderBlock & Record<string, unknown>
-  void _key
-  if (_type === "richTextBlock") data.content = portableTextToMarkdown(data.content)
-  if (_type === "testimonialsBlock" && Array.isArray(data.testimonials)) {
-    data.testimonials = (data.testimonials as TestimonialData[]).map(({ avatar, ...t }) => ({
-      ...t,
-      avatarUrl: t.avatarUrl ?? urlForImage(avatar)?.width(192).height(192).url(),
-    }))
-  }
-  return JSON.parse(JSON.stringify(data)) as Record<string, unknown>
-}
-
-const IMPORTS: { path: string; title: string; page_type: "home" | "static" | "service"; load: () => Promise<PageDocument | null> }[] = [
-  { path: "/", title: "Home", page_type: "home", load: getSanityHomePage },
-  { path: "/about-us", title: "About Us", page_type: "static", load: getSanityAboutPage },
-  { path: "/contact-us", title: "Contact Us", page_type: "static", load: getSanityContactPage },
-  { path: "/hosting", title: "Web Hosting", page_type: "service", load: () => getSanityServicesPage("hosting") },
-  { path: "/domain", title: "Domains", page_type: "service", load: () => getSanityServicesPage("domain") },
-  { path: "/email-hosting", title: "Email Hosting", page_type: "service", load: () => getSanityServicesPage("email-hosting") },
-]
-
 /**
- * One-click migration off Sanity: copies page-builder pages, their SEO, navigation and site
- * settings into the CMS. Never overwrites anything that already exists in the CMS, so it's
- * safe to re-run. Pages import as drafts unless `publish` is checked — the website keeps
- * serving the Sanity version until an imported page is published.
+ * Copies the header/footer menus and site settings from Sanity into the CMS. Unlike pages,
+ * these have no draft state — the website switches to the CMS copy immediately — so this is
+ * a separate, explicit step. The copied values are identical to what Sanity serves today,
+ * existing CMS values are never overwritten, and Sanity only fills empty fields.
  */
-export async function importFromSanityAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function importMenusAndSettingsAction(): Promise<ActionState> {
   try {
     const admin = await authorizeAction("system.import")
-    const publish = formData.get("publish") === "on"
     const report: string[] = []
-
-    for (const item of IMPORTS) {
-      const doc = await item.load()
-      if (!doc?.pageBuilder?.length) continue
-      const { data: existing } = await db().from("pages").select("id").eq("path", item.path).maybeSingle()
-      if (existing) {
-        report.push(`${item.path}: skipped (already in CMS)`)
-        continue
-      }
-      const { data: page, error } = await db()
-        .from("pages")
-        .insert({
-          title: item.title,
-          path: item.path,
-          page_type: item.page_type,
-          status: publish ? "published" : "draft",
-          published_at: publish ? new Date().toISOString() : null,
-          created_by: actorId(admin),
-          updated_by: actorId(admin),
-        })
-        .select("id")
-        .single()
-      if (error) throw error
-
-      const { error: sectionsError } = await db()
-        .from("page_sections")
-        .insert(doc.pageBuilder.map((block, position) => ({ page_id: page.id, type: block._type, position, data: blockToSectionData(block) })))
-      if (sectionsError) throw sectionsError
-
-      if (doc.seo?.metaTitle || doc.seo?.metaDescription) {
-        await db()
-          .from("seo")
-          .upsert(
-            { path: item.path, page_id: page.id, meta_title: doc.seo.metaTitle ?? null, meta_description: doc.seo.metaDescription ?? null },
-            { onConflict: "path", ignoreDuplicates: true }
-          )
-      }
-      report.push(`${item.path}: imported ${doc.pageBuilder.length} sections`)
-    }
 
     const navigation = await getSanityNavigation()
     const { data: menus } = await db().from("menus").select("location, items")
@@ -224,9 +151,9 @@ export async function importFromSanityAction(_prev: ActionState, formData: FormD
       report.push("site settings: merged")
     }
 
-    await logActivity({ admin, action: "system.import", entityType: "system", description: "Imported content from Sanity", metadata: { report, publish } })
+    await logActivity({ admin, action: "system.import", entityType: "system", description: "Copied menus and site settings from Sanity", metadata: { report } })
     refreshWebsite()
-    return { ok: true, message: report.length ? report.join(" · ") : "Nothing to import — Sanity has no page-builder content." }
+    return { ok: true, message: report.length ? report.join(" · ") : "Nothing to copy — the CMS already has menus and settings." }
   } catch (error) {
     return toActionError(error)
   }

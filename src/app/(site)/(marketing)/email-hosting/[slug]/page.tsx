@@ -12,6 +12,7 @@ import { PricingCard } from "@/components/sections/pricing-card"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { emailIncludedFeatures, emailPages, getEmailPage } from "@/constants/email-pages-data"
+import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
 import type { PricingPlan } from "@/types/content"
@@ -52,6 +53,10 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
   const description = cms?.heroDescription ?? fallback!.description
   const bullets = cms?.bullets ?? fallback!.bullets
   const faqs = cms?.faqs ?? fallback!.faqs
+  const copy = cms?.copy
+  const features = cms?.features?.length
+    ? cms.features.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) }))
+    : emailIncludedFeatures
   const plan: PricingPlan = cms?.plan
     ? { ...cms.plan, features: cms.plan.features ?? [], cta: cms.plan.cta ?? { label: "Get started", href: "#lead" } }
     : fallback!.plan
@@ -65,32 +70,47 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={{ label: "Get started", href: LEAD_CTA_HREF }}
-        secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
-        stats={[
-          { label: "Spam caught", value: "99.7%" },
-          { label: "Pricing", value: `${plan.price}${plan.priceSuffix ?? ""}` },
-          { label: "Support", value: "24/7" },
-        ]}
+        primaryCta={copy?.primaryCta ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        stats={
+          copy?.heroStats?.length
+            ? copy.heroStats.map(({ label, value }) => ({ label, value }))
+            : [
+                { label: "Spam caught", value: "99.7%" },
+                { label: "Pricing", value: `${plan.price}${plan.priceSuffix ?? ""}` },
+                { label: "Support", value: "24/7" },
+              ]
+        }
         media={<HeroVisual variant="mail" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Email Hosting", href: "/email-hosting" }, { label: eyebrow }]}
       />
 
       <SectionContainer width="narrow">
-        <SectionHeading eyebrow="Pricing" title="Simple, per-mailbox pricing" />
+        <SectionHeading
+          eyebrow={copy?.pricingEyebrow || "Pricing"}
+          title={copy?.pricingTitle || "Simple, per-mailbox pricing"}
+          description={copy?.pricingDescription || undefined}
+        />
         <div className="mx-auto mt-10 max-w-sm">
           <PricingCard plan={plan} />
         </div>
       </SectionContainer>
 
-      <FeaturesSection eyebrow="Included" title="What every mailbox gets" columns={4} background="alt" features={emailIncludedFeatures} />
+      <FeaturesSection
+        eyebrow={copy?.featuresEyebrow || "Included"}
+        title={copy?.featuresTitle || "What every mailbox gets"}
+        columns={4}
+        background="alt"
+        features={features}
+      />
 
-      <FAQSection eyebrow="FAQs" title={`${eyebrow} questions, answered`} items={faqs} />
+      <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
-        title="Ready to set up professional email?"
-        description="Tell us how many mailboxes you need and we'll get you set up."
-        primaryCta={{ label: "Get started", href: LEAD_CTA_HREF }}
+        title={copy?.ctaTitle || "Ready to set up professional email?"}
+        description={copy?.ctaDescription || "Tell us how many mailboxes you need and we'll get you set up."}
+        primaryCta={copy?.ctaPrimary ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        secondaryCta={copy?.ctaSecondary}
         background="navy"
       />
     </>

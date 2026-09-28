@@ -9,23 +9,35 @@ import { BlogPostingJsonLd, BreadcrumbJsonLd } from "@/components/common/json-ld
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
-import { blogPosts, getBlogCategoryName, getBlogPost, getRelatedPosts } from "@/constants/blog-data"
+import { getBlogPost } from "@/constants/blog-data"
+import { getBlog } from "@/lib/cms/blog"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllBlogPosts, getBlogPostBySlug } from "@/sanity/lib/queries"
+import { getBlogPostBySlug } from "@/sanity/lib/queries"
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
-  const cmsPosts = await getAllBlogPosts()
-  const slugs = new Set([...blogPosts.map((post) => post.slug), ...cmsPosts.map((post) => post.slug)])
-  return [...slugs].map((slug) => ({ slug }))
+  const { posts } = await getBlog()
+  return posts.map((post) => ({ slug: post.slug }))
+}
+
+/** CMS post (built-in template) → Sanity post (Portable Text template) → built-in post. */
+async function resolvePost(slug: string) {
+  const blog = await getBlog()
+  if (blog.cmsSlugs.has(slug)) {
+    const post = blog.posts.find((candidate) => candidate.slug === slug)
+    if (post) return { blog, post, cmsPost: null }
+  }
+  const cmsPost = await getBlogPostBySlug(slug)
+  if (cmsPost) return { blog, post: undefined, cmsPost }
+  return { blog, post: getBlogPost(slug), cmsPost: null }
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const cmsPost = await getBlogPostBySlug(slug)
+  const { post, cmsPost } = await resolvePost(slug)
 
   if (cmsPost) {
     return buildPageMetadata({
@@ -37,7 +49,6 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     })
   }
 
-  const post = getBlogPost(slug)
   if (!post) return {}
 
   return buildPageMetadata({
@@ -57,7 +68,7 @@ function publishedLabelToISO(label: string): string | undefined {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const cmsPost = await getBlogPostBySlug(slug)
+  const { blog, post, cmsPost } = await resolvePost(slug)
 
   if (cmsPost) {
     const breadcrumbs = [
@@ -117,11 +128,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     )
   }
 
-  const post = getBlogPost(slug)
-
   if (!post) notFound()
 
-  const relatedPosts = getRelatedPosts(post)
+  const relatedPosts = blog.related(post)
   const breadcrumbs = [
     { label: "Home", href: "/" },
     { label: "Blog", href: "/blog" },
@@ -143,7 +152,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             href={`/blog/category/${post.categorySlug}`}
             className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/20"
           >
-            {getBlogCategoryName(post.categorySlug)}
+            {blog.categoryName(post.categorySlug)}
           </Link>
           <h1 className="text-3xl font-bold text-brand-navy sm:text-4xl">{post.title}</h1>
           <p className="text-lg text-body-text">{post.excerpt}</p>
@@ -216,7 +225,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 href={`/blog/${related.slug}`}
                 className="flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-6 transition-all hover:-translate-y-1 hover:shadow-md"
               >
-                <p className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{getBlogCategoryName(related.categorySlug)}</p>
+                <p className="text-xs font-semibold tracking-wide text-brand-orange uppercase">{blog.categoryName(related.categorySlug)}</p>
                 <p className="text-sm font-semibold text-brand-navy">{related.title}</p>
                 <p className="text-sm text-body-text">{related.excerpt}</p>
               </Link>

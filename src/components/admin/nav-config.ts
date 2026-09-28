@@ -11,6 +11,7 @@ export type AdminNavIcon =
   | "users"
   | "settings"
   | "activity"
+  | "migration"
 
 export type AdminNavLink = { label: string; href: string; permission?: Permission }
 
@@ -38,13 +39,17 @@ export const adminNav: AdminNavItem[] = [
     icon: "content",
     children: [
       { label: "Home Page", href: "/admin/content/home" },
-      { label: "Service Pages", href: "/admin/content/service" },
-      { label: "Product Pages", href: "/admin/content/product" },
-      { label: "Category Pages", href: "/admin/content/category" },
-      { label: "Static Pages", href: "/admin/content/static" },
-      { label: "Blog Posts", href: "/admin/content/blog" },
+      { label: "Company Pages", href: "/admin/content/company" },
+      { label: "Services & Products", href: "/admin/content/services" },
+      { label: "Pricing Plans", href: "/admin/content/pricing", permission: "pages.edit" },
+      { label: "Legal Pages", href: "/admin/content/legal" },
+      { label: "Knowledge Base", href: "/admin/content/knowledge-base" },
+      { label: "Blog", href: "/admin/content/blog" },
+      { label: "Promotions", href: "/admin/content/promotions" },
+      { label: "Custom Pages", href: "/admin/content/custom" },
     ],
   },
+  { label: "Content Migration", icon: "migration", href: "/admin/migration", permission: "pages.edit" },
   {
     label: "Media Library",
     icon: "media",

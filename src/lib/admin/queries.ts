@@ -205,10 +205,10 @@ export async function getDashboardData(): Promise<DashboardData> {
 
   return {
     totals: {
-      pages: pageRows.filter((p) => p.page_type !== "blog").length,
+      pages: pageRows.filter((p) => !p.path.startsWith("/blog/")).length,
       published: pageRows.filter((p) => p.status === "published").length,
       drafts: pageRows.filter((p) => p.status === "draft").length,
-      blogs: pageRows.filter((p) => p.page_type === "blog").length,
+      blogs: pageRows.filter((p) => p.path.startsWith("/blog/")).length,
       media: media.data?.length ?? 0,
       mediaBytes: (media.data ?? []).reduce((sum, row) => sum + Number(row.size_bytes ?? 0), 0),
       users: users.count,

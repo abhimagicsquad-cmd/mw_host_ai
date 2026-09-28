@@ -6,7 +6,8 @@ import { FilePlus2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { createPageAction } from "@/lib/admin/actions/pages"
-import { slugify } from "@/lib/cms/paths"
+import { normalizePath, slugify } from "@/lib/cms/paths"
+import { templateForPath, templates } from "@/lib/cms/templates"
 import type { PageType } from "@/lib/cms/types"
 import { cn } from "@/lib/utils"
 
@@ -19,21 +20,23 @@ const STARTERS = [
   { value: "blank", label: "Blank", description: "Start with no sections" },
 ]
 
-function suggestPath(title: string, type: PageType) {
+function suggestPath(title: string, type: PageType, prefix?: string) {
   const slug = slugify(title)
+  if (prefix) return `${prefix}${slug}`
   if (type === "home") return "/"
   if (type === "blog") return `/blog/${slug}`
   return `/${slug}`
 }
 
-export function NewPageForm({ defaultType, hasHome }: { defaultType: PageType; hasHome: boolean }) {
+export function NewPageForm({ defaultType, hasHome, prefix }: { defaultType: PageType; hasHome: boolean; prefix?: string }) {
   const [state, formAction] = useActionState(createPageAction, {})
   const [title, setTitle] = useState("")
   const [type, setType] = useState<PageType>(defaultType)
-  const [path, setPath] = useState(suggestPath("", defaultType))
+  const [path, setPath] = useState(suggestPath("", defaultType, prefix))
   const [pathTouched, setPathTouched] = useState(false)
   const [starter, setStarter] = useState(defaultType === "blog" ? "blog" : "basic")
 
+  const template = templateForPath(normalizePath(path))
   const types = (Object.keys(PAGE_TYPE_LABELS) as PageType[]).filter((t) => t !== "home" || !hasHome || defaultType === "home")
 
   return (
@@ -49,7 +52,7 @@ export function NewPageForm({ defaultType, hasHome }: { defaultType: PageType; h
               maxLength={200}
               onChange={(event) => {
                 setTitle(event.target.value)
-                if (!pathTouched) setPath(suggestPath(event.target.value, type))
+                if (!pathTouched) setPath(suggestPath(event.target.value, type, prefix))
               }}
               placeholder="e.g. Cloud Hosting"
             />
@@ -66,7 +69,7 @@ export function NewPageForm({ defaultType, hasHome }: { defaultType: PageType; h
                 onChange={(event) => {
                   const next = event.target.value as PageType
                   setType(next)
-                  if (!pathTouched) setPath(suggestPath(title, next))
+                  if (!pathTouched) setPath(suggestPath(title, next, prefix))
                   if (next === "blog") setStarter("blog")
                   else if (starter === "blog") setStarter("basic")
                 }}
@@ -107,7 +110,15 @@ export function NewPageForm({ defaultType, hasHome }: { defaultType: PageType; h
       </div>
 
       <div className="flex flex-col gap-4">
-        {type !== "blog" ? (
+        {template ? (
+          <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 text-sm">
+            <p className="font-medium">{templates[template].label} template</p>
+            <p className="mt-1 text-muted-foreground">
+              This URL uses the website&apos;s standard {templates[template].label.toLowerCase()} design. You&apos;ll fill in its content in a form.
+            </p>
+            <input type="hidden" name="starter" value="template" />
+          </div>
+        ) : type !== "blog" ? (
           <fieldset className="rounded-xl border bg-card p-5 shadow-xs">
             <legend className="sr-only">Starting layout</legend>
             <p className="mb-3 text-sm font-medium">Starting layout</p>
