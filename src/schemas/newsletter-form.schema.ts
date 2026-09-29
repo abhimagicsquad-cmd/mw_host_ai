@@ -19,6 +19,7 @@ export const newsletterApiPayloadSchema = newsletterFormSchema.extend({
   source: z.string().max(60).optional(),
   formRenderedAt: z.number().optional(),
   pageUrl: z.string().max(500).optional().or(z.literal("")),
+  turnstileToken: z.string().max(2048).nullish(),
 })
 
 export type NewsletterApiPayload = z.infer<typeof newsletterApiPayloadSchema>

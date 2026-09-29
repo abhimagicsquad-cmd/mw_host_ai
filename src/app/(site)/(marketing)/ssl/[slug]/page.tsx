@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { ProductJsonLd } from "@/components/common/json-ld"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
@@ -84,6 +85,8 @@ export default async function SslSlugPage({ params }: SslSlugPageProps) {
         media={<HeroVisual variant="security" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "SSL Certificates", href: "/ssl" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path={`/ssl/${slug}`} kind="ssl" label={eyebrow} />
 
       <SectionContainer width="narrow" id="pricing">
         <SectionHeading

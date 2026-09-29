@@ -56,7 +56,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     description: post.excerpt,
     path: `/blog/${post.slug}`,
     ogType: "article",
-    publishedTime: publishedLabelToISO(post.publishedLabel),
+    publishedTime: post.publishedAt ?? publishedLabelToISO(post.publishedLabel),
+    modifiedTime: post.modifiedAt ?? undefined,
   })
 }
 
@@ -80,7 +81,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return (
       <>
         <BreadcrumbJsonLd items={breadcrumbs} />
-        <BlogPostingJsonLd title={cmsPost.title} description={cmsPost.excerpt} slug={cmsPost.slug} authorName={cmsPost.author?.name ?? "MagicWorks Host Team"} />
+        <BlogPostingJsonLd
+          title={cmsPost.title}
+          description={cmsPost.excerpt}
+          slug={cmsPost.slug}
+          authorName={cmsPost.author?.name ?? "MagicWorks Host Team"}
+          datePublished={cmsPost.publishedAt}
+          section={cmsPost.category?.title}
+        />
 
         <SectionContainer width="narrow" background="alt" className="py-12 sm:py-16">
           <Reveal className="flex flex-col gap-4">
@@ -140,7 +148,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
-      <BlogPostingJsonLd title={post.title} description={post.excerpt} slug={post.slug} authorName={post.author.name} />
+      <BlogPostingJsonLd
+        title={post.title}
+        description={post.excerpt}
+        slug={post.slug}
+        authorName={post.author.name}
+        datePublished={post.publishedAt ?? publishedLabelToISO(post.publishedLabel)}
+        dateModified={post.modifiedAt}
+        wordCount={post.sections.reduce((count, section) => count + section.body.join(" ").split(/\s+/).length, 0)}
+        section={blog.categoryName(post.categorySlug)}
+      />
 
       <SectionContainer width="narrow" background="alt" className="py-12 sm:py-16">
         <Reveal className="flex flex-col gap-4">
@@ -210,7 +227,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </span>
           <div>
             <p className="text-sm font-semibold text-brand-navy">{post.author.name}</p>
-            <p className="text-sm text-muted-foreground">{post.author.role} at MagicWorks Host</p>
+            <p className="text-sm text-muted-foreground">{post.author.role ? `${post.author.role} at MagicWorks Host` : "MagicWorks Host"}</p>
           </div>
         </div>
       </SectionContainer>

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { ProductJsonLd } from "@/components/common/json-ld"
@@ -10,7 +11,7 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { getHostingPage, hostingPages } from "@/constants/hosting-pages-data"
-import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { sharedHostingPlans, usaSharedHostingPlans } from "@/constants/pricing-plans"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
@@ -55,7 +56,10 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
   const faqs = cms?.faqs ?? fallback!.faqs
   const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("shared-hosting")
-  const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
+  const indiaPlans = cmsPlans.filter((plan) => plan.region !== "usa")
+  const usaPlans = cmsPlans.filter((plan) => plan.region === "usa")
+  const plans =
+    slug === "usa-web-hosting" ? (usaPlans.length ? usaPlans : usaSharedHostingPlans) : indiaPlans.length ? indiaPlans : sharedHostingPlans
 
   return (
     <>
@@ -80,6 +84,8 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
         media={<HeroVisual variant="dashboard" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Hosting", href: "/hosting" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path={`/hosting/${slug}`} kind="hosting" label={eyebrow} />
 
       <FeaturesSection
         eyebrow={copy?.featuresEyebrow || "Why this hosting"}

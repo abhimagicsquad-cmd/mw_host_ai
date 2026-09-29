@@ -18,8 +18,9 @@ export const client = createClient({
 export async function sanityFetch<T>(query: string, params: Record<string, unknown> = {}): Promise<T | null> {
   try {
     const result = await client.fetch<T>(query, params, {
-      cache: "force-cache",
-      next: { tags: ["sanity"] },
+      // Tagged for webhook / admin invalidation, plus an hourly revalidate so a missed
+      // webhook can't leave stale Sanity content cached indefinitely.
+      next: { tags: ["sanity"], revalidate: 3600 },
     })
     return result ?? null
   } catch (error) {

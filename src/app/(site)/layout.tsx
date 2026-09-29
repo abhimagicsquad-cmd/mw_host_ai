@@ -7,11 +7,19 @@ import { TopBar } from "@/components/layout/header/top-bar"
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:bg-brand-navy focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+      >
+        Skip to main content
+      </a>
       <Header>
         <TopBar />
         <MainHeader />
       </Header>
-      <main>{children}</main>
+      <main id="main-content" tabIndex={-1} className="outline-none">
+        {children}
+      </main>
       <Footer />
       <PreviewBanner />
     </>

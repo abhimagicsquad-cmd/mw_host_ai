@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 
-import { LeadForm } from "@/components/forms/lead-form"
+import { LazyLeadForm as LeadForm } from "@/components/forms/lazy-forms"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { PageHero } from "@/components/sections/page-hero"
@@ -8,6 +8,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
+import { billingUrls, normalizeBillingHref } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getSupportPage } from "@/sanity/lib/queries"
@@ -26,7 +27,7 @@ const fallbackChannels = [
     description: "Track and manage support tickets from your client area.",
     icon: "Ticket",
     ctaLabel: "Client area login",
-    ctaHref: "https://clients.magicworkshost.com/clientarea.php",
+    ctaHref: billingUrls.clientArea,
     external: true,
   },
   {
@@ -89,7 +90,7 @@ export default async function SupportPage() {
                 <p className="text-base font-semibold text-brand-navy">{channel.title}</p>
                 <p className="text-sm text-body-text">{channel.description}</p>
                 <a
-                  href={channel.ctaHref}
+                  href={normalizeBillingHref(channel.ctaHref)}
                   target={channel.external ? "_blank" : undefined}
                   rel={channel.external ? "noopener noreferrer" : undefined}
                   className="mt-auto text-sm font-semibold text-brand-orange hover:underline"

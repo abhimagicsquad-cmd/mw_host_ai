@@ -149,7 +149,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
               </span>
               <div>
                 <p className="text-sm font-semibold text-white">{stat.value}</p>
-                <p className="text-[11px] text-white/50">{stat.label}</p>
+                <p className="text-xs text-white/70">{stat.label}</p>
               </div>
             </div>
           ))}
@@ -162,7 +162,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
         </span>
         <div>
           <p className="text-xs font-semibold text-brand-navy">{config.badgeTop.label}</p>
-          <p className="text-[11px] text-muted-foreground">{config.badgeTop.sublabel}</p>
+          <p className="text-xs text-muted-foreground">{config.badgeTop.sublabel}</p>
         </div>
       </div>
 
@@ -172,7 +172,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
         </span>
         <div>
           <p className="text-xs font-semibold text-brand-navy">{config.badgeBottom.label}</p>
-          <p className="text-[11px] text-muted-foreground">{config.badgeBottom.sublabel}</p>
+          <p className="text-xs text-muted-foreground">{config.badgeBottom.sublabel}</p>
         </div>
       </div>
     </div>

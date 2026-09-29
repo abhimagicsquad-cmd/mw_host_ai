@@ -2,6 +2,7 @@ import { Check } from "lucide-react"
 
 import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { Badge } from "@/components/ui/badge"
+import { planCheckoutUrl } from "@/lib/billing"
 import { cn } from "@/lib/utils"
 import type { PricingPlan } from "@/types/content"
 
@@ -10,6 +11,11 @@ type PricingCardProps = {
 }
 
 export function PricingCard({ plan }: PricingCardProps) {
+  // Plans sold online go straight to the live WHMCS cart (same product, cycle and promo as the
+  // WordPress site); anything else keeps its CMS-defined button (e.g. the "talk to sales" form).
+  const checkout = planCheckoutUrl(plan.slug)
+  const cta = checkout ? { label: plan.cta.href === "#lead" || !plan.cta.label ? "Buy Now" : plan.cta.label, href: checkout } : plan.cta
+
   return (
     <div
       className={cn(
@@ -49,7 +55,7 @@ export function PricingCard({ plan }: PricingCardProps) {
       </ul>
 
       <CTAOrLeadButton
-        cta={plan.cta}
+        cta={cta}
         source={`pricing:${plan.slug}`}
         variant={plan.featured ? "primary" : "outline"}
         className="mt-auto w-full justify-center"

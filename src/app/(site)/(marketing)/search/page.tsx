@@ -38,6 +38,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             name="q"
             defaultValue={q}
             placeholder="Search the site…"
+            aria-label="Search the site"
             className="h-12 pl-11"
             autoFocus
           />

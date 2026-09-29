@@ -10,6 +10,7 @@ import { TextField } from "@/components/forms/fields/text-field"
 import { TextareaField } from "@/components/forms/fields/textarea-field"
 import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
 import { serviceOptions } from "@/constants/service-options"
 import { cn } from "@/lib/utils"
 import { leadFormDefaultValues, leadFormSchema, type LeadFormValues } from "@/schemas/lead-form.schema"
@@ -40,6 +41,7 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
   const router = useRouter()
   const [result, setResult] = useState<LeadFormResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
+  const turnstile = useTurnstile()
   const honeypotId = useId()
 
   const {
@@ -55,13 +57,18 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
 
   const onSubmit = async (values: LeadFormValues) => {
     setResult(null)
+    if (turnstile.missing) {
+      setResult({ success: false, message: TURNSTILE_MISSING_MESSAGE })
+      return
+    }
 
     try {
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, source, formRenderedAt, pageUrl: window.location.href }),
+        body: JSON.stringify({ ...values, source, formRenderedAt, pageUrl: window.location.href, turnstileToken: turnstile.token }),
       })
+      turnstile.consume()
 
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       const success = Boolean(data.success)
@@ -136,6 +143,8 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
         <label htmlFor={honeypotId}>Website</label>
         <input id={honeypotId} type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>
+
+      <TurnstileWidget {...turnstile.widgetProps} />
 
       {result ? <FormStatusMessage status={result.success ? "success" : "error"} message={result.message} /> : null}
 

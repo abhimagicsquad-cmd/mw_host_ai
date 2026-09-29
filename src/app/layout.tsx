@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { siteConfig } from "@/constants/site-config"
 import { getCmsWebsiteSettings } from "@/lib/cms/content"
 import { geist } from "@/lib/fonts"
+import { DEFAULT_SHARE_IMAGE } from "@/lib/seo"
 
 import "./globals.css"
 
@@ -35,11 +36,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: siteConfig.name,
       type: "website",
       locale: "en_IN",
+      images: [DEFAULT_SHARE_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [DEFAULT_SHARE_IMAGE.url],
     },
   }
 }

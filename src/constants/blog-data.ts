@@ -1,3 +1,5 @@
+import legacyPosts from "./legacy-blog-posts.json"
+
 export type BlogCategory = {
   slug: string
   name: string
@@ -18,6 +20,11 @@ export type BlogPost = {
   featured?: boolean
   author: { name: string; role: string }
   sections: BlogPostSection[]
+  /** ISO dates — set for the articles imported from the WordPress blog. */
+  publishedAt?: string | null
+  modifiedAt?: string | null
+  /** The article's old WordPress URL (it 301s here). */
+  legacyPath?: string
 }
 
 /** Seed content — real CMS-backed content population is a future phase; this establishes the working index + detail template structure. */
@@ -26,9 +33,12 @@ export const blogCategories: BlogCategory[] = [
   { slug: "security", name: "Security" },
   { slug: "wordpress", name: "WordPress" },
   { slug: "business", name: "Running a Business" },
+  { slug: "web-hosting", name: "Web Hosting" },
+  { slug: "domains-email", name: "Domains & Email" },
+  { slug: "web-development", name: "Web Development" },
 ]
 
-export const blogPosts: BlogPost[] = [
+const originalPosts: BlogPost[] = [
   {
     slug: "why-page-speed-affects-conversions",
     title: "Why page speed affects conversions more than you think",
@@ -276,6 +286,9 @@ export const blogPosts: BlogPost[] = [
     ],
   },
 ]
+
+/** Current articles first, then the 42 articles carried over from the WordPress blog (newest first). */
+export const blogPosts: BlogPost[] = [...originalPosts, ...(legacyPosts as BlogPost[])]
 
 export function getBlogCategoryName(slug: string) {
   return blogCategories.find((category) => category.slug === slug)?.name ?? slug

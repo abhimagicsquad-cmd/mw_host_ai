@@ -1,10 +1,23 @@
 import { emailPages } from "@/constants/email-pages-data"
+import { planCheckoutUrl } from "@/lib/billing"
 import type { PricingPlan } from "@/types/content"
 
-/** Points every plan's purchase CTA at its mock-checkout order page instead of the lead modal. */
+/** Points every plan's purchase CTA at its live WHMCS cart (lead form for plans not sold online). */
 function withOrderCta(plans: PricingPlan[]): PricingPlan[] {
-  return plans.map((plan) => ({ ...plan, cta: { ...plan.cta, href: `/order/${plan.slug}` } }))
+  return plans.map((plan) => ({ ...plan, cta: { ...plan.cta, href: planCheckoutUrl(plan.slug) ?? plan.cta.href } }))
 }
+
+const usaFeatures = (site: string, space: string, bandwidth: string, email: string) => [site, `${space} storage`, `${bandwidth} bandwidth`, email, "Free SSL", "Free site backup"]
+
+/** USA-hosted shared plans — same products, promo and prices as the WordPress USA hosting page. */
+export const usaSharedHostingPlans: PricingPlan[] = withOrderCta([
+  { slug: "usa-starter", name: "USA Starter", price: "₹42", priceSuffix: "/mo", regularPrice: "₹84", discountLabel: "Billed annually", features: usaFeatures("1 website", "1GB", "10GB", "5 email accounts"), cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", region: "usa" },
+  { slug: "usa-basic", name: "USA Basic", price: "₹55", priceSuffix: "/mo", regularPrice: "₹109", discountLabel: "Billed annually", features: usaFeatures("1 website", "2GB", "20GB", "10 email accounts"), cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", region: "usa" },
+  { slug: "usa-basic-plus", name: "USA Basic Plus", price: "₹67", priceSuffix: "/mo", regularPrice: "₹134", discountLabel: "Billed annually", features: usaFeatures("1 website", "5GB", "50GB", "15 email accounts"), cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", region: "usa", featured: true },
+  { slug: "usa-economy", name: "USA Economy", price: "₹84", priceSuffix: "/mo", regularPrice: "₹167", discountLabel: "Billed annually", features: usaFeatures("1 website", "10GB", "100GB", "Unlimited email accounts"), cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", region: "usa" },
+  { slug: "usa-deluxe", name: "USA Deluxe", price: "₹104", priceSuffix: "/mo", regularPrice: "₹208", discountLabel: "Billed annually", features: usaFeatures("1 website", "20GB", "200GB", "Unlimited email accounts"), cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", region: "usa" },
+  { slug: "usa-unlimited", name: "USA Unlimited", price: "₹167", priceSuffix: "/mo", regularPrice: "₹333", discountLabel: "Billed annually", features: usaFeatures("1 website", "Unlimited", "Unlimited", "Unlimited email accounts"), cta: { label: "Buy Now", href: "#lead" }, service: "shared-hosting", region: "usa" },
+])
 
 /**
  * The real NVMe shared-hosting tier grid (see docs/01-website-audit-report.md §5.2) —
@@ -131,7 +144,7 @@ export const vpsPlans: PricingPlan[] = withOrderCta([
   {
     slug: "vps-basic",
     name: "VPS Basic",
-    price: "₹5,512",
+    price: "₹5,542",
     priceSuffix: "/mo",
     features: ["4 vCPU", "8GB RAM", "160GB NVMe storage", "Full root access"],
     cta: { label: "Buy Now", href: "#lead" },
@@ -171,7 +184,7 @@ export const vpsPlansUSA: PricingPlan[] = withOrderCta([
   {
     slug: "vps-basic-usa",
     name: "VPS Basic",
-    price: "₹4,880",
+    price: "₹4,996",
     priceSuffix: "/mo",
     features: ["4 vCPU", "8GB RAM", "160GB NVMe storage", "Full root access"],
     cta: { label: "Buy Now", href: "#lead" },
@@ -196,6 +209,15 @@ export const sslPlans: PricingPlan[] = withOrderCta([
   {
     slug: "domain-validated",
     name: "Domain Validated",
+    price: "₹4,000",
+    priceSuffix: "/yr",
+    features: ["Domain ownership validation", "Issued within minutes", "256-bit encryption", "Browser padlock"],
+    cta: { label: "Get started", href: "#lead" },
+    service: "ssl",
+  },
+{
+    slug: "domain-validated-sni",
+    name: "Domain Validated (SNI)",
     price: "₹4,000",
     priceSuffix: "/yr",
     features: ["Domain ownership validation", "Issued within minutes", "256-bit encryption", "Browser padlock"],
@@ -247,7 +269,7 @@ export const dedicatedPlans: PricingPlan[] = withOrderCta([
   {
     slug: "dedicated-basic",
     name: "Dedicated Basic",
-    price: "₹18,469",
+    price: "₹15,329",
     priceSuffix: "/mo",
     features: ["8 cores / 16 threads", "32GB RAM", "2TB storage", "5 dedicated IPs"],
     cta: { label: "Buy Now", href: "#lead" },
@@ -258,7 +280,7 @@ export const dedicatedPlans: PricingPlan[] = withOrderCta([
   {
     slug: "dedicated-silver",
     name: "Dedicated Silver",
-    price: "₹21,969",
+    price: "₹20,009",
     priceSuffix: "/mo",
     features: ["12 cores / 24 threads", "64GB RAM", "4TB storage", "5 dedicated IPs"],
     cta: { label: "Buy Now", href: "#lead" },
@@ -297,7 +319,7 @@ export const dedicatedPlansUSA: PricingPlan[] = withOrderCta([
   {
     slug: "dedicated-basic-usa",
     name: "Dedicated Basic",
-    price: "₹16,830",
+    price: "₹15,329",
     priceSuffix: "/mo",
     features: ["8 cores / 16 threads", "32GB RAM", "2TB storage", "5 dedicated IPs"],
     cta: { label: "Buy Now", href: "#lead" },
@@ -308,7 +330,7 @@ export const dedicatedPlansUSA: PricingPlan[] = withOrderCta([
   {
     slug: "dedicated-silver-usa",
     name: "Dedicated Silver",
-    price: "₹19,310",
+    price: "₹17,669",
     priceSuffix: "/mo",
     features: ["12 cores / 24 threads", "64GB RAM", "4TB storage", "5 dedicated IPs"],
     cta: { label: "Buy Now", href: "#lead" },
@@ -357,6 +379,7 @@ export const promoSharedHostingPlans: PricingPlan[] = withOrderCta(
 export const allPricingPlans: PricingPlan[] = [
   ...sharedHostingPlans,
   ...promoSharedHostingPlans,
+  ...usaSharedHostingPlans,
   ...vpsPlans,
   ...vpsPlansUSA,
   ...sslPlans,

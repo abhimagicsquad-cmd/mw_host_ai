@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+// Skip zod's JIT (it probes `new Function("")`), which the site's CSP blocks without
+// 'unsafe-eval' and reports as a violation. Every form schema imports this module.
+z.config({ jitless: true })
+
 export const nameField = z
   .string()
   .trim()

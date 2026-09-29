@@ -1,5 +1,6 @@
 "use server"
 
+import { updateTag } from "next/cache"
 import { z } from "zod"
 
 import { logActivity } from "@/lib/admin/activity"
@@ -83,6 +84,8 @@ export async function clearWebsiteCacheAction(): Promise<ActionState> {
   try {
     const admin = await authorizeAction("system.import")
     refreshWebsite()
+    // Also drop cached Sanity reads — the fallback content for anything not yet in the CMS.
+    updateTag("sanity")
     await logActivity({ admin, action: "system.cache_cleared", entityType: "system", description: "Cleared the website content cache" })
     return { ok: true, message: "Website cache cleared — every page will re-read the CMS on its next visit." }
   } catch (error) {

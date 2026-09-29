@@ -1,123 +1,165 @@
+import { readFileSync } from "node:fs";
 import type { NextConfig } from "next";
 
-// The old WordPress site (see docs/03-route-mapping.md) used flat permalinks with no shared
-// prefix, so every legacy path is listed explicitly rather than matched with a wildcard —
-// a wildcard here would also catch (and mis-redirect) unrelated current routes like /about-us.
-const legacyBlogPostSlugs = [
-  "how-to-use-wordpress-to-build-your-online-presence",
-  "how-to-create-a-website",
-  "best-hosting-for-affiliate-marketing",
-  "market-your-business-with-professional-email-address",
-  "do-not-take-malware-lightly-it-can-ruin-your-business",
-  "want-to-know-different-types-of-ssl-certificates-for-webhosting",
-  "moments-of-truth-mot-for-digital-marketer",
-  "cannot-ignore-webpage-loading-time",
-  "why-you-should-care-about-website-uptime",
-  "improve-webpage-speed-and-boost-your-digital-business",
-  "take-website-security-seriously-it-affects-seo",
-  "need-faster-website-because-slow-website-kill-conversions",
-  "when-to-choose-shared-web-hosting-service",
-  "are-you-curious-about-types-of-web-hosting",
-  "secure-web-hosting-ensuring-security-of-your-website",
-  "demystifying-ssl-https-for-business-website",
-  "5-best-payment-processing-app-for-your-website",
-  "how-to-build-e-commerce-website",
-  "what-is-ssl-certificate",
-  "when-dedicated-server-should-be-used-for-web-hosting",
-  "what-is-web-hosting",
-  "blogging-four-steps-guide-for-beginners",
-  "importance-of-taking-website-backup",
-  "taking-business-online-2-key-steps-after-shared-web-hosting",
-  "grow-your-business-even-in-the-days-of-lock-down-and-corona-pandemic-with-best-web-hosting",
-  "with-best-web-hosting-no-excuses-take-business-online",
-  "3-quick-steps-to-be-online-with-best-web-hosting-company",
-  "how-to-choose-best-seo-web-hosting",
-  "compare-web-hosting-plans-practical-guide-for-business-owners",
-  "why-you-need-domain-registration-for-online-business",
-  "what-is-domain-name-and-how-it-works",
-  "5-reasons-for-getting-ssl-certificate-for-your-website",
-  "here-are-the-reasons-for-taking-your-business-online",
-  "comparing-shared-vps-and-dedicated-hosting",
-  "website-speed-favors-your-google-ads",
-  "what-is-vps-web-hosting",
-  "your-customers-have-a-need-for-speedy-website",
-  "why-is-web-hosting-important-for-digital-marketing",
-  "business-is-always-a-race-where-you-need-to-outrun-your-competitors",
-  "what-is-user-experience-and-why-should-you-care",
-  "what-is-user-experience-and-why-should-you-care-2",
-  "why-your-site-needs-to-stay-up",
+/**
+ * URL continuity with the WordPress site (https://magicworkshost.com). Every URL in its
+ * sitemap resolves here in ONE 301 hop — with or without the trailing slash WordPress
+ * uses — to its closest equivalent page. See docs/13-launch-readiness.md for the inventory.
+ */
+
+// Old blog posts now live at /blog/<slug> with their full content (imported by
+// scripts/import-wordpress-posts.mjs), so each keeps its own URL rather than the blog index.
+const legacyPosts: { slug: string; legacyPath: string }[] = JSON.parse(
+  readFileSync(new URL("./src/constants/legacy-blog-posts.json", import.meta.url), "utf8")
+);
+
+// WordPress categories → blog category pages.
+const legacyCategories: Record<string, string> = {
+  "affiliate-marketing": "business",
+  blogging: "wordpress",
+  "dedicated-hosting": "web-hosting",
+  "digital-marketing": "business",
+  "domain-name": "domains-email",
+  "email-hosting": "domains-email",
+  "online-business": "business",
+  "secure-socket-layer-ssl": "security",
+  "secure-web-hosting": "security",
+  "shared-web-hosting-service": "web-hosting",
+  "ssl-certificate": "security",
+  "web-designs": "web-development",
+  "web-development": "web-development",
+  "web-hosting": "web-hosting",
+  "web-security": "security",
+};
+
+const legacyPages: Record<string, string> = {
+  "/about-us-website-hosting-services": "/about-us",
+  "/resources": "/blog",
+  "/sitemap": "/sitemap-page",
+  "/web-hosting-cart": "/hosting/buy-web-hosting",
+  "/migration-status": "/support",
+  "/demo": "/",
+  "/demo-2": "/",
+
+  "/buy-web-hosting": "/hosting/buy-web-hosting",
+  "/unlimited-web-hosting-plans": "/hosting/unlimited-hosting",
+  "/seo-hosting": "/hosting/seo-hosting",
+  "/wordpress-hosting": "/hosting/wordpress-hosting",
+  "/linux-shared-hosting": "/hosting/linux-shared-hosting",
+  "/cheap-fast-reliable-seo-friendly-usa-web-hosting": "/hosting/usa-web-hosting",
+  "/50-off": "/promo/50-off",
+
+  "/dedicated-server-hosting": "/dedicated-hosting/dedicated-server",
+  "/managed-dedicated-hosting-services": "/dedicated-hosting/managed-dedicated-server",
+  "/linux-dedicated-server-hosting": "/dedicated-hosting/linux-dedicated-server",
+
+  "/domain-hosting": "/domain/domain-hosting",
+  "/domain-registration-india": "/domain/indian-domain",
+  "/domain-name-registration": "/domain/domain-name-registration",
+  "/buy-domain-name-at-cheap-price": "/domain/buy-domain-name",
+  "/transfer-your-domain-name": "/domain/transfer-your-domain-name",
+  "/renew-your-domain": "/domain/renew",
+  "/domain-name-search-landing-page": "/domain/search",
+
+  // Each certificate type has its own page again, so the old per-certificate URLs map 1:1.
+  "/buy-ssl-certificate": "/ssl",
+  "/domain-validated-certificates": "/ssl/domain-validated",
+  "/domain-validated-certificate-with-sni-feature": "/ssl/domain-validated-sni",
+  "/business-validated-certificates": "/ssl/business-validated",
+  "/extended-validated-certificates": "/ssl/extended-validated",
+  "/wild-card-certificates": "/ssl/wildcard",
+
+  "/business-email-hosting": "/email-hosting/business",
+  "/enterprise-email-hosting": "/email-hosting/enterprise",
+
+  "/web-hosting-bandwidth-calculator": "/tools/bandwidth-calculator",
+  "/data-unit-calculator": "/tools/data-unit-calculator",
+  "/download-upload-time-calculator": "/tools/transfer-time-calculator",
+
+  "/thank-you-for-subscribing": "/thank-you",
+  "/thank-you-for-interest-in-affiliate-program": "/thank-you",
+
+  "/privacy-policy": "/legal/privacy-policy",
+  "/terms-of-services": "/legal/terms-of-service",
+  "/service-level-agreement": "/legal/service-level-agreement",
+  "/acceptable-use-policy": "/legal/acceptable-use-policy",
+  "/mail-policy": "/legal/mail-policy",
+  "/affiliate-programme-terms": "/legal/affiliate-programme-terms",
+  "/resource-abuse-policy": "/legal/resource-abuse-policy",
+
+  // WordPress system URLs that search engines and feed readers still request.
+  "/feed": "/blog",
+  "/comments/feed": "/blog",
+  "/index.php": "/",
+  "/sitemap_index.xml": "/sitemap.xml",
+  "/post-sitemap.xml": "/sitemap.xml",
+  "/page-sitemap.xml": "/sitemap.xml",
+  "/category-sitemap.xml": "/sitemap.xml",
+};
+
+for (const post of legacyPosts) legacyPages[post.legacyPath.replace(/\/$/, "")] = `/blog/${post.slug}`;
+for (const [wp, slug] of Object.entries(legacyCategories)) legacyPages[`/category/${wp}`] = `/blog/category/${slug}`;
+
+/** One redirect per legacy URL, matching both "/path" and "/path/" (WordPress's canonical form). */
+const legacyRedirects = Object.entries(legacyPages).flatMap(([source, destination]) => [
+  { source, destination, permanent: true },
+  { source: `${source}/`, destination, permanent: true },
+]);
+
+/** WHMCS stays on the current server at www.magicworkshost.com/clients (see src/lib/billing.ts). */
+const billingBase = (process.env.NEXT_PUBLIC_BILLING_URL || "https://www.magicworkshost.com/clients").replace(/\/$/, "");
+const billingOrigin = new URL(billingBase).origin;
+
+const wordpressPatternRedirects = [
+  // Old relative /clients links → the billing system (308 keeps POSTs intact).
+  { source: "/clients", destination: billingBase, permanent: true },
+  { source: "/clients/:path*", destination: `${billingBase}/:path*`, permanent: true },
+  // (No /wp-content redirect: WordPress on www 301s to the apex, which would loop back here.)
+  { source: "/wp-admin/:path*", destination: "/", permanent: false },
+  { source: "/wp-login.php", destination: "/", permanent: false },
+  { source: "/author/:name/:rest*", destination: "/blog", permanent: true },
+  { source: "/tag/:tag/:rest*", destination: "/blog", permanent: true },
+  { source: "/page/:n/:rest*", destination: "/blog", permanent: true },
+  { source: "/category/:slug/page/:n/:rest*", destination: "/blog", permanent: true },
+  { source: "/:slug/feed/:rest*", destination: "/blog", permanent: true },
 ];
 
-const legacyBlogCategorySlugs = [
-  "affiliate-marketing",
-  "blogging",
-  "dedicated-hosting",
-  "digital-marketing",
-  "domain-name",
-  "email-hosting",
-  "online-business",
-  "secure-socket-layer-ssl",
-  "secure-web-hosting",
-  "shared-web-hosting-service",
-  "ssl-certificate",
-  "web-designs",
-  "web-development",
-  "web-hosting",
-  "web-security",
-];
+const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : "https://*.supabase.co";
 
-// 1:1 legacy WordPress path -> current route. The new blog is a fresh set of posts (not a
-// port of the old 42), so legacy post/category URLs redirect to the blog index rather than
-// a non-existent equivalent. Pages the old site had that were never rebuilt here (the 50-off
-// promo, the 3 calculators, the USA-hosting/domain-search/domain-renew pages, and 3 of the 7
-// legal docs) are intentionally left unmapped — see docs/03-route-mapping.md.
-const legacyRedirects: { source: string; destination: string }[] = [
-  { source: "/about-us-website-hosting-services", destination: "/about-us" },
-  { source: "/resources", destination: "/blog" },
-  { source: "/sitemap", destination: "/sitemap-page" },
-  { source: "/web-hosting-cart", destination: "/hosting/buy-web-hosting" },
+function csp(extra: { script?: string; connect?: string; img?: string; frame?: string } = {}) {
+  return [
+    "default-src 'self'",
+    // Next.js injects inline bootstrap scripts into statically rendered pages, which rules out
+    // nonces without making every page dynamic; everything else is locked to this origin.
+    `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${extra.script ?? ""}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob: https://cdn.sanity.io ${supabaseOrigin}${extra.img ?? ""}`,
+    "font-src 'self' data:",
+    `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com${extra.connect ?? ""}`,
+    `frame-src https://challenges.cloudflare.com${extra.frame ?? ""}`,
+    "frame-ancestors 'none'",
+    `form-action 'self' ${billingOrigin}`,
+    "base-uri 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+}
 
-  { source: "/buy-web-hosting", destination: "/hosting/buy-web-hosting" },
-  { source: "/unlimited-web-hosting-plans", destination: "/hosting/unlimited-hosting" },
-  { source: "/seo-hosting", destination: "/hosting/seo-hosting" },
-  { source: "/wordpress-hosting", destination: "/hosting/wordpress-hosting" },
-  { source: "/linux-shared-hosting", destination: "/hosting/linux-shared-hosting" },
-
-  { source: "/dedicated-server-hosting", destination: "/dedicated-hosting/dedicated-server" },
-  { source: "/managed-dedicated-hosting-services", destination: "/dedicated-hosting/managed-dedicated-server" },
-  { source: "/linux-dedicated-server-hosting", destination: "/dedicated-hosting/linux-dedicated-server" },
-
-  { source: "/domain-hosting", destination: "/domain/domain-hosting" },
-  { source: "/domain-registration-india", destination: "/domain/indian-domain" },
-  { source: "/domain-name-registration", destination: "/domain/domain-name-registration" },
-  { source: "/buy-domain-name-at-cheap-price", destination: "/domain/buy-domain-name" },
-  { source: "/transfer-your-domain-name", destination: "/domain/transfer-your-domain-name" },
-
-  // The 5 individual certificate pages were consolidated into the single /ssl pillar page,
-  // which already carries the differentiated pricing they used to (inconsistently) show.
-  { source: "/buy-ssl-certificate", destination: "/ssl" },
-  { source: "/business-validated-certificates", destination: "/ssl" },
-  { source: "/domain-validated-certificate-with-sni-feature", destination: "/ssl" },
-  { source: "/domain-validated-certificates", destination: "/ssl" },
-  { source: "/extended-validated-certificates", destination: "/ssl" },
-  { source: "/wild-card-certificates", destination: "/ssl" },
-
-  { source: "/business-email-hosting", destination: "/email-hosting/business" },
-  { source: "/enterprise-email-hosting", destination: "/email-hosting/enterprise" },
-
-  { source: "/thank-you-for-subscribing", destination: "/thank-you" },
-  { source: "/thank-you-for-interest-in-affiliate-program", destination: "/thank-you" },
-
-  { source: "/privacy-policy", destination: "/legal/privacy-policy" },
-  { source: "/terms-of-services", destination: "/legal/terms-of-service" },
-  { source: "/service-level-agreement", destination: "/legal/service-level-agreement" },
-  { source: "/acceptable-use-policy", destination: "/legal/acceptable-use-policy" },
-
-  ...legacyBlogPostSlugs.map((slug) => ({ source: `/${slug}`, destination: "/blog" })),
-  ...legacyBlogCategorySlugs.map((slug) => ({ source: `/category/${slug}`, destination: "/blog" })),
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  // No includeSubDomains: www (WHMCS) and other subdomains stay on the existing server.
+  { key: "Strict-Transport-Security", value: "max-age=63072000" },
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  // Trailing slashes are handled by the redirects below so a legacy "/path/" URL takes a
+  // single hop to its new page instead of two (strip slash, then redirect).
+  skipTrailingSlashRedirect: true,
   images: {
     dangerouslyAllowSVG: true,
   },
@@ -126,7 +168,29 @@ const nextConfig: NextConfig = {
   // Server Component — load it via Node's require() instead of bundling it.
   serverExternalPackages: ["sanity", "@sanity/vision"],
   async redirects() {
-    return legacyRedirects.map(({ source, destination }) => ({ source, destination, permanent: true }));
+    return [
+      ...legacyRedirects,
+      ...wordpressPatternRedirects,
+      // Any other URL with a trailing slash → the same URL without it (the site's canonical form).
+      { source: "/:path+/", destination: "/:path+", permanent: true },
+    ];
+  },
+  async headers() {
+    return [
+      { source: "/:path*", headers: [...securityHeaders, { key: "Content-Security-Policy", value: csp() }] },
+      // Admin: media previews may be any https image the editor pastes.
+      { source: "/admin/:path*", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
+      // Sanity Studio needs eval, its APIs/websockets and remote images.
+      {
+        source: "/studio/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: csp({ script: " 'unsafe-eval'", connect: " https://*.sanity.io wss://*.sanity.io https://*.apicdn.sanity.io", img: " https:", frame: " https://*.sanity.io" }),
+          },
+        ],
+      },
+    ];
   },
 };
 

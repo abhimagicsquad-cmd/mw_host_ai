@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
-import { GetQuoteForm } from "@/components/forms/get-quote-form"
+import { LazyGetQuoteForm as GetQuoteForm } from "@/components/forms/lazy-forms"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { PricingSection } from "@/components/sections/pricing-section"

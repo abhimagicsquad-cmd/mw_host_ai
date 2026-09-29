@@ -53,7 +53,7 @@ export const getBlog = cache(async () => {
     ...baseCategories,
     ...[...new Set(posts.map((post) => post.categorySlug))]
       .filter((slug) => slug !== "uncategorized" && !baseCategories.some((c) => c.slug === slug))
-      .map((slug) => ({ slug, name: slug })),
+      .map((slug) => blogCategories.find((c) => c.slug === slug) ?? { slug, name: slug }),
   ]
 
   return {

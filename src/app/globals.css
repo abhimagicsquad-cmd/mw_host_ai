@@ -64,8 +64,9 @@
 }
 
 :root {
-  --brand-orange: #ff6600;
-  --brand-orange-hover: #e65c00;
+  /* #ff6600 (the logo orange) is only 2.9:1 on white; #b84300 keeps the hue at 5.5:1 (WCAG AA). */
+  --brand-orange: #b84300;
+  --brand-orange-hover: #9a3800;
   --brand-navy: #2a363f;
   --brand-navy-dark: #1c2329;
   --brand-cta-secondary: #019ad2;
@@ -75,8 +76,8 @@
   --brand-whatsapp: #25d366;
   --surface-alt: #f5f5f5;
   --border-alt: #e8e8e8;
-  --body-text: #727272;
-  --muted-text-2: #999999;
+  --body-text: #666666;
+  --muted-text-2: #6b6b6b;
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -84,12 +85,12 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #ff6600;
+  --primary: #b84300;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: #636363;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -119,7 +120,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #ff6600;
+  --primary: #ff7a1a;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -295,4 +296,10 @@
   --color-admin-sidebar-hover: var(--admin-sidebar-hover);
   --color-admin-sidebar-active: var(--admin-sidebar-active);
   --color-admin-chart: var(--admin-chart);
+}
+/* On navy surfaces the darker text orange loses contrast; use a lighter tint there
+   (#ff7a1a is 4.7:1 on --brand-navy). Buttons keep the solid token. */
+.bg-brand-navy .text-brand-orange,
+.bg-brand-navy-dark .text-brand-orange {
+  color: #ff7a1a;
 }

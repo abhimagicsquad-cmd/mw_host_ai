@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { siteConfig } from "@/constants/site-config"
 import { sendLeadNotificationEmail } from "@/lib/email"
 import { storeLead } from "@/lib/leads-store"
+import { verifyTurnstile } from "@/lib/turnstile"
 import { leadApiPayloadSchema } from "@/schemas/lead-form.schema"
 
 export const runtime = "nodejs"
@@ -63,8 +64,12 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl } =
+  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl, turnstileToken } =
     parsed.data
+
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return NextResponse.json({ success: false, message: "The security check failed. Please try again." }, { status: 403 })
+  }
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)

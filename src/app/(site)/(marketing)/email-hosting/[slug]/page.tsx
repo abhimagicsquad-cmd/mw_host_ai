@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { ProductJsonLd } from "@/components/common/json-ld"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { FeaturesSection } from "@/components/sections/features-section"
@@ -84,6 +85,8 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
         media={<HeroVisual variant="mail" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Email Hosting", href: "/email-hosting" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path={`/email-hosting/${slug}`} kind="email" label={eyebrow} />
 
       <SectionContainer width="narrow">
         <SectionHeading

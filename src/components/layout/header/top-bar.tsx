@@ -3,6 +3,7 @@ import { Phone, LifeBuoy, LogIn } from "lucide-react"
 
 import { resolveSocialIcon } from "@/components/common/social-icons"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
+import { billingUrls } from "@/lib/billing"
 import { getSiteSettings } from "@/sanity/lib/queries"
 
 export async function TopBar() {
@@ -30,7 +31,7 @@ export async function TopBar() {
             Support
           </Link>
           <a
-            href="https://clients.magicworkshost.com/clientarea.php"
+            href={billingUrls.clientArea}
             className="flex items-center gap-1.5 hover:text-white"
           >
             <LogIn className="size-3.5" />

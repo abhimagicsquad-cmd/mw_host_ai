@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { FeaturesSection } from "@/components/sections/features-section"
@@ -75,6 +76,8 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
         media={<HeroVisual variant="domain" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Domains", href: "/domain" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path={`/domain/${slug}`} kind="domain" label={eyebrow} />
 
       <TldPricingStrip items={tldPricing} />
 

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next"
 
-import { blogPosts } from "@/constants/blog-data"
+import { blogCategories, blogPosts } from "@/constants/blog-data"
 import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
@@ -8,6 +8,7 @@ import { hostingPages } from "@/constants/hosting-pages-data"
 import { kbCategories } from "@/constants/knowledge-base-data"
 import { legalSlugs } from "@/constants/legal-content"
 import { siteConfig } from "@/constants/site-config"
+import { sslPages } from "@/constants/ssl-pages-data"
 import { getPublishedCmsPaths } from "@/lib/cms/content"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -23,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/blog"), changeFrequency: "weekly", priority: 0.6 },
     { url: url("/hosting"), changeFrequency: "monthly", priority: 0.8 },
     { url: url("/domain"), changeFrequency: "monthly", priority: 0.7 },
+    { url: url("/domain/search"), changeFrequency: "monthly", priority: 0.6 },
     { url: url("/email-hosting"), changeFrequency: "monthly", priority: 0.6 },
     { url: url("/vps-hosting"), changeFrequency: "monthly", priority: 0.8 },
     { url: url("/ssl"), changeFrequency: "monthly", priority: 0.7 },
@@ -65,8 +67,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: url(`/blog/${post.slug}`),
     changeFrequency: "yearly" as const,
     priority: 0.5,
-    lastModified: now,
+    lastModified: post.modifiedAt ? new Date(post.modifiedAt) : post.publishedAt ? new Date(post.publishedAt) : now,
   }))
+
+  const blogCategoryRoutes = blogCategories
+    .filter((category) => blogPosts.some((post) => post.categorySlug === category.slug))
+    .map((category) => ({ url: url(`/blog/category/${category.slug}`), changeFrequency: "weekly" as const, priority: 0.4 }))
+
+  const sslRoutes = sslPages.map((page) => ({ url: url(`/ssl/${page.slug}`), changeFrequency: "monthly" as const, priority: 0.6 }))
 
   const kbCategoryRoutes = kbCategories.map((category) => ({
     url: url(`/knowledge-base/category/${category.slug}`),
@@ -82,6 +90,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...emailRoutes,
     ...legalRoutes,
     ...blogRoutes,
+    ...blogCategoryRoutes,
+    ...sslRoutes,
     ...kbCategoryRoutes,
   ]
 

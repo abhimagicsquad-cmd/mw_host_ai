@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { checkboxClassName, Field, FormMessage, selectClassName, SubmitButton } from "./form-controls"
 import { MediaUrlInput } from "./media-picker"
 
-const SITE_URL = "https://www.magicworkshost.com"
+const SITE_URL = "https://magicworkshost.com"
 
 function Counter({ value, ideal }: { value: string; ideal: [number, number] }) {
   const length = value.length

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { Gauge, Lock, Rocket, Search, Server, Sparkles, Terminal, TrendingUp, Zap } from "lucide-react"
+import { Globe, Gauge, Lock, Rocket, Search, Server, Sparkles, Terminal, TrendingUp, Zap } from "lucide-react"
 
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -137,6 +137,30 @@ export const hostingPages: HostingPageData[] = [
   },
 ]
 
+hostingPages.push({
+  slug: "usa-web-hosting",
+  eyebrow: "USA Web Hosting",
+  title: "Fast, affordable web hosting on US servers",
+  description:
+    "Serve visitors in North America from servers located in the USA — cPanel, free SSL and daily backups included, with the same 24/7 support team as our India plans.",
+  bullets: [
+    "Servers located in the United States",
+    "Free SSL certificate on every plan",
+    "cPanel with unlimited subdomains and FTP accounts",
+    "Free site backups and SpamAssassin email protection",
+  ],
+  features: [
+    { title: "Closer to US visitors", description: "Lower latency for audiences in the US and Canada, which helps page speed and SEO.", icon: Globe },
+    { title: "cPanel included", description: "Manage domains, email, databases and files from the control panel you already know.", icon: Terminal },
+    { title: "Secure by default", description: "Free SSL, SpamAssassin filtering and regular backups on every plan.", icon: Lock },
+  ],
+  faqs: [
+    { question: "When should I choose USA hosting instead of India hosting?", answer: "Choose USA hosting when most of your visitors are in North America — shorter network distance means faster page loads for them. If your audience is mainly in India, our Mumbai NVMe plans will be faster." },
+    { question: "Is the price billed monthly?", answer: "USA plans are billed annually; the price shown is the monthly equivalent of the yearly term." },
+    { question: "Can I move from a USA plan to an India plan later?", answer: "Yes. Contact support and we'll migrate your site between data centres for you." },
+  ],
+})
+
 export function getHostingPage(slug: string) {
   return hostingPages.find((page) => page.slug === slug)
 }
@@ -147,4 +171,5 @@ export const hostingPageIcons: Record<string, LucideIcon> = {
   "wordpress-hosting": Rocket,
   "linux-shared-hosting": Terminal,
   "unlimited-hosting": TrendingUp,
+  "usa-web-hosting": Globe,
 }

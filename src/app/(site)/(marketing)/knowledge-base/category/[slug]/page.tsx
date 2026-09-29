@@ -3,7 +3,6 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { BreadcrumbJsonLd } from "@/components/common/json-ld"
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
@@ -70,7 +69,6 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
 
   return (
     <>
-      <BreadcrumbJsonLd items={breadcrumbs} />
 
       <PageHero title={name} description={description} breadcrumbs={breadcrumbs} />
 

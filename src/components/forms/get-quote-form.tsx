@@ -10,6 +10,7 @@ import { TextField } from "@/components/forms/fields/text-field"
 import { TextareaField } from "@/components/forms/fields/textarea-field"
 import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
 import { hostingRelatedServiceValues, hostingTypeOptions, serviceOptions } from "@/constants/service-options"
 import {
   getQuoteFormDefaultValues,
@@ -38,6 +39,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
   const [result, setResult] = useState<SubmitResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
   const honeypotId = useId()
+  const turnstile = useTurnstile()
 
   const {
     register,
@@ -57,6 +59,10 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
 
   const onSubmit = async (values: GetQuoteFormValues) => {
     setResult(null)
+    if (turnstile.missing) {
+      setResult({ success: false, message: TURNSTILE_MISSING_MESSAGE })
+      return
+    }
 
     try {
       const response = await fetch("/api/leads", {
@@ -74,8 +80,10 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           source,
           formRenderedAt,
           pageUrl: window.location.href,
+          turnstileToken: turnstile.token,
         }),
       })
+      turnstile.consume()
 
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       const success = Boolean(data.success)
@@ -171,6 +179,8 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
         <label htmlFor={honeypotId}>Website</label>
         <input id={honeypotId} type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>
+
+      <TurnstileWidget {...turnstile.widgetProps} />
 
       {result ? (
         <FormStatusMessage status={result.success ? "success" : "error"} message={result.message} />

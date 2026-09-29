@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { ProductJsonLd } from "@/components/common/json-ld"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { FeaturesSection } from "@/components/sections/features-section"
@@ -57,8 +58,12 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
     ? cms.features.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) }))
     : dedicatedTrustFeatures
   const cmsPlans = await getPricingPlansByService("dedicated-server")
-  const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : dedicatedPlans
-  const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : dedicatedPlansUSA
+  // Region-less CMS/Sanity plans are the India tiers; the USA tab keeps the built-in USA plans
+  // (the same USA products the WordPress site sells) until USA plans are added to the CMS.
+  const cmsIndia = cmsPlans.filter((plan) => plan.region !== "usa")
+  const cmsUsa = cmsPlans.filter((plan) => plan.region === "usa")
+  const indiaPlans = cmsIndia.length ? cmsIndia : dedicatedPlans
+  const usaPlans = cmsUsa.length ? cmsUsa : dedicatedPlansUSA
   const withService = (plans: typeof dedicatedPlans) =>
     plans.map((plan) => ({ ...plan, service: managed ? "managed-dedicated-server" : "dedicated-server" }))
 
@@ -85,6 +90,8 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
         media={<HeroVisual variant="server" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path={`/dedicated-hosting/${slug}`} kind="server" label={eyebrow} />
 
       <FeaturesSection
         eyebrow={copy?.featuresEyebrow || (managed ? "Fully managed" : "Full control")}

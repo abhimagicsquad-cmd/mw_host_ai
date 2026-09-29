@@ -73,8 +73,27 @@ function mergeDefined<T extends object>(base: T, overrides: Partial<T>): T {
  * Content precedence everywhere in this file: custom CMS (Supabase, managed at /admin) →
  * Sanity (legacy, read-only until its content is imported) → hardcoded page defaults.
  */
+/**
+ * Two legacy Sanity values are placeholders, not real business details: social links that
+ * point at a bare network homepage (e.g. "https://facebook.com") and a personal webmail
+ * contact address. Drop them so the site's real profiles / domain email apply instead.
+ */
+function withoutPlaceholderSettings(settings: SiteSettingsData | null): SiteSettingsData | null {
+  if (!settings) return settings
+  const socialLinks = settings.socialLinks?.filter((link) => {
+    try {
+      return new URL(link.url).pathname.replace(/\/+$/, "") !== ""
+    } catch {
+      return false
+    }
+  })
+  const contactEmail = settings.contactEmail && /@(gmail|yahoo|outlook|hotmail)\./i.test(settings.contactEmail) ? undefined : settings.contactEmail
+  return { ...settings, socialLinks: socialLinks?.length ? socialLinks : undefined, contactEmail }
+}
+
 export async function getSiteSettings() {
-  const [sanity, general, website] = await Promise.all([getSanitySiteSettings(), getCmsGeneralSettings(), getCmsWebsiteSettings()])
+  const [rawSanity, general, website] = await Promise.all([getSanitySiteSettings(), getCmsGeneralSettings(), getCmsWebsiteSettings()])
+  const sanity = withoutPlaceholderSettings(rawSanity)
   const cmsValues: Partial<SiteSettingsData> = {
     ...general,
     headerCta: website.headerCta?.label ? website.headerCta : undefined,

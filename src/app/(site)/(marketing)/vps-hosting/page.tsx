@@ -3,6 +3,7 @@ import { Cpu, Gauge, HeadphonesIcon, Server, ShieldCheck, Zap } from "lucide-rea
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { ProductJsonLd } from "@/components/common/json-ld"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
@@ -67,8 +68,12 @@ export default async function VpsHostingPage() {
   const faqs = cms?.faqs ?? defaultFaqs
   const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("vps-hosting")
-  const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : vpsPlans
-  const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : vpsPlansUSA
+  // Region-less CMS/Sanity plans are the India tiers; the USA tab keeps the built-in USA plans
+  // (the same USA products the WordPress site sells) until USA plans are added to the CMS.
+  const cmsIndia = cmsPlans.filter((plan) => plan.region !== "usa")
+  const cmsUsa = cmsPlans.filter((plan) => plan.region === "usa")
+  const indiaPlans = cmsIndia.length ? cmsIndia : vpsPlans
+  const usaPlans = cmsUsa.length ? cmsUsa : vpsPlansUSA
 
   return (
     <>
@@ -93,6 +98,8 @@ export default async function VpsHostingPage() {
         media={<HeroVisual />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path="/vps-hosting" kind="server" label={eyebrow} />
 
       <StatsSection
         eyebrow="Why upgrade to VPS"

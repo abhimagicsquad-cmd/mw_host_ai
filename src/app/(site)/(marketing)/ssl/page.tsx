@@ -3,6 +3,7 @@ import { KeyRound, Lock, ScanSearch, ShieldCheck, ShoppingCart, TrendingUp } fro
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { ProductJsonLd } from "@/components/common/json-ld"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
@@ -93,6 +94,8 @@ export default async function SslPage() {
         media={<HeroVisual variant="security" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path="/ssl" kind="ssl" label={eyebrow} />
 
       <WhyChooseUs
         eyebrow={copy?.featuresEyebrow || "Why SSL matters"}

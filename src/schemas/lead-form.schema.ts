@@ -53,6 +53,7 @@ export const leadApiPayloadSchema = leadFormSchema.extend({
   company: z.string().trim().max(120).optional().or(z.literal("")),
   hostingType: z.string().max(60).optional().or(z.literal("")),
   pageUrl: z.string().max(500).optional().or(z.literal("")),
+  turnstileToken: z.string().max(2048).nullish(),
 })
 
 export type LeadApiPayload = z.infer<typeof leadApiPayloadSchema>

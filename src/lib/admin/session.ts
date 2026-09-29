@@ -12,6 +12,8 @@ import type { AdminRole } from "@/lib/cms/types"
 
 export const SESSION_COOKIE = "mwh_admin_session"
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8 // 8 hours
+/** Request header proxy.ts sets to the admin path, read by the panel layout. */
+export const ADMIN_PATH_HEADER = "x-admin-path"
 
 export type SessionPayload = {
   /** User id, or "bootstrap" for the env-configured break-glass login. */

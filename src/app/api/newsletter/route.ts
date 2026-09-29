@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { storeNewsletterSubscriber } from "@/lib/newsletter-store"
+import { verifyTurnstile } from "@/lib/turnstile"
 import { newsletterApiPayloadSchema } from "@/schemas/newsletter-form.schema"
 
 export const runtime = "nodejs"
@@ -45,7 +46,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: "Please enter a valid email address." }, { status: 422 })
   }
 
-  const { email, website, source, formRenderedAt, pageUrl } = parsed.data
+  const { email, website, source, formRenderedAt, pageUrl, turnstileToken } = parsed.data
+
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return NextResponse.json({ success: false, message: "The security check failed. Please try again." }, { status: 403 })
+  }
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)

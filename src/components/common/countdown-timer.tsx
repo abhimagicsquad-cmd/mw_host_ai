@@ -46,7 +46,7 @@ export function CountdownTimer({ targetDate, className }: CountdownTimerProps) {
             <span className="text-2xl font-bold text-white sm:text-3xl tabular-nums">
               {hasEnded ? "0" : String(unit.value).padStart(2, "0")}
             </span>
-            <span className="text-[11px] font-medium tracking-wide text-white/60 uppercase">{unit.label}</span>
+            <span className="text-xs font-medium tracking-wide text-white/75 uppercase">{unit.label}</span>
           </div>
         ))}
       </div>
