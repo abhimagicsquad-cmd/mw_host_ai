@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"

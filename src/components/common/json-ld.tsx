@@ -1,4 +1,5 @@
 import { siteConfig, socialLinks } from "@/constants/site-config"
+import { publicPath } from "@/lib/public-paths"
 import type { BreadcrumbItem, FAQItem } from "@/types/content"
 
 const ORG_ID = `${siteConfig.url}/#organization`
@@ -69,7 +70,7 @@ export function OrganizationJsonLd() {
             publisher: { "@id": ORG_ID },
             potentialAction: {
               "@type": "SearchAction",
-              target: `${siteConfig.url}/search?q={search_term_string}`,
+              target: `${siteConfig.url}/search/?q={search_term_string}`,
               "query-input": "required name=search_term_string",
             },
           },
@@ -130,7 +131,7 @@ type BlogPostingJsonLdProps = {
 
 /** BlogPosting structured data for a single blog post page. */
 export function BlogPostingJsonLd({ title, description, slug, authorName, datePublished, dateModified, wordCount, section }: BlogPostingJsonLdProps) {
-  const url = `${siteConfig.url}/blog/${slug}`
+  const url = `${siteConfig.url}${publicPath(`/blog/${slug}`)}`
   const isTeam = /magicworks host/i.test(authorName)
   return (
     <JsonLd
@@ -176,7 +177,7 @@ export function ProductJsonLd({ name, description, path, plans }: ProductJsonLdP
   const prices = plans.map((plan) => parsePriceNumber(plan.price)).filter((value): value is number => typeof value === "number")
   if (prices.length === 0) return null
 
-  const url = `${siteConfig.url}${path}`
+  const url = `${siteConfig.url}${publicPath(path)}`
   const common = { priceCurrency: "INR", url, availability: "https://schema.org/InStock", seller: { "@id": ORG_ID } }
   const offers =
     prices.length === 1
@@ -215,7 +216,7 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
           "@type": "ListItem",
           position: index + 1,
           name: item.label,
-          ...(item.href ? { item: `${siteConfig.url}${item.href === "/" ? "/" : item.href}` } : {}),
+          ...(item.href ? { item: `${siteConfig.url}${publicPath(item.href)}` } : {}),
         })),
       }}
     />

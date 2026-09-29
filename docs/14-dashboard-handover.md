@@ -57,8 +57,9 @@ The custom dashboard is the website's content management system. Content comes f
 | `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | set | Dashboard database, media storage, form entries |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_API_VERSION`, `SANITY_API_TOKEN` | set | Sanity fallback content |
 | `SANITY_REVALIDATE_SECRET` | set | Must match the secret in Sanity's webhook (Sanity → API → Webhooks → `https://<domain>/api/revalidate`) |
-| `RESEND_API_KEY` | set | Lead notification emails |
-| `EMAIL_FROM_ADDRESS`, `ADMIN_NOTIFICATION_EMAIL` | optional | Sender and recipient for lead emails (defaults to sales@magicworkshost.com) |
+| `RESEND_API_KEY` | set | Lead, quote and newsletter notification emails (Resend) |
+| `ADMIN_NOTIFICATION_EMAIL` | optional | Who receives notifications. Defaults to abhimagicsquad@gmail.com; comma-separate several |
+| `EMAIL_FROM_ADDRESS` | **set after the Resend domain is verified** | e.g. `MagicWorks Host <notifications@magicworkshost.com>`. Until then mail comes from Resend's test sender, which only reaches the Resend account owner's address |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | **to add** | Cloudflare Turnstile anti-spam on the lead, quote and newsletter forms. Create a widget for `magicworkshost.com` at dash.cloudflare.com → Turnstile. Until both are set, the forms use honeypot, fill-time and rate-limit protection only |
 | `ADMIN_SESSION_SECRET` | recommended | A long random value (`openssl rand -base64 48`). Without it the session key is derived from the Supabase key |
 | `NEXT_PUBLIC_BILLING_URL` | optional | Only if the WHMCS install moves from `https://www.magicworkshost.com/clients` |
@@ -78,6 +79,17 @@ The custom dashboard is the website's content management system. Content comes f
 5. **Configure services:**
    - Add the Turnstile keys (and `ADMIN_SESSION_SECRET`), then redeploy.
    - In Sanity, update the webhook URL to the new domain.
+   - **Verify the email domain in Resend.** Add the records below in the DNS zone for magicworkshost.com (cPanel → Zone Editor on ns1/ns2.magicworkshost.com). They add new names only and don't change the existing MX, SPF or DMARC records. When Resend shows **Verified**, set `EMAIL_FROM_ADDRESS` and redeploy.
+
+     | Type | Name | Value | Priority |
+     |---|---|---|---|
+     | TXT | `resend._domainkey` | `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8Qm8WCJTjJJiNcp4+Ycjqr2DZNEh4lzSDsWp6i+Qj+0o7h6W9vU1VBcxIdErs4y2tS1jMB967yYiETREnDHBaTHQkilbiBjnbRSc33R2Ih1084MR+BhH2VcKDskQhmrXGvg5x93alBJhpo/NN+H1jMUytwPr/aIXn92Lv1XxnXwIDAQAB` | |
+     | MX | `send` | `feedback-smtp.us-east-1.amazonses.com` | 10 |
+     | TXT | `send` | `v=spf1 include:amazonses.com ~all` | |
+     | CNAME | `rsend` | `send.forge.rmta.net` | |
+
+     Don't set an `@magicworkshost.com` sender before verification: the domain's DMARC policy is `p=reject`, so unsigned mail would be rejected.
 6. **After the switch:**
    - Submit `https://magicworkshost.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
-   - Spot-check a few old WordPress URLs. All 109 redirect in one hop, and the list is in `next.config.ts`.
+   - Spot-check a few old WordPress URLs. All 109 load at the same URL; the map is in `src/lib/public-paths.ts` and the table is in `docs/15-url-parity.md`.
+   - Submit a test enquiry and confirm it arrives at abhimagicsquad@gmail.com.

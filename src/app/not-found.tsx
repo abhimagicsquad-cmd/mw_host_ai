@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { Search as SearchIcon } from "lucide-react"
 
 import { SectionContainer } from "@/components/layout/section-container"
@@ -34,7 +34,7 @@ export default function NotFound() {
           The link may be old or mistyped. Search the site, or jump to one of the sections below.
         </p>
 
-        <form action="/search" method="get" className="relative mx-auto mt-8 max-w-md">
+        <form action="/search/" method="get" className="relative mx-auto mt-8 max-w-md">
           <SearchIcon className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <Input type="search" name="q" placeholder="Search hosting, domains, guides…" aria-label="Search the site" className="h-12 pl-11" />
         </form>

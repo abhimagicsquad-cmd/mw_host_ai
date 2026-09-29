@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 import { siteConfig } from "@/constants/site-config"
 import { cn } from "@/lib/utils"

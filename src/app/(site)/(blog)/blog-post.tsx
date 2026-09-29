@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { PortableText } from "@portabletext/react"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 
@@ -99,7 +99,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {cmsPost.category ? (
               <Link
                 href={`/blog/category/${cmsPost.category.slug}`}
-                className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/20"
+                className="w-fit rounded-full border border-brand-orange/30 bg-background px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/10"
               >
                 {cmsPost.category.title}
               </Link>
@@ -167,7 +167,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </Link>
           <Link
             href={`/blog/category/${post.categorySlug}`}
-            className="w-fit rounded-full border border-brand-orange/20 bg-brand-orange/10 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/20"
+            className="w-fit rounded-full border border-brand-orange/30 bg-background px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/10"
           >
             {blog.categoryName(post.categorySlug)}
           </Link>

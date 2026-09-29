@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { publicPath } from "@/lib/public-paths"
 
 import { LazyLeadForm as LeadForm } from "@/components/forms/lazy-forms"
 import { CTASection } from "@/components/sections/cta-section"
@@ -90,7 +91,7 @@ export default async function SupportPage() {
                 <p className="text-base font-semibold text-brand-navy">{channel.title}</p>
                 <p className="text-sm text-body-text">{channel.description}</p>
                 <a
-                  href={normalizeBillingHref(channel.ctaHref)}
+                  href={publicPath(normalizeBillingHref(channel.ctaHref))}
                   target={channel.external ? "_blank" : undefined}
                   rel={channel.external ? "noopener noreferrer" : undefined}
                   className="mt-auto text-sm font-semibold text-brand-orange hover:underline"

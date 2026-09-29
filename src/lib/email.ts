@@ -1,12 +1,21 @@
 import { Resend } from "resend"
 
 import { hostingTypeOptions, serviceOptions } from "@/constants/service-options"
-import { siteConfig } from "@/constants/site-config"
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
+/**
+ * Sender. Until a domain is verified in Resend, only Resend's shared test sender works (and it
+ * can only deliver to the Resend account owner's address). After verifying magicworkshost.com
+ * in Resend, set EMAIL_FROM_ADDRESS, e.g. "MagicWorks Host <notifications@magicworkshost.com>".
+ */
 const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS || "MagicWorks Host <onboarding@resend.dev>"
-const NOTIFICATION_ADDRESS = process.env.ADMIN_NOTIFICATION_EMAIL || siteConfig.contact.email
+
+/** Where website enquiries are sent (ADMIN_NOTIFICATION_EMAIL overrides; comma-separate several). */
+const NOTIFICATION_ADDRESSES = (process.env.ADMIN_NOTIFICATION_EMAIL || "abhimagicsquad@gmail.com")
+  .split(",")
+  .map((address) => address.trim())
+  .filter(Boolean)
 
 export type LeadEmailPayload = {
   name: string
@@ -17,9 +26,10 @@ export type LeadEmailPayload = {
   service?: string
   company?: string
   hostingType?: string
+  pageUrl?: string
 }
 
-export type SendEmailResult = { sent: true } | { sent: false; skipped: true } | { sent: false; skipped: false; error: unknown }
+export type SendEmailResult = { sent: true; id: string } | { sent: false; skipped: true } | { sent: false; skipped: false; error: unknown }
 
 function escapeHtml(value: string) {
   return value
@@ -52,136 +62,78 @@ function hostingTypeLabel(value?: string) {
   return hostingTypeOptions.find((option) => option.value === value)?.label ?? value
 }
 
-export async function sendLeadNotificationEmail(payload: LeadEmailPayload): Promise<SendEmailResult> {
-  if (!resend) {
-    console.warn("[email] RESEND_API_KEY is not set — logging lead instead of sending email.", payload)
-    return { sent: false, skipped: true }
-  }
-
-  const name = sanitize(payload.name)
-  const phone = sanitize(payload.phone)
-  const email = sanitize(payload.email)
-  const message = payload.message ? sanitize(payload.message) : ""
-  const source = payload.source ? sanitize(payload.source) : "website"
-  const company = payload.company ? sanitize(payload.company) : ""
-  const service = serviceLabel(payload.service)
-  const hostingType = hostingTypeLabel(payload.hostingType)
-
-  const extraRows = [
-    company ? { label: "Company", value: company } : null,
-    service ? { label: "Service", value: service } : null,
-    hostingType ? { label: "Hosting type", value: hostingType } : null,
-  ].filter((row): row is { label: string; value: string } => row !== null)
-
-  const html = `
-    <div style="font-family:'Geist','Geist Fallback',sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
-      <h2 style="margin:0 0 16px;color:#2a363f">New lead &mdash; ${escapeHtml(source)}</h2>
-      <p style="margin:0 0 4px"><strong>Name:</strong> ${escapeHtml(name)}</p>
-      <p style="margin:0 0 4px"><strong>Phone:</strong> ${escapeHtml(phone)}</p>
-      <p style="margin:0 0 4px"><strong>Email:</strong> ${escapeHtml(email)}</p>
-      ${extraRows.map((row) => `<p style="margin:0 0 4px"><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.value)}</p>`).join("")}
-      ${message ? `<p style="margin:16px 0 4px"><strong>Message:</strong></p><p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>` : ""}
-    </div>
-  `
-
-  const text = [
-    `New lead - ${source}`,
-    `Name: ${name}`,
-    `Phone: ${phone}`,
-    `Email: ${email}`,
-    ...extraRows.map((row) => `${row.label}: ${row.value}`),
-    message ? `\nMessage:\n${message}` : "",
-  ]
-    .filter(Boolean)
-    .join("\n")
-
-  try {
-    const { error } = await resend.emails.send({
-      from: FROM_ADDRESS,
-      to: NOTIFICATION_ADDRESS,
-      replyTo: email,
-      subject: "New Lead — MWH",
-      html,
-      text,
-    })
-
-    if (error) {
-      console.error("[email] Resend returned an error", error)
-      return { sent: false, skipped: false, error }
-    }
-
-    return { sent: true }
-  } catch (error) {
-    console.error("[email] Failed to send lead notification", error)
-    return { sent: false, skipped: false, error }
-  }
+/** "contact-page:quote" → which form was used, for the subject line. */
+function formLabel(source: string) {
+  return /quote/i.test(source) ? "Quote request" : "Enquiry"
 }
 
-export type OrderEmailPayload = {
-  orderRef: string
-  planName: string
-  billingLabel: string
-  amount: string
-  name: string
-  email: string
-  phone: string
-  company?: string
+function submittedAt() {
+  return new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " IST"
 }
 
-/** Notifies the team of a new mock order. No live payment gateway is involved — see api/orders/route.ts. */
-export async function sendOrderNotificationEmail(payload: OrderEmailPayload): Promise<SendEmailResult> {
-  if (!resend) {
-    console.warn("[email] RESEND_API_KEY is not set — logging order instead of sending email.", payload)
-    return { sent: false, skipped: true }
-  }
+type Row = { label: string; value: string }
 
-  const name = sanitize(payload.name)
-  const phone = sanitize(payload.phone)
-  const email = sanitize(payload.email)
-  const company = payload.company ? sanitize(payload.company) : ""
-  const planName = sanitize(payload.planName)
-  const billingLabel = sanitize(payload.billingLabel)
-  const amount = sanitize(payload.amount)
-  const orderRef = sanitize(payload.orderRef)
-
-  const rows = [
-    { label: "Order ref", value: orderRef },
-    { label: "Plan", value: planName },
-    { label: "Billing", value: `${billingLabel} — ${amount}` },
-    { label: "Name", value: name },
-    { label: "Phone", value: phone },
-    { label: "Email", value: email },
-    company ? { label: "Company", value: company } : null,
-  ].filter((row): row is { label: string; value: string } => row !== null)
-
+function renderEmail(heading: string, rows: Row[], message?: string) {
   const html = `
-    <div style="font-family:'Geist','Geist Fallback',sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
-      <h2 style="margin:0 0 16px;color:#2a363f">New order (test mode) &mdash; ${escapeHtml(orderRef)}</h2>
+    <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#1c2329">
+      <h2 style="margin:0 0 16px;color:#2a363f">${escapeHtml(heading)}</h2>
       ${rows.map((row) => `<p style="margin:0 0 4px"><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.value)}</p>`).join("")}
-      <p style="margin:16px 0 0;color:#727272">No live charge was made — this order was placed through the mock checkout flow.</p>
+      ${message ? `<p style="margin:16px 0 4px"><strong>Message:</strong></p><p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>` : ""}
+      <p style="margin:24px 0 0;font-size:12px;color:#666">Sent by the magicworkshost.com website. Reply to this email to answer the customer directly.</p>
     </div>
   `
+  const text = [heading, "", ...rows.map((row) => `${row.label}: ${row.value}`), message ? `\nMessage:\n${message}` : ""].filter((line) => line !== undefined).join("\n")
+  return { html, text }
+}
 
-  const text = [`New order (test mode) - ${orderRef}`, ...rows.map((row) => `${row.label}: ${row.value}`)].join("\n")
-
+async function send(options: { subject: string; html: string; text: string; replyTo?: string }, logPayload: unknown): Promise<SendEmailResult> {
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY is not set — logging instead of sending email.", logPayload)
+    return { sent: false, skipped: true }
+  }
   try {
-    const { error } = await resend.emails.send({
-      from: FROM_ADDRESS,
-      to: NOTIFICATION_ADDRESS,
-      replyTo: email,
-      subject: `New Order (Test Mode) — ${orderRef}`,
-      html,
-      text,
-    })
-
-    if (error) {
+    const { data, error } = await resend.emails.send({ from: FROM_ADDRESS, to: NOTIFICATION_ADDRESSES, ...options })
+    if (error || !data) {
       console.error("[email] Resend returned an error", error)
       return { sent: false, skipped: false, error }
     }
-
-    return { sent: true }
+    console.info("[email] notification accepted by Resend", { id: data.id, subject: options.subject })
+    return { sent: true, id: data.id }
   } catch (error) {
-    console.error("[email] Failed to send order notification", error)
+    console.error("[email] Failed to send notification", error)
     return { sent: false, skipped: false, error }
   }
+}
+
+export async function sendLeadNotificationEmail(payload: LeadEmailPayload): Promise<SendEmailResult> {
+  const name = sanitize(payload.name)
+  const email = sanitize(payload.email)
+  const source = payload.source ? sanitize(payload.source) : "website"
+  const message = payload.message ? sanitize(payload.message) : ""
+  const rows: Row[] = [
+    { label: "Name", value: name },
+    { label: "Phone", value: sanitize(payload.phone) },
+    { label: "Email", value: email },
+    ...(payload.company ? [{ label: "Company", value: sanitize(payload.company) }] : []),
+    ...(payload.service ? [{ label: "Service", value: serviceLabel(payload.service) }] : []),
+    ...(payload.hostingType ? [{ label: "Hosting type", value: hostingTypeLabel(payload.hostingType) }] : []),
+    { label: "Form", value: source },
+    ...(payload.pageUrl ? [{ label: "Page", value: sanitize(payload.pageUrl) }] : []),
+    { label: "Submitted", value: submittedAt() },
+  ]
+  const kind = formLabel(source)
+  const { html, text } = renderEmail(`New website ${kind.toLowerCase()} from ${name}`, rows, message)
+  return send({ subject: `${kind} from ${name} — MagicWorks Host website`, html, text, replyTo: email }, payload)
+}
+
+export async function sendNewsletterNotificationEmail(payload: { email: string; source?: string; pageUrl?: string; alreadySubscribed?: boolean }): Promise<SendEmailResult> {
+  const email = sanitize(payload.email)
+  const rows: Row[] = [
+    { label: "Email", value: email },
+    { label: "Form", value: payload.source ? sanitize(payload.source) : "newsletter" },
+    ...(payload.pageUrl ? [{ label: "Page", value: sanitize(payload.pageUrl) }] : []),
+    { label: "Submitted", value: submittedAt() },
+  ]
+  const { html, text } = renderEmail("New newsletter subscriber", rows)
+  return send({ subject: `New newsletter subscriber: ${email} — MagicWorks Host website`, html, text, replyTo: email }, payload)
 }

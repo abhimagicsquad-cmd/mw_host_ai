@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"

@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { Search as SearchIcon } from "lucide-react"
 
 import { PageHero } from "@/components/sections/page-hero"
@@ -31,7 +31,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       />
 
       <SectionContainer width="narrow">
-        <form action="/search" method="get" className="relative">
+        <form action="/search/" method="get" className="relative">
           <SearchIcon className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"

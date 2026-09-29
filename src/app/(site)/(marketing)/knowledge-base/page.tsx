@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 import { CTASection } from "@/components/sections/cta-section"
 import { KnowledgeBaseExplorer } from "@/components/sections/knowledge-base-explorer"

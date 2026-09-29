@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { CreditCard, Mail, MapPin, Phone, RotateCcw, ShieldCheck, Zap } from "lucide-react"
 
 import { Logo } from "@/components/common/logo"

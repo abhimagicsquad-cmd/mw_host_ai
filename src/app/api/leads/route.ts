@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
   const [storeResult, emailResult] = await Promise.all([
     storeLead({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
-    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType }),
+    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
   ])
 
   if (!storeResult.stored && !storeResult.skipped) {

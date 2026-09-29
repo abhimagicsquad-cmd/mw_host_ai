@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { ArrowRight, Check } from "lucide-react"
 
 import { HowToJsonLd } from "@/components/common/json-ld"

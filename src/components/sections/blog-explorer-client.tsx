@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { Search } from "lucide-react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"

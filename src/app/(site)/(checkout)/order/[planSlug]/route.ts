@@ -10,5 +10,5 @@ import { planCheckoutUrl } from "@/lib/billing"
 export async function GET(request: NextRequest, { params }: { params: Promise<{ planSlug: string }> }) {
   const { planSlug } = await params
   const checkout = planCheckoutUrl(planSlug)
-  return NextResponse.redirect(checkout ?? new URL("/contact-us", request.url), 307)
+  return NextResponse.redirect(checkout ?? new URL("/contact-us/", request.url), 307)
 }

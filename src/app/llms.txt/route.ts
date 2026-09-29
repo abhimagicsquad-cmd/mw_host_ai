@@ -7,6 +7,7 @@ import { legalDocuments } from "@/constants/legal-content"
 import { siteConfig, socialLinks } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { billingUrls } from "@/lib/billing"
+import { publicPath } from "@/lib/public-paths"
 
 export const dynamic = "force-static"
 
@@ -16,7 +17,7 @@ export const dynamic = "force-static"
  * canonical page for each topic, so AI answers cite the right URL.
  */
 export function GET() {
-  const u = (path: string) => `${siteConfig.url}${path}`
+  const u = (path: string) => `${siteConfig.url}${publicPath(path)}`
   const list = (items: { href: string; label: string; note?: string }[]) =>
     items.map((item) => `- [${item.label}](${item.href})${item.note ? `: ${item.note}` : ""}`).join("\n")
 

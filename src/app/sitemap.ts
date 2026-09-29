@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next"
+import { publicPath } from "@/lib/public-paths"
 
-import { blogCategories, blogPosts } from "@/constants/blog-data"
+import { blogCategories, blogPosts, inWordpressCategory, wordpressCategories } from "@/constants/blog-data"
 import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
@@ -13,7 +14,7 @@ import { getPublishedCmsPaths } from "@/lib/cms/content"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
-  const url = (path: string) => `${siteConfig.url}${path}`
+  const url = (path: string) => `${siteConfig.url}${publicPath(path)}`
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: url("/"), changeFrequency: "weekly", priority: 1 },
@@ -70,9 +71,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: post.modifiedAt ? new Date(post.modifiedAt) : post.publishedAt ? new Date(post.publishedAt) : now,
   }))
 
-  const blogCategoryRoutes = blogCategories
-    .filter((category) => blogPosts.some((post) => post.categorySlug === category.slug))
-    .map((category) => ({ url: url(`/blog/category/${category.slug}`), changeFrequency: "weekly" as const, priority: 0.4 }))
+  // Blog topics plus the WordPress category archives (same /category/<slug>/ URLs as before).
+  const categorySlugs = new Set([
+    ...blogCategories.filter((category) => blogPosts.some((post) => post.categorySlug === category.slug)).map((category) => category.slug),
+    ...wordpressCategories.filter((category) => blogPosts.some((post) => inWordpressCategory(post, category.slug))).map((category) => category.slug),
+  ])
+  const blogCategoryRoutes = [...categorySlugs].map((slug) => ({ url: url(`/blog/category/${slug}`), changeFrequency: "weekly" as const, priority: 0.4 }))
 
   const sslRoutes = sslPages.map((page) => ({ url: url(`/ssl/${page.slug}`), changeFrequency: "monthly" as const, priority: 0.6 }))
 

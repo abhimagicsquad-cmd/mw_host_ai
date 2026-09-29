@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 
 import { siteConfig } from "@/constants/site-config"
+import { publicPath } from "@/lib/public-paths"
 import { getSeoOverride } from "@/lib/cms/content"
 
 type BuildMetadataOptions = {
@@ -60,7 +61,8 @@ export function buildMetadata({
   publishedTime,
   modifiedTime,
 }: BuildMetadataOptions): Metadata {
-  const url = path === "/" ? siteConfig.url : `${siteConfig.url}${path}`
+  const canonical = publicPath(path)
+  const url = canonical === "/" ? siteConfig.url : `${siteConfig.url}${canonical}`
   const withBrand = `${title} | ${siteConfig.name}`
   const fitsWithBrand = withBrand.length <= TITLE_MAX
   const fullTitle = fitsWithBrand ? withBrand : title
@@ -76,7 +78,7 @@ export function buildMetadata({
     title: fitsWithBrand ? title : { absolute: title },
     description,
     alternates: {
-      canonical: path,
+      canonical,
     },
     openGraph,
     twitter: {
@@ -91,13 +93,13 @@ export function buildMetadata({
 
 /**
  * Layers the per-path SEO saved in the admin (/admin/seo) over a page's computed metadata.
- * The path is read from `alternates.canonical`, which `buildMetadata` always sets, so any
- * page can opt in by wrapping its metadata. Empty admin fields leave the page's own values.
+ * Admin SEO rows are keyed by the page's route path (`path`, e.g. "/legal/privacy-policy");
+ * the canonical stays the public URL unless the admin sets one. Empty admin fields leave the
+ * page's own values.
  */
-export async function applySeoOverrides(metadata: Metadata): Promise<Metadata> {
-  const canonical = metadata.alternates?.canonical
-  const path = typeof canonical === "string" ? canonical : "/"
+export async function applySeoOverrides(metadata: Metadata, path = "/"): Promise<Metadata> {
   const seo = await getSeoOverride(path)
+  const canonical = metadata.alternates?.canonical ?? publicPath(path)
   if (!seo) return metadata
 
   const title = seo.meta_title?.trim()
@@ -111,7 +113,7 @@ export async function applySeoOverrides(metadata: Metadata): Promise<Metadata> {
     ...metadata,
     ...(title ? { title: { absolute: title } } : {}),
     ...(description ? { description } : {}),
-    alternates: { ...metadata.alternates, canonical: seo.canonical_url?.trim() || path },
+    alternates: { ...metadata.alternates, canonical: seo.canonical_url?.trim() || canonical },
     openGraph: {
       ...metadata.openGraph,
       ...(ogTitle ? { title: ogTitle } : {}),
@@ -131,5 +133,5 @@ export async function applySeoOverrides(metadata: Metadata): Promise<Metadata> {
 
 /** `buildMetadata` + admin SEO overrides. Use from `generateMetadata`. */
 export async function buildPageMetadata(options: BuildMetadataOptions): Promise<Metadata> {
-  return applySeoOverrides(buildMetadata(options))
+  return applySeoOverrides(buildMetadata(options), options.path)
 }

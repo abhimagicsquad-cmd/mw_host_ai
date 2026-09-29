@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { Phone, LifeBuoy, LogIn } from "lucide-react"
 
 import { resolveSocialIcon } from "@/components/common/social-icons"

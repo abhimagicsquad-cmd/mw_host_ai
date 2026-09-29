@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 type FooterColumnProps = {
   heading: string

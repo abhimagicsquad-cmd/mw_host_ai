@@ -5,14 +5,16 @@ Branch: `feature/launch-readiness` (stacked on `feature/cms-content-migration`).
 ## 1. URL inventory & migration
 
 - The live WordPress site (`https://magicworkshost.com`; `www` 301s to the apex) publishes **109 URLs** in its sitemaps: 42 posts, pages, categories and SSL/landing pages.
-- Every legacy URL maps to a new page in `next.config.ts` (`legacyPages`). Each is emitted with and without the trailing slash as a **single-hop 308**.
+- **The new site uses the WordPress URL structure itself, trailing slash included.**
+  - All 109 WordPress URLs load at the same URL with a 200 and no redirect.
+  - Examples: `/privacy-policy/`, `/wordpress-hosting/`, `/what-is-web-hosting/`, `/category/ssl-certificate/`.
+  - How it works, and the full mapping table: `docs/15-url-parity.md`.
 - Pattern rules catch the rest:
   - `/clients/*` → WHMCS.
   - `wp-admin` / `wp-login` → `/`.
-  - `author`, `tag` and `page` archives → `/blog`.
-  - `/:slug/feed` → `/blog`.
-  - Any other trailing slash is stripped.
-- The 42 WordPress articles now live at `/blog/<slug>`.
+  - `author`, `tag` and `page` archives → `/blog/`.
+  - `/:slug/feed` → the post.
+- The 42 WordPress articles are served at their original `/<slug>/` URLs.
   - `scripts/import-wordpress-posts.mjs` imports them into `src/constants/legacy-blog-posts.json`, keeping title, description, dates, author and body.
   - 4 over-long or duplicate titles are rewritten via `TITLE_OVERRIDES`.
 - Three missing policies were imported from WordPress (`src/constants/legacy-legal.json`):
@@ -21,7 +23,37 @@ Branch: `feature/launch-readiness` (stacked on `feature/cms-content-migration`).
   - Resource abuse policy.
 - The USA web hosting page was added: `/hosting/usa-web-hosting`, with the 6 USA plans.
 
-**Verified:** 217/217 legacy URL variants (109 paths, with and without the trailing slash) reach a 200 in ≤ 1 hop. 0 fail and 0 need multiple hops.
+**Verified:**
+- 109/109 WordPress URLs are served at exactly the same URL.
+- 217/217 variants (with and without the slash) reach a 200 in ≤ 1 hop.
+- 0 internal links go through a redirect.
+
+## 1a. Forms and email (Resend)
+
+| Form | Where | Endpoint | Saved to | Admin email |
+|---|---|---|---|---|
+| Lead form | Contact, support, affiliate pages, and the "Talk to us" dialog behind every lead button | `POST /api/leads` | Supabase `leads` | "Enquiry from {name} — MagicWorks Host website" |
+| Quote form | Contact page, hosting hub | `POST /api/leads` | Supabase `leads` | "Quote request from {name} — …" |
+| Newsletter | Footer (every page) | `POST /api/newsletter` | Supabase `newsletter_subscribers` | "New newsletter subscriber: {email} — …" |
+| Domain search | Domain pages | GET → WHMCS `cart.php?a=add&domain=register` | WHMCS | none |
+| Site search | Header, `/search/`, 404 page | GET `/search/?q=` | none | none |
+
+**Recipient and message:**
+- Admin notifications go to **abhimagicsquad@gmail.com**. This is the default in `src/lib/email.ts`; `ADMIN_NOTIFICATION_EMAIL` overrides it.
+- Reply-to is the customer, so replying answers them directly.
+- Each email lists every field, the form, the page URL and the time (IST).
+
+**Root cause of the missing notifications:** the first notification (2026-09-23) bounced at Gmail, so Resend put abhimagicsquad@gmail.com on its suppression list. Every notification since then was suppressed without an attempt, and nothing had been delivered. I removed the address from the suppression list on 2026-09-29.
+
+**End-to-end result (2026-09-29, real browser, production build):**
+- 4 real submissions went through the actual forms: contact lead, contact quote, service-page dialog and footer newsletter.
+- All 4 returned API 200, landed on `/thank-you/` (or showed the success message), were saved in Supabase, and were **delivered** to Gmail according to Resend, each with a message ID.
+- Validation also rejected empty, invalid-email and short-phone submissions with no request sent.
+
+**Still to do — the sender domain:**
+- Mail is sent from Resend's test sender `onboarding@resend.dev`. It delivers only to the Resend account owner's address and is more likely to be filtered as spam.
+- `magicworkshost.com` is registered in Resend but not yet verified. Its DNS records are listed in `docs/14-dashboard-handover.md`.
+- The domain has DMARC `p=reject` (strict), so switch `EMAIL_FROM_ADDRESS` to an `@magicworkshost.com` sender only after Resend shows the domain as Verified.
 
 ## 2. Checkout, login & client area (WHMCS)
 
@@ -94,18 +126,22 @@ All figures come from `next build && next start`, measured on the same machine. 
 
 | Check | Result |
 |---|---|
-| Legacy WordPress URL variants → 200 in ≤ 1 hop | 217 / 217 |
-| Crawled pages returning 200 (sitemap plus discovered links) | 108 / 108, with 0 not in the sitemap |
-| OG and Twitter image coverage | 108 / 108 |
+| WordPress URLs served at the identical URL (200, no redirect) | 109 / 109 |
+| WordPress URL variants (with/without slash) → 200 in ≤ 1 hop | 217 / 217 |
+| Internal links that go through a redirect | 0 |
+| Client-side navigation to rewritten URLs; failed prefetches | 9 / 9 pass; 0 failed of ~550 RSC requests |
+| Crawled pages returning 200 (sitemap plus discovered links) | 121 / 121, with 0 missing from the sitemap |
+| OG and Twitter image coverage | 121 / 121 |
 | JSON-LD blocks that fail to parse | 0 |
-| Pages by schema type | BreadcrumbList 107, BlogPosting 50, FAQPage 29, HowTo 24, Product 18, Organization/LocalBusiness/WebSite on the home page |
+| Pages by schema type | BreadcrumbList 120, BlogPosting 50, FAQPage 29, HowTo 24, Product 18, Organization/LocalBusiness/WebSite on the home page |
 | Checkout links | 24 cart links (23 pids), 0 invalid pids, 0 mock `/order` links |
 | Login links | all point to `www.magicworkshost.com/clients/clientarea.php` |
-| Responsive checks (108 pages × 390 / 768 / 1440 px) | 0 horizontal overflow, 0 console errors, 0 nav mismatches |
+| Responsive checks (121 pages × 390 / 768 / 1440 px = 363) | 0 horizontal overflow, 0 console errors, 0 nav mismatches |
 | CSP violations (home, product, contact, blog) | 0 |
+| Public forms, real browser (lead, quote, dialog, newsletter + validation, domain and site search) | 10 / 10 pass; each submission saved in Supabase and delivered to abhimagicsquad@gmail.com (Resend status `delivered`) |
 | Dashboard (20 checks) | Current credentials sign in to the dashboard, and all sections load. Wrong password, signed-out access and cross-origin action requests are refused. Cookie flags are correct |
-| Contact details | +91 9764746633 and sales@magicworkshost.com on all 108 pages (header, footer, contact page, schema); 0 pages with the old number or a Gmail address |
-| Testimonials | The 4 WordPress testimonials (with photos) show on `/`, `/hosting` and `/vps-hosting`; 0 pages with invented testimonials |
+| Contact details | +91 9764746633 and sales@magicworkshost.com on every page (header, footer, contact page, schema); 0 pages with the old number or a Gmail address |
+| Testimonials | The 4 WordPress testimonials (with photos) show on `/`, `/web-hosting-cart/` and `/vps-hosting/`; 0 pages with invented testimonials |
 
 ### Lighthouse: before (commit 678f2ea) vs after, identical local conditions, 12 templates
 

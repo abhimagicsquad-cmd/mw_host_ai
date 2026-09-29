@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 
+import { sendNewsletterNotificationEmail } from "@/lib/email"
 import { storeNewsletterSubscriber } from "@/lib/newsletter-store"
 import { verifyTurnstile } from "@/lib/turnstile"
 import { newsletterApiPayloadSchema } from "@/schemas/newsletter-form.schema"
@@ -66,8 +67,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: "Something went wrong. Please try again." }, { status: 502 })
   }
 
+  const alreadySubscribed = result.stored && "alreadySubscribed" in result && result.alreadySubscribed
+  if (!alreadySubscribed) {
+    // The subscriber is saved either way; a failed notification is logged, not shown to them.
+    const notified = await sendNewsletterNotificationEmail({ email, source, pageUrl })
+    if (!notified.sent && !notified.skipped) console.error("[api/newsletter] Notification email failed after the subscriber was stored.", { email })
+  }
+
   return NextResponse.json({
     success: true,
-    message: result.stored && "alreadySubscribed" in result && result.alreadySubscribed ? "You're already subscribed!" : "You're subscribed!",
+    message: alreadySubscribed ? "You're already subscribed!" : "You're subscribed!",
   })
 }

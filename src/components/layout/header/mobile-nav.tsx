@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { usePathname } from "next/navigation"
 import { Menu, Phone } from "lucide-react"
 

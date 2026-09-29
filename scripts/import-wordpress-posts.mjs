@@ -123,6 +123,24 @@ for (const url of urls) {
   console.log(`${String(words).padStart(5)} words  ${slug}`)
 }
 
+// Each post's WordPress categories (their archives stay at /category/<slug>/). Read from the
+// category archive cards, whose classes list every category of the post ("category-<slug>").
+const byPath = new Map(posts.map((post) => [post.legacyPath, post]))
+const categorySitemap = await get(`${ORIGIN}/category-sitemap.xml`)
+for (const [, category] of categorySitemap.matchAll(/<loc>[^<]*\/category\/([a-z0-9-]+)\/<\/loc>/g)) {
+  for (let page = 1; page <= 5; page++) {
+    const html = await get(`${ORIGIN}/category/${category}/${page > 1 ? `page/${page}/` : ""}`)
+    let found = 0
+    for (const card of html.matchAll(/<article class="([^"]*\bw-grid-item\b[^"]*\btype-post\b[^"]*)"[\s\S]*?href="https:\/\/magicworkshost\.com(\/[a-z0-9-]+\/)"/g)) {
+      const post = byPath.get(card[2])
+      if (!post) continue
+      found++
+      post.wpCategories = [...new Set([...(post.wpCategories ?? []), ...[...card[1].matchAll(/\bcategory-([a-z0-9-]+)/g)].map((m) => m[1])])].sort()
+    }
+    if (!found) break
+  }
+}
+
 posts.sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
 writeFileSync(OUT, `${JSON.stringify(posts, null, 2)}\n`)
 console.log(`\nWrote ${posts.length} posts to src/constants/legacy-blog-posts.json`)

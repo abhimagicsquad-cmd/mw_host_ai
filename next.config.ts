@@ -1,110 +1,47 @@
-import { readFileSync } from "node:fs";
 import type { NextConfig } from "next";
 
+import { RETIRED_WORDPRESS_URLS, WORDPRESS_ALIASES, WORDPRESS_ROUTES } from "./src/lib/public-paths";
+
 /**
- * URL continuity with the WordPress site (https://magicworkshost.com). Every URL in its
- * sitemap resolves here in ONE 301 hop — with or without the trailing slash WordPress
- * uses — to its closest equivalent page. See docs/13-launch-readiness.md for the inventory.
+ * URL parity with the WordPress site (https://magicworkshost.com): pages are served at the
+ * WordPress URLs themselves, trailing slash included (see src/lib/public-paths.ts).
+ *
+ * - WordPress URLs render directly (rewrites to the internal route).
+ * - Internal route paths (/legal/privacy-policy, /blog/<post>, /blog/category/<topic>)
+ *   and slash-less page URLs 308 to the public URL in one hop.
+ * - WordPress aliases of a page (/resources/ for the blog) render too, canonical to the page.
+ * - WordPress feed URLs 308 to the blog.
  */
+const permanent = (source: string, destination: string) => ({ source, destination, permanent: true });
+const bothSlashes = (path: string) => [path.replace(/\/$/, ""), path.endsWith("/") ? path : `${path}/`];
 
-// Old blog posts now live at /blog/<slug> with their full content (imported by
-// scripts/import-wordpress-posts.mjs), so each keeps its own URL rather than the blog index.
-const legacyPosts: { slug: string; legacyPath: string }[] = JSON.parse(
-  readFileSync(new URL("./src/constants/legacy-blog-posts.json", import.meta.url), "utf8")
+const internalPathRedirects = Object.entries(WORDPRESS_ROUTES).flatMap(([publicUrl, internal]) =>
+  bothSlashes(internal).map((source) => permanent(source, publicUrl))
 );
+const retiredRedirects = Object.entries(RETIRED_WORDPRESS_URLS).flatMap(([oldUrl, target]) =>
+  bothSlashes(oldUrl).map((source) => permanent(source, target))
+);
+// Blog posts live at /<slug>/ and categories at /category/<topic>/, as on WordPress.
+const blogStructureRedirects = [
+  permanent("/blog/category/:topic", "/category/:topic/"),
+  permanent("/blog/category/:topic/", "/category/:topic/"),
+  permanent("/blog/:slug((?!category$)[^/]+)", "/:slug/"),
+  permanent("/blog/:slug((?!category$)[^/]+)/", "/:slug/"),
+];
 
-// WordPress categories → blog category pages.
-const legacyCategories: Record<string, string> = {
-  "affiliate-marketing": "business",
-  blogging: "wordpress",
-  "dedicated-hosting": "web-hosting",
-  "digital-marketing": "business",
-  "domain-name": "domains-email",
-  "email-hosting": "domains-email",
-  "online-business": "business",
-  "secure-socket-layer-ssl": "security",
-  "secure-web-hosting": "security",
-  "shared-web-hosting-service": "web-hosting",
-  "ssl-certificate": "security",
-  "web-designs": "web-development",
-  "web-development": "web-development",
-  "web-hosting": "web-hosting",
-  "web-security": "security",
-};
+const wordpressRewrites = Object.entries({ ...WORDPRESS_ROUTES, ...WORDPRESS_ALIASES }).map(([publicUrl, internal]) => ({ source: publicUrl, destination: internal }));
 
-const legacyPages: Record<string, string> = {
-  "/about-us-website-hosting-services": "/about-us",
-  "/resources": "/blog",
-  "/sitemap": "/sitemap-page",
-  "/web-hosting-cart": "/hosting/buy-web-hosting",
-  "/migration-status": "/support",
-  "/demo": "/",
-  "/demo-2": "/",
+// WordPress system URLs that search engines and feed readers still request.
+const wordpressSystemRedirects = [
+  permanent("/index.php", "/"),
+  permanent("/sitemap_index.xml", "/sitemap.xml"),
+  permanent("/post-sitemap.xml", "/sitemap.xml"),
+  permanent("/page-sitemap.xml", "/sitemap.xml"),
+  permanent("/category-sitemap.xml", "/sitemap.xml"),
+];
 
-  "/buy-web-hosting": "/hosting/buy-web-hosting",
-  "/unlimited-web-hosting-plans": "/hosting/unlimited-hosting",
-  "/seo-hosting": "/hosting/seo-hosting",
-  "/wordpress-hosting": "/hosting/wordpress-hosting",
-  "/linux-shared-hosting": "/hosting/linux-shared-hosting",
-  "/cheap-fast-reliable-seo-friendly-usa-web-hosting": "/hosting/usa-web-hosting",
-  "/50-off": "/promo/50-off",
-
-  "/dedicated-server-hosting": "/dedicated-hosting/dedicated-server",
-  "/managed-dedicated-hosting-services": "/dedicated-hosting/managed-dedicated-server",
-  "/linux-dedicated-server-hosting": "/dedicated-hosting/linux-dedicated-server",
-
-  "/domain-hosting": "/domain/domain-hosting",
-  "/domain-registration-india": "/domain/indian-domain",
-  "/domain-name-registration": "/domain/domain-name-registration",
-  "/buy-domain-name-at-cheap-price": "/domain/buy-domain-name",
-  "/transfer-your-domain-name": "/domain/transfer-your-domain-name",
-  "/renew-your-domain": "/domain/renew",
-  "/domain-name-search-landing-page": "/domain/search",
-
-  // Each certificate type has its own page again, so the old per-certificate URLs map 1:1.
-  "/buy-ssl-certificate": "/ssl",
-  "/domain-validated-certificates": "/ssl/domain-validated",
-  "/domain-validated-certificate-with-sni-feature": "/ssl/domain-validated-sni",
-  "/business-validated-certificates": "/ssl/business-validated",
-  "/extended-validated-certificates": "/ssl/extended-validated",
-  "/wild-card-certificates": "/ssl/wildcard",
-
-  "/business-email-hosting": "/email-hosting/business",
-  "/enterprise-email-hosting": "/email-hosting/enterprise",
-
-  "/web-hosting-bandwidth-calculator": "/tools/bandwidth-calculator",
-  "/data-unit-calculator": "/tools/data-unit-calculator",
-  "/download-upload-time-calculator": "/tools/transfer-time-calculator",
-
-  "/thank-you-for-subscribing": "/thank-you",
-  "/thank-you-for-interest-in-affiliate-program": "/thank-you",
-
-  "/privacy-policy": "/legal/privacy-policy",
-  "/terms-of-services": "/legal/terms-of-service",
-  "/service-level-agreement": "/legal/service-level-agreement",
-  "/acceptable-use-policy": "/legal/acceptable-use-policy",
-  "/mail-policy": "/legal/mail-policy",
-  "/affiliate-programme-terms": "/legal/affiliate-programme-terms",
-  "/resource-abuse-policy": "/legal/resource-abuse-policy",
-
-  // WordPress system URLs that search engines and feed readers still request.
-  "/feed": "/blog",
-  "/comments/feed": "/blog",
-  "/index.php": "/",
-  "/sitemap_index.xml": "/sitemap.xml",
-  "/post-sitemap.xml": "/sitemap.xml",
-  "/page-sitemap.xml": "/sitemap.xml",
-  "/category-sitemap.xml": "/sitemap.xml",
-};
-
-for (const post of legacyPosts) legacyPages[post.legacyPath.replace(/\/$/, "")] = `/blog/${post.slug}`;
-for (const [wp, slug] of Object.entries(legacyCategories)) legacyPages[`/category/${wp}`] = `/blog/category/${slug}`;
-
-/** One redirect per legacy URL, matching both "/path" and "/path/" (WordPress's canonical form). */
-const legacyRedirects = Object.entries(legacyPages).flatMap(([source, destination]) => [
-  { source, destination, permanent: true },
-  { source: `${source}/`, destination, permanent: true },
-]);
+// Slash-less page URLs get their trailing slash in src/proxy.ts: Next matches redirect
+// sources with an optional trailing slash, so a config rule would redirect "/x/" to itself.
 
 /** WHMCS stays on the current server at www.magicworkshost.com/clients (see src/lib/billing.ts). */
 const billingBase = (process.env.NEXT_PUBLIC_BILLING_URL || "https://www.magicworkshost.com/clients").replace(/\/$/, "");
@@ -117,11 +54,11 @@ const wordpressPatternRedirects = [
   // (No /wp-content redirect: WordPress on www 301s to the apex, which would loop back here.)
   { source: "/wp-admin/:path*", destination: "/", permanent: false },
   { source: "/wp-login.php", destination: "/", permanent: false },
-  { source: "/author/:name/:rest*", destination: "/blog", permanent: true },
-  { source: "/tag/:tag/:rest*", destination: "/blog", permanent: true },
-  { source: "/page/:n/:rest*", destination: "/blog", permanent: true },
-  { source: "/category/:slug/page/:n/:rest*", destination: "/blog", permanent: true },
-  { source: "/:slug/feed/:rest*", destination: "/blog", permanent: true },
+  { source: "/author/:name/:rest*", destination: "/blog/", permanent: true },
+  { source: "/tag/:tag/:rest*", destination: "/blog/", permanent: true },
+  { source: "/page/:n/:rest*", destination: "/blog/", permanent: true },
+  { source: "/category/:slug/page/:n/:rest*", destination: "/category/:slug/", permanent: true },
+  { source: "/:slug/feed/:rest*", destination: "/:slug/", permanent: true },
 ];
 
 const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : "https://*.supabase.co";
@@ -159,8 +96,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  // Trailing slashes are handled by the redirects below so a legacy "/path/" URL takes a
-  // single hop to its new page instead of two (strip slash, then redirect).
+  // Trailing slashes follow WordPress (pages end in "/"); src/proxy.ts adds them to page URLs
+  // only, so the admin and API keep their slash-less URLs.
   skipTrailingSlashRedirect: true,
   images: {
     dangerouslyAllowSVG: true,
@@ -171,11 +108,15 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sanity", "@sanity/vision"],
   async redirects() {
     return [
-      ...legacyRedirects,
+      ...internalPathRedirects,
+      ...blogStructureRedirects,
+      ...retiredRedirects,
+      ...wordpressSystemRedirects,
       ...wordpressPatternRedirects,
-      // Any other URL with a trailing slash → the same URL without it (the site's canonical form).
-      { source: "/:path+/", destination: "/:path+", permanent: true },
     ];
+  },
+  async rewrites() {
+    return wordpressRewrites;
   },
   async headers() {
     return [

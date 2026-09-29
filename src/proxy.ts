@@ -3,12 +3,28 @@ import { type NextRequest, NextResponse } from "next/server"
 import { SESSION_COOKIE, verifySession } from "@/lib/admin/session"
 
 /**
+ * 1. /admin: optimistic gate (below).
+ * 2. Public pages: WordPress's URL form ends in "/", so a slash-less page URL 308s to the
+ *    same URL with the slash (one hop, query kept). Done here rather than in next.config
+ *    because Next matches redirect sources with an optional trailing slash, so a config rule
+ *    would also match — and loop on — the slashed URL. The matcher excludes the API, the
+ *    admin, Studio, the /order/ checkout forwarder, Next internals, generated images and
+ *    any path with a file extension.
+ */
+export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return adminGate(request)
+  if (pathname === "/" || pathname.endsWith("/")) return NextResponse.next()
+  return NextResponse.redirect(new URL(`${pathname}/${search}`, request.url), 308)
+}
+
+/**
  * Optimistic gate for /admin: bounces requests without a validly-signed, unexpired session
  * cookie to /admin/login (and signed-in users away from the login page). This is only the
  * first layer — every admin layout/page re-verifies the user against the database via
  * `requireAdmin`, and every server action via `authorizeAction`, per the Next.js auth guide.
  */
-export async function proxy(request: NextRequest) {
+async function adminGate(request: NextRequest) {
   const { pathname, search } = request.nextUrl
   const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value)
   const isLoginPage = pathname === "/admin/login"
@@ -34,5 +50,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: [
+    "/admin",
+    "/admin/:path*",
+    "/((?!api|admin|studio|order/|_next|opengraph-image|twitter-image|icon|apple-icon|.*\\.[a-zA-Z0-9]+$).+)",
+  ],
 }
