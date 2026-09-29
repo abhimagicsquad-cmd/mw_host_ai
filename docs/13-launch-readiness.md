@@ -75,7 +75,7 @@ The mock `/order` checkout, its API and its store are **removed**. Billing stays
 
 ## 6. Security
 
-- **Headers.** CSP, HSTS (no `includeSubDomains`, since other subdomains stay on the old server), `nosniff`, `X-Frame-Options: DENY`, Referrer-Policy, Permissions-Policy and COOP. `X-Powered-By` is removed.
+- **Headers.** CSP, HSTS (no `includeSubDomains`, since other subdomains stay on the old server), `nosniff`, `X-Frame-Options: DENY`, Referrer-Policy and Permissions-Policy. `X-Powered-By` is removed. COOP is deliberately not sent: `same-origin` breaks Lighthouse/PageSpeed Insights traces, and framing is already blocked.
 - **Cloudflare Turnstile.**
   - It covers the lead, quote and newsletter forms, with server-side verification in `/api/leads` and `/api/newsletter`.
   - It turns on when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are both set.
@@ -83,7 +83,37 @@ The mock `/order` checkout, its API and its store are **removed**. Billing stays
 - **Admin password.** Admins with a temporary or default password are held on `/admin/profile` (in `requireAdmin`, so client-side navigation can't skip it). Every content action is refused until the password is changed.
 - **Cache.** Sanity reads revalidate hourly, and "Clear website cache" also clears Sanity. This fixes stale Sanity content such as the "10X fasters" headline.
 
-## 7. Before launch — owner actions
+## 7. Verification results (production build, 2026-09-29)
+
+All figures come from `next build && next start`, measured on the same machine. The Vercel preview sits behind SSO deployment protection, so it couldn't be audited directly.
+
+| Check | Result |
+|---|---|
+| Legacy WordPress URL variants → 200 in ≤ 1 hop | 217 / 217 |
+| Crawled pages returning 200 (sitemap plus discovered links) | 108 / 108, with 0 not in the sitemap |
+| OG and Twitter image coverage | 108 / 108 |
+| JSON-LD blocks that fail to parse | 0 |
+| Pages by schema type | BreadcrumbList 107, BlogPosting 50, FAQPage 29, HowTo 24, Product 18, Organization/LocalBusiness/WebSite on the home page |
+| Checkout links | 24 cart links (23 pids), 0 invalid pids, 0 mock `/order` links |
+| Login links | all point to `www.magicworkshost.com/clients/clientarea.php` |
+| Responsive checks (108 pages × 390 / 768 / 1440 px) | 0 horizontal overflow, 0 console errors, 0 nav mismatches |
+| CSP violations (home, product, contact, blog) | 0 |
+| Admin temporary-password gate | hard loads, client-side navigation and server actions all blocked until the password is changed |
+
+### Lighthouse: before (commit 678f2ea) vs after, identical local conditions, 12 templates
+
+| Category | Mobile before → after | Desktop before → after |
+|---|---|---|
+| Performance | 84 → **87** (range 82–92) | 99 → **100** (range 99–100) |
+| Accessibility | 95 → **99** (range 96–100) | 96 → **99** (range 96–100) |
+| Best practices | 100 → **100** | 100 → **100** |
+| SEO | 100 → **100** | 100 → **100** |
+
+Mobile total blocking time fell on almost every page (for example home 310 → 90 ms and VPS 230 → 120 ms).
+
+**Mobile performance is below the 95 target.** In the observed trace, LCP paints at the same moment as FCP on every page, so nothing is waiting on JavaScript. Lighthouse's simulated slow-4G / 4× CPU model still charges the ~217 KB (brotli) of JS that downloads before paint. About 82 KB of that is React/Next itself; the rest is the interactive header menu, mobile nav, FAQ accordion, pricing tabs and carousel. Closing the gap means replacing those with CSS-only or server-rendered versions, which is post-launch work. Serving from Vercel (HTTP/2 + brotli) usually scores a few points higher than a local `next start`.
+
+## 8. Before launch — owner actions
 
 1. **Change the `abhiadmin` password.** The admin now requires this at the next sign-in.
 2. **Add the Turnstile keys in Vercel** (and set `NEXT_PUBLIC_BILLING_URL` only if WHMCS moves).

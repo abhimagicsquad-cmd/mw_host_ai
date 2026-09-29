@@ -66,7 +66,7 @@ export function AffiliateEarningsCalculator() {
                 style={{ height: `${Math.max(4, (amount / maxIncome) * 96)}px` }}
                 title={`Month ${index + 1}: ₹${formatNumber(amount)}`}
               />
-              <span className="text-[10px] text-muted-foreground">{index + 1}</span>
+              <span className="text-xs text-muted-foreground">{index + 1}</span>
             </div>
           ))}
         </div>
