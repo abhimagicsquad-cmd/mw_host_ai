@@ -80,7 +80,12 @@ The mock `/order` checkout, its API and its store are **removed**. Billing stays
   - It covers the lead, quote and newsletter forms, with server-side verification in `/api/leads` and `/api/newsletter`.
   - It turns on when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are both set.
   - Until then, the existing honeypot, minimum fill time and rate limit apply.
-- **Admin password.** Admins with a temporary or default password are held on `/admin/profile` (in `requireAdmin`, so client-side navigation can't skip it). Every content action is refused until the password is changed.
+- **Admin dashboard.** The existing login URL, username, credentials and workflow are unchanged. A change of the original password is recommended but not forced. Existing protections:
+  - scrypt password hashing, with timing-safe checks.
+  - A 15-minute pause after 5 failed attempts, and every failed login is logged.
+  - An HttpOnly, Secure, SameSite=Lax session cookie scoped to `/admin`, with the user re-checked on every request.
+  - Origin-checked server actions (CSRF).
+  - Admin pages are noindex and no-store.
 - **Cache.** Sanity reads revalidate hourly, and "Clear website cache" also clears Sanity. This fixes stale Sanity content such as the "10X fasters" headline.
 
 ## 7. Verification results (production build, 2026-09-29)
@@ -98,7 +103,9 @@ All figures come from `next build && next start`, measured on the same machine. 
 | Login links | all point to `www.magicworkshost.com/clients/clientarea.php` |
 | Responsive checks (108 pages × 390 / 768 / 1440 px) | 0 horizontal overflow, 0 console errors, 0 nav mismatches |
 | CSP violations (home, product, contact, blog) | 0 |
-| Admin temporary-password gate | hard loads, client-side navigation and server actions all blocked until the password is changed |
+| Dashboard (20 checks) | Current credentials sign in to the dashboard, and all sections load. Wrong password, signed-out access and cross-origin action requests are refused. Cookie flags are correct |
+| Contact details | +91 9764746633 and sales@magicworkshost.com on all 108 pages (header, footer, contact page, schema); 0 pages with the old number or a Gmail address |
+| Testimonials | The 4 WordPress testimonials (with photos) show on `/`, `/hosting` and `/vps-hosting`; 0 pages with invented testimonials |
 
 ### Lighthouse: before (commit 678f2ea) vs after, identical local conditions, 12 templates
 
@@ -115,10 +122,14 @@ Mobile total blocking time fell on almost every page (for example home 310 → 9
 
 ## 8. Before launch — owner actions
 
-1. **Change the `abhiadmin` password.** The admin now requires this at the next sign-in.
-2. **Add the Turnstile keys in Vercel** (and set `NEXT_PUBLIC_BILLING_URL` only if WHMCS moves).
-3. **Confirm the phone number.** WordPress shows +91 9764746633 and the new site shows +91 8421903846.
-4. **Replace the Gmail address in the Sanity site settings.** The code already hides personal webmail and empty social links.
-5. **Add real customer testimonials.** The three placeholder testimonials are hidden, and the section stays hidden until real ones exist.
-6. **Review and publish the CMS drafts.** They include 48 pages and the pricing collection, whose prices are now aligned with WordPress.
-7. **DNS.** Move only the apex to Vercel (see §2), then re-run the legacy redirect check against production.
+Done already:
+- **Contact details** now match magicworkshost.com (+91 9764746633, sales@magicworkshost.com) in the dashboard settings, Sanity and the code defaults.
+- **Social links** are the real profiles.
+- **Testimonials:** the 4 real WordPress testimonials replaced all 8 invented ones in the dashboard, in Sanity and in the code defaults.
+
+The step-by-step launch sequence is in `docs/14-dashboard-handover.md`:
+1. Merge PR #2, then PR #3.
+2. Publish the drafts in the dashboard.
+3. Add the Turnstile keys.
+4. Add the domain in Vercel and move DNS for the apex only.
+5. Resubmit the sitemap.

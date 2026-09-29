@@ -1,6 +1,6 @@
 import "server-only"
 
-import { cookies, headers } from "next/headers"
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 
@@ -8,7 +8,7 @@ import { cmsAdminDb, isMissingTableError } from "@/lib/cms/db"
 import type { AdminRole, SafeUser } from "@/lib/cms/types"
 
 import { can, type Permission } from "./permissions"
-import { ADMIN_PATH_HEADER, SESSION_COOKIE, verifySession } from "./session"
+import { SESSION_COOKIE, verifySession } from "./session"
 
 export type CurrentAdmin = Pick<SafeUser, "id" | "username" | "email" | "full_name" | "role" | "must_change_password"> & {
   /** True for the env-configured break-glass login (only works while no CMS users exist). */
@@ -70,10 +70,6 @@ export const getCurrentAdmin = cache(async (): Promise<CurrentAdmin | null> => {
 export async function requireAdmin(permission?: Permission): Promise<CurrentAdmin> {
   const admin = await getCurrentAdmin()
   if (!admin) redirect("/admin/login")
-  // A temporary/default password must be replaced before anything else in the admin is usable.
-  if (admin.must_change_password && (await headers()).get(ADMIN_PATH_HEADER) !== "/admin/profile") {
-    redirect("/admin/profile?required=1")
-  }
   if (permission && !can(admin.role, permission)) redirect("/admin/dashboard?denied=1")
   return admin
 }
@@ -84,8 +80,6 @@ export class AuthorizationError extends Error {}
 export async function authorizeAction(permission?: Permission): Promise<CurrentAdmin> {
   const admin = await getCurrentAdmin()
   if (!admin) throw new AuthorizationError("Your session has expired. Please sign in again.")
-  // Only the permission-less account actions (changing the password) are open until then.
-  if (permission && admin.must_change_password) throw new AuthorizationError("Change your temporary password first (Profile).")
   if (permission && !can(admin.role, permission)) throw new AuthorizationError("You don't have permission to do that.")
   return admin
 }

@@ -12,8 +12,8 @@ export const siteConfig = {
   /** Canonical origin — the apex domain, exactly as the WordPress site (www 301s to it). */
   url: "https://magicworkshost.com",
   contact: {
-    phone: "+91 8421903846",
-    phoneHref: "tel:+918421903846",
+    phone: "+91 9764746633",
+    phoneHref: "tel:+919764746633",
     email: "sales@magicworkshost.com",
     address: "#201, Vasant Bahawa, Survey No. 20, Near La Valle Casa, Bavdhan, Pune, Maharashtra – 411021",
     postalAddress: {
