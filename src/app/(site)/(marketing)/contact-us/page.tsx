@@ -5,6 +5,7 @@ import { ContactSection } from "@/components/sections/contact-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { PageHero } from "@/components/sections/page-hero"
+import { QuoteVisual } from "@/components/sections/quote-visual"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
@@ -49,14 +50,20 @@ export default async function ContactUsPage() {
         <LeadForm source="contact-page" submitLabel="Send message" />
       </ContactSection>
 
-      <SectionContainer width="narrow" background="alt">
-        <SectionHeading
-          eyebrow="Planning something bigger"
-          title="Request a detailed quote"
-          description="Tell us your service, hosting type, and requirements and we'll follow up with pricing tailored to your project."
-        />
-        <div className="mx-auto mt-10 max-w-xl">
-          <GetQuoteForm source="contact-page:quote" />
+      <SectionContainer width="wide" background="alt">
+        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,11fr)_minmax(0,9fr)] lg:gap-16">
+          <div>
+            <SectionHeading
+              align="left"
+              eyebrow="Planning something bigger"
+              title="Request a detailed quote"
+              description="Tell us your service, hosting type, and requirements and we'll follow up with pricing tailored to your project."
+            />
+            <div className="mt-8 rounded-2xl border border-border-alt bg-background p-5 shadow-sm sm:p-8">
+              <GetQuoteForm source="contact-page:quote" />
+            </div>
+          </div>
+          <QuoteVisual />
         </div>
       </SectionContainer>
 
