@@ -13,7 +13,8 @@ export const billingUrls = {
   clientArea: `${BILLING_BASE_URL}/clientarea.php`,
   register: `${BILLING_BASE_URL}/register.php`,
   cart: `${BILLING_BASE_URL}/cart.php?a=view`,
-  submitTicket: `${BILLING_BASE_URL}/submitticket.php`,
+  /** Opens a new ticket in the Support department directly — the WordPress support page's link. */
+  submitTicket: `${BILLING_BASE_URL}/submitticket.php?step=2&deptid=1`,
   affiliates: `${BILLING_BASE_URL}/affiliates.php`,
   domainTransfer: `${BILLING_BASE_URL}/cart.php?a=add&domain=transfer`,
 } as const
@@ -157,12 +158,20 @@ export function planCheckoutUrl(slug: string): string | null {
   return product ? cartAddUrl(product) : null
 }
 
-/** WHMCS domain availability check + registration for `query` (e.g. "mybrand.com" or "mybrand"). */
-export function domainRegisterUrl(query?: string): string {
-  const params = new URLSearchParams({ a: "add", domain: "register" })
+export type DomainOrderMode = "register" | "transfer"
+
+/**
+ * WHMCS domain cart for `query` (e.g. "mybrand.com" or "mybrand"): availability check +
+ * registration, or a transfer-in (the WordPress transfer page's form) — same endpoint the
+ * site's domain search forms submit to.
+ */
+export function domainOrderUrl(mode: DomainOrderMode, query?: string): string {
+  const params = new URLSearchParams({ a: "add", domain: mode })
   if (query?.trim()) params.set("query", query.trim().toLowerCase())
   return `${BILLING_BASE_URL}/cart.php?${params.toString()}`
 }
+
+export const domainRegisterUrl = (query?: string) => domainOrderUrl("register", query)
 
 /** Hostname of the billing system, for CSP `form-action`/`connect-src`. */
 export const BILLING_ORIGIN = new URL(BILLING_BASE_URL).origin

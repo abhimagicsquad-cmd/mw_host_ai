@@ -1,6 +1,7 @@
 import { Resend } from "resend"
 
 import { hostingTypeOptions, serviceOptions } from "@/constants/service-options"
+import { AFFILIATE_SERVICE_VALUE } from "@/schemas/lead-form.schema"
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
@@ -53,6 +54,7 @@ function sanitize(value: string) {
 }
 
 function serviceLabel(value?: string) {
+  if (value === AFFILIATE_SERVICE_VALUE) return "Affiliate Programme application"
   if (!value) return ""
   return serviceOptions.find((option) => option.value === value)?.label ?? value
 }

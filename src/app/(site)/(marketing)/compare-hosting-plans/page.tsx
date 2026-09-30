@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { PlanComparisonTable } from "@/components/sections/plan-comparison-table"
 import { PricingSection } from "@/components/sections/pricing-section"
@@ -10,6 +11,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { comparisonRows } from "@/constants/compare-hosting-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
 import { buildPageMetadata } from "@/lib/seo"
 import { getComparisonPage, getPricingPlansByService } from "@/lib/cms/queries"
 
@@ -62,6 +64,8 @@ export default async function CompareHostingPlansPage() {
 
       {/* WordPress lists the full plan grid under the table, each with its 1/2/3-year buy options. */}
       <PricingSection eyebrow="Pricing" title="Pick your plan and billing period" plans={plans} background="alt" />
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
 
       <FAQSection eyebrow="FAQs" title="Choosing a plan" items={faqs} />
 

@@ -76,6 +76,13 @@ export const WORDPRESS_ALIASES: Record<string, string> = {
 export const RETIRED_WORDPRESS_URLS: Record<string, string> = {
   "/feed/": "/blog/",
   "/comments/feed/": "/blog/",
+  // Older WordPress page URLs still linked from the WordPress sitemap / about pages (and indexed).
+  "/linux-hosting/": "/linux-shared-hosting/",
+  "/buy-domain-name/": "/buy-domain-name-at-cheap-price/",
+  "/vps/": "/vps-hosting/",
+  "/linux-dedicated-server/": "/linux-dedicated-server-hosting/",
+  "/ssl-certificate/": "/buy-ssl-certificate/",
+  "/domain-name-search/": "/domain-name-search-landing-page/",
 }
 
 const INTERNAL_TO_PUBLIC: Record<string, string> = Object.fromEntries(

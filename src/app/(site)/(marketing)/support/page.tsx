@@ -28,7 +28,7 @@ const fallbackChannels = [
     description: "Track and manage support tickets from your client area.",
     icon: "Ticket",
     ctaLabel: "Client area login",
-    ctaHref: billingUrls.clientArea,
+    ctaHref: billingUrls.submitTicket,
     external: true,
   },
   {
@@ -46,6 +46,16 @@ const fallbackFaqs = [
   { question: "How fast do you respond to tickets?", answer: "Most tickets receive a first response within a few hours; urgent live-site issues are prioritized." },
   { question: "Where do I check on my invoice or billing?", answer: "Log into your client area to view invoices, update payment methods, or check your renewal date." },
 ]
+
+/**
+ * A ticket channel that points at the client-area home opens the ticket form itself, as the
+ * WordPress support page did (submitticket.php, Support department).
+ */
+function channelHref(channel: { icon?: string; title: string; ctaHref: string }) {
+  const href = normalizeBillingHref(channel.ctaHref)
+  if (href === billingUrls.clientArea && (channel.icon === "Ticket" || /ticket/i.test(channel.title))) return billingUrls.submitTicket
+  return publicPath(href)
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getSupportPage()
@@ -91,7 +101,7 @@ export default async function SupportPage() {
                 <p className="text-base font-semibold text-brand-navy">{channel.title}</p>
                 <p className="text-sm text-body-text">{channel.description}</p>
                 <a
-                  href={publicPath(normalizeBillingHref(channel.ctaHref))}
+                  href={channelHref(channel)}
                   target={channel.external ? "_blank" : undefined}
                   rel={channel.external ? "noopener noreferrer" : undefined}
                   className="mt-auto text-sm font-semibold text-brand-orange hover:underline"
@@ -117,6 +127,7 @@ export default async function SupportPage() {
         title="Still stuck?"
         description="Send us your details and we'll take it from there."
         primaryCta={{ label: "Talk to us", href: LEAD_CTA_HREF }}
+        secondaryCta={{ label: "Open a support ticket", href: billingUrls.submitTicket, external: true }}
         background="navy"
       />
     </>

@@ -9,9 +9,11 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { Breadcrumbs } from "@/components/sections/breadcrumbs"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { getPromoPage, type PromoPageData, promoPages } from "@/constants/promo-pages-data"
 import { promoSharedHostingPlans } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
 import { getCmsTemplate, getCmsTemplatePages } from "@/lib/cms/content"
 import { buildPageMetadata } from "@/lib/seo"
 
@@ -86,6 +88,8 @@ export default async function PromoPage({ params }: PromoPageProps) {
           plans={promoSharedHostingPlans}
         />
       </div>
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
 
       <FAQSection eyebrow="FAQs" title="Promo questions, answered" items={page.faqs} />
 

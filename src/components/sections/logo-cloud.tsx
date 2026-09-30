@@ -19,9 +19,9 @@ export function LogoCloud({ title = "Trusted by businesses across India", logos,
             <Image
               src={logo.logoUrl}
               alt={logo.name}
-              width={120}
-              height={40}
-              className="h-8 w-auto object-contain opacity-60 grayscale transition-opacity hover:opacity-100 hover:grayscale-0"
+              width={197}
+              height={100}
+              className="h-12 w-auto object-contain opacity-70 grayscale transition-opacity hover:opacity-100 hover:grayscale-0 sm:h-14"
             />
           )
 

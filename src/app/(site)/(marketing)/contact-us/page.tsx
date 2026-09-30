@@ -4,6 +4,7 @@ import { LeadForm } from "@/components/forms/lead-form"
 import { ContactSection } from "@/components/sections/contact-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { OfficeMapSection } from "@/components/sections/office-map-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { QuoteFormSection } from "@/components/sections/quote-form-section"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
@@ -28,10 +29,15 @@ export default async function ContactUsPage() {
   // otherwise the built-in layout renders.
   const cmsPage = await getCmsBuilderDocument("/contact-us")
   if (cmsPage?.pageBuilder?.length) {
+    // The office map (as on WordPress) goes before the page's closing call-to-action banner.
+    const blocks = cmsPage.pageBuilder
+    const closingCta = blocks.at(-1)?._type === "ctaBannerBlock" ? blocks.slice(-1) : []
     return (
       <>
         <CmsSchemaJsonLd path="/contact-us" />
-        <PageBuilder blocks={cmsPage.pageBuilder} />
+        <PageBuilder blocks={closingCta.length ? blocks.slice(0, -1) : blocks} />
+        <OfficeMapSection />
+        {closingCta.length ? <PageBuilder blocks={closingCta} /> : null}
       </>
     )
   }
@@ -81,6 +87,8 @@ export default async function ContactUsPage() {
           },
         ]}
       />
+
+      <OfficeMapSection />
 
       <CTASection
         title="Prefer to talk it through first?"

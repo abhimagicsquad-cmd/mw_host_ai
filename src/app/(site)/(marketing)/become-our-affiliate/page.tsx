@@ -10,6 +10,8 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { AffiliateEarningsCalculator } from "@/components/tools/affiliate-earnings-calculator"
+import { AffiliateSignupForm } from "@/components/forms/affiliate-signup-form"
+import Link from "@/components/common/site-link"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAffiliatePage } from "@/lib/cms/queries"
@@ -33,6 +35,9 @@ const fallbackFaqs = [
   { question: "When do I get paid?", answer: "Monthly, once your unpaid commission balance reaches the ₹2,000 minimum withdrawal threshold." },
   { question: "Is there a limit to how many people I can refer?", answer: "No cap — your earning potential scales with how many referrals you bring in." },
 ]
+
+/** Affiliate support address from the WordPress affiliate page. */
+const AFFILIATE_EMAIL = "affiliate@magicworkshost.com"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getAffiliatePage()
@@ -75,7 +80,7 @@ export default async function BecomeOurAffiliatePage() {
         title={heroTitle}
         description={heroDescription}
         bullets={heroBullets}
-        primaryCta={{ label: "Join the program", href: LEAD_CTA_HREF }}
+        primaryCta={{ label: "Join the program", href: "#affiliate-signup" }}
         secondaryCta={{ label: "Ask a question", href: LEAD_CTA_HREF }}
         stats={stats.slice(0, 3).map((stat) => ({ label: stat.label, value: stat.value }))}
         media={<HeroVisual variant="affiliate" />}
@@ -106,12 +111,33 @@ export default async function BecomeOurAffiliatePage() {
         reasons={howItWorks.map((step) => ({ title: step.title, description: step.description ?? "", icon: resolveIcon(step.icon) }))}
       />
 
+      <SectionContainer width="narrow" id="affiliate-signup" className="scroll-mt-24">
+        <SectionHeading
+          eyebrow="Join the program"
+          title="Become our affiliate"
+          description="Fill in your details, then complete the final registration in our client area to get your referral link."
+        />
+        <div className="mt-10 rounded-2xl border border-border-alt bg-background p-6 sm:p-8">
+          <AffiliateSignupForm />
+        </div>
+        <p className="mt-5 text-center text-sm text-body-text">
+          Questions? Email{" "}
+          <a href={`mailto:${AFFILIATE_EMAIL}`} className="font-medium text-brand-orange hover:underline">
+            {AFFILIATE_EMAIL}
+          </a>{" "}
+          · Read the{" "}
+          <Link href="/legal/affiliate-programme-terms" className="font-medium text-brand-orange hover:underline">
+            Affiliate Programme Terms
+          </Link>
+        </p>
+      </SectionContainer>
+
       <FAQSection eyebrow="FAQs" title="Affiliate program questions, answered" items={faqs} />
 
       <CTASection
         title="Ready to start earning?"
         description="Share your details and we'll get your affiliate account set up."
-        primaryCta={{ label: "Join now", href: LEAD_CTA_HREF }}
+        primaryCta={{ label: "Join now", href: "#affiliate-signup" }}
         background="navy"
       />
     </>

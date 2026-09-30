@@ -5,6 +5,7 @@ import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { ProductJsonLd } from "@/components/common/json-ld"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
@@ -13,6 +14,7 @@ import { PricingSection } from "@/components/sections/pricing-section"
 import { getHostingPage, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans, usaSharedHostingPlans } from "@/constants/pricing-plans"
 import { siteConfig } from "@/constants/site-config"
+import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
@@ -105,6 +107,8 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
           plans={plans}
         />
       </div>
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
 
       <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 

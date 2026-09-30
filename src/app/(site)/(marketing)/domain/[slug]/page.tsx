@@ -2,17 +2,25 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { ProductJsonLd } from "@/components/common/json-ld"
 import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
+import { PricingSection } from "@/components/sections/pricing-section"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
-import { domainIncludedFeatures, domainPages, getDomainPage, tldPricing } from "@/constants/domain-pages-data"
+import { SectionContainer } from "@/components/layout/section-container"
+import { DomainSearchWidget } from "@/components/tools/domain-search-widget"
+import { domainIncludedFeatures, domainPages, domainTransferNotes, getDomainPage, tldPricing, tldTransferPricing } from "@/constants/domain-pages-data"
+import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
+import { billingUrls } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getServicePage } from "@/lib/cms/queries"
+import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type DomainSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -55,20 +63,38 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
     ? cms.features.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) }))
     : domainIncludedFeatures
 
+  // Page flows, as on WordPress: the transfer page orders transfers (at transfer prices), the renew
+  // page sends customers to the client area, and every other domain page searches + registers.
+  const isTransfer = slug === "transfer-your-domain-name"
+  const isRenew = slug === "renew"
+  const searchCta = { label: isTransfer ? "Transfer your domain" : "Search domains", href: "#domain-search" }
+  const renewCta = { label: "Log in to renew", href: billingUrls.clientArea, external: true }
+  const prices = isTransfer ? tldTransferPricing : tldPricing
+  const cmsPlans = isRenew ? [] : await getPricingPlansByService("shared-hosting", "india")
+  const plans = isRenew ? [] : cmsPlans.length ? cmsPlans : sharedHostingPlans
+
   return (
     <>
+      {/* Offers for the TLD prices shown on the page (registration, or transfer on the transfer page). */}
+      <ProductJsonLd
+        name={title}
+        description={description}
+        path={`/domain/${slug}`}
+        plans={prices.map((tld) => ({ name: `${tld.tld} domain${isTransfer ? " transfer" : ""}`, price: tld.price }))}
+      />
+
       <HeroSection
         eyebrow={eyebrow}
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={copy?.primaryCta ?? { label: "Get started", href: LEAD_CTA_HREF }}
-        secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
+        primaryCta={copy?.primaryCta ?? (isRenew ? renewCta : searchCta)}
+        secondaryCta={copy?.secondaryCta ?? (isRenew ? { label: "Search domains", href: "#domain-search" } : { label: "Talk to an expert", href: LEAD_CTA_HREF })}
         stats={
           copy?.heroStats?.length
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
-                { label: ".com from", value: "₹1,099" },
+                { label: isTransfer ? ".com transfer" : ".com from", value: prices[0].price },
                 { label: "Propagation", value: "< 24 hrs" },
                 { label: "WHOIS privacy", value: "Free" },
               ]
@@ -79,7 +105,24 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
 
       <AnswerSection path={`/domain/${slug}`} kind="domain" label={eyebrow} />
 
-      <TldPricingStrip items={tldPricing} />
+      <SectionContainer width="narrow" id="domain-search" className="scroll-mt-24">
+        <DomainSearchWidget mode={isTransfer ? "transfer" : "register"} />
+        {isRenew ? (
+          <p className="mt-5 text-center text-sm text-body-text">
+            Already registered with us?{" "}
+            <a href={billingUrls.clientArea} className="font-medium text-brand-orange hover:underline">
+              Log in to your client area
+            </a>{" "}
+            and renew from My Domains — or turn on auto-renewal so it never lapses.
+          </p>
+        ) : null}
+      </SectionContainer>
+
+      <TldPricingStrip items={prices} />
+
+      {isTransfer ? (
+        <FeaturesSection eyebrow="Before you transfer" title="Transfer of domain notes" columns={3} features={domainTransferNotes} />
+      ) : null}
 
       <FeaturesSection
         eyebrow={copy?.featuresEyebrow || "Included"}
@@ -88,12 +131,26 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
         features={features}
       />
 
+      {plans.length ? (
+        <div id="pricing">
+          <PricingSection
+            eyebrow="Hosting for your domain"
+            title="Select from Magic Host packages"
+            description="Powerful, lightning-fast NVMe web hosting — pick a plan and billing period."
+            plans={plans}
+            background="alt"
+          />
+        </div>
+      ) : null}
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
+
       <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 
       <CTASection
         title={copy?.ctaTitle || "Ready to get your domain sorted?"}
         description={copy?.ctaDescription || "Our team can register, host, or transfer it for you today."}
-        primaryCta={copy?.ctaPrimary ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        primaryCta={copy?.ctaPrimary ?? (isRenew ? renewCta : searchCta)}
         secondaryCta={copy?.ctaSecondary}
         background="navy"
       />

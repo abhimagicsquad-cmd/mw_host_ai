@@ -57,7 +57,7 @@ export async function Footer({ showCta = true }: FooterProps) {
   return (
     <footer className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
-        {showCta ? <FooterCTABlock contactPhone={phone} contactPhoneHref={phoneHref} /> : null}
+        {showCta ? <FooterCTABlock contactPhone={phone} contactPhoneHref={phoneHref} contactEmail={email} /> : null}
 
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-b border-white/10 py-6 sm:justify-between">
           {trustBadges.map((badge) => (

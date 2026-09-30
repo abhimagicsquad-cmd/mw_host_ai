@@ -48,6 +48,8 @@ const billingBase = (process.env.NEXT_PUBLIC_BILLING_URL || "https://www.magicwo
 const billingOrigin = new URL(billingBase).origin;
 
 const wordpressPatternRedirects = [
+  // WordPress site search (/?s=term — its search forms and old links) → the site search page.
+  { source: "/", has: [{ type: "query" as const, key: "s", value: "(?<term>.*)" }], destination: "/search/?q=:term", permanent: true },
   // Old relative /clients links → the billing system (308 keeps POSTs intact).
   { source: "/clients", destination: billingBase, permanent: true },
   { source: "/clients/:path*", destination: `${billingBase}/:path*`, permanent: true },
@@ -74,7 +76,8 @@ const tracking = {
   // frames and fonts stay allowlisted.
   connect: " https: wss://*.tidio.co",
   img: " https:",
-  frame: " https://*.doubleclick.net https://www.googletagmanager.com https://*.tidio.co https://*.tidiochat.com",
+  // + the Google Maps embed of the office on /contact-us.
+  frame: " https://*.doubleclick.net https://www.googletagmanager.com https://*.tidio.co https://*.tidiochat.com https://www.google.com",
   font: " https://*.tidio.co https://*.tidiochat.com",
 };
 

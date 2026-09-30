@@ -1,8 +1,9 @@
 import { blogPosts } from "@/constants/blog-data"
 import { dedicatedPages } from "@/constants/dedicated-pages-data"
-import { domainPages } from "@/constants/domain-pages-data"
+import { domainPages, tldPricing, tldTransferPricing } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
 import { hostingPages } from "@/constants/hosting-pages-data"
+import { dedicatedPlans, sharedHostingPlans, sslPlans, vpsPlans } from "@/constants/pricing-plans"
 import { legalDocuments } from "@/constants/legal-content"
 import { siteConfig, socialLinks } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
@@ -29,6 +30,13 @@ export function GET() {
 - Address: ${siteConfig.contact.address}
 - Customer login and billing: ${billingUrls.clientArea}
 - Profiles: ${socialLinks.map((link) => link.href).join(", ")}
+
+## Prices at a glance (INR)
+- Shared NVMe hosting: from ${sharedHostingPlans[0].price}/month on a 3-year term (${sharedHostingPlans.map((plan) => `${plan.name} ${plan.price}`).join(", ")}); 1-, 2- and 3-year terms available
+- VPS (India): from ${vpsPlans[0].price}/month; dedicated servers (India): from ${dedicatedPlans[0].price}/month
+- SSL certificates: from ${sslPlans[0].price}/year
+- Domain registration per year: ${tldPricing.map((tld) => `${tld.tld} ${tld.price}`).join(", ")}
+- Domain transfer (adds 1 year): ${tldTransferPricing.map((tld) => `${tld.tld} ${tld.price}`).join(", ")}
 
 ## Web hosting
 ${list([

@@ -2,6 +2,8 @@ import { AnalyticsScripts } from "@/components/common/analytics-scripts"
 import { FloatingContact } from "@/components/common/floating-contact"
 import { LeadAutoPopup } from "@/components/common/lead-auto-popup"
 import { PreviewBanner } from "@/components/common/preview-banner"
+import { LogoCloud } from "@/components/sections/logo-cloud"
+import { clientLogos } from "@/constants/client-logos"
 import { Footer } from "@/components/layout/footer/footer"
 import { Header } from "@/components/layout/header/header"
 import { MainHeader } from "@/components/layout/header/main-header"
@@ -23,6 +25,8 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main id="main-content" tabIndex={-1} className="outline-none">
         {children}
       </main>
+      {/* The WordPress "Trusted By" strip, above the footer on every page. */}
+      <LogoCloud title="Trusted by" logos={clientLogos} />
       <Footer />
       <PreviewBanner />
       <FloatingContact />

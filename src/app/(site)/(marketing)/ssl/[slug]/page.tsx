@@ -6,6 +6,7 @@ import { ProductJsonLd } from "@/components/common/json-ld"
 import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingCard } from "@/components/sections/pricing-card"
@@ -13,6 +14,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { sslPlans } from "@/constants/pricing-plans"
 import { getSslPage, sslPages } from "@/constants/ssl-pages-data"
+import { testimonials } from "@/constants/testimonials"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getServicePage } from "@/lib/cms/queries"
 import type { PricingPlan } from "@/types/content"
@@ -98,6 +100,8 @@ export default async function SslSlugPage({ params }: SslSlugPageProps) {
           <PricingCard plan={plan} />
         </div>
       </SectionContainer>
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
 
       <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 

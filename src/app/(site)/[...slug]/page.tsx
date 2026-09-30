@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
 import { PageBuilder } from "@/components/page-builder/page-builder"
 import { getPublishedCmsPage, getPublishedCmsPaths, isTemplateSection } from "@/lib/cms/content"
+import { CMS_INTEGRATED_PATHS } from "@/lib/cms/paths"
 import { templateForPath } from "@/lib/cms/templates"
 import { buildPageMetadata } from "@/lib/seo"
 import { getCmsBuilderDocument } from "@/lib/cms/queries"
@@ -37,7 +38,9 @@ function postParams(slug: string[]) {
 export async function generateStaticParams() {
   const [paths, posts] = await Promise.all([getPublishedCmsPaths(), blogPostStaticParams()])
   return [
-    ...paths.filter((page) => page.path !== "/" && !templateForPath(page.path)).map((page) => ({ slug: page.path.slice(1).split("/") })),
+    // Builder pages of coded routes (/, /about-us, /contact-us, hubs) are prerendered by their own route —
+    // listing them here too would let this route's output replace theirs.
+    ...paths.filter((page) => !(page.path in CMS_INTEGRATED_PATHS) && !templateForPath(page.path)).map((page) => ({ slug: page.path.slice(1).split("/") })),
     ...posts.map((post) => ({ slug: [post.slug] })),
   ]
 }

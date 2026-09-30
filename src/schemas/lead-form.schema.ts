@@ -10,11 +10,14 @@ export const leadMessageField = z
   .optional()
   .or(z.literal(""))
 
+/** Service value of affiliate-programme applications (the affiliate signup form; not in the dropdown). */
+export const AFFILIATE_SERVICE_VALUE = "affiliate-programme"
+
 export const serviceField = z
   .string()
   .min(1, "Please select a service.")
   .refine(
-    (value) => serviceOptions.some((option) => option.value === value),
+    (value) => value === AFFILIATE_SERVICE_VALUE || serviceOptions.some((option) => option.value === value),
     "Please select a valid service."
   )
 

@@ -7,6 +7,7 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
+import { billingUrls } from "@/lib/billing"
 import { buildPageMetadata } from "@/lib/seo"
 import { getThankYouPage } from "@/lib/cms/queries"
 
@@ -91,7 +92,10 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const heading = cms?.heading ?? fallback.heading
   const description = cms?.description ?? fallback.description
   const steps = cms?.steps ?? fallback.steps
-  const ctas = cms?.ctas ?? fallbackCtas
+  const ctas =
+    type === "affiliate"
+      ? [{ label: "Complete affiliate registration", href: billingUrls.affiliates, icon: "HeartHandshake", variant: "primary" as const }, ...fallbackCtas.slice(1)]
+      : (cms?.ctas ?? fallbackCtas)
 
   return (
     <>
