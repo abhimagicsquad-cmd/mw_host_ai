@@ -102,8 +102,15 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
   },
 }
 
-export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVariant }) {
-  const config = VARIANTS[variant]
+type HeroVisualProps = {
+  variant?: HeroVisualVariant
+  /** Replaces the first stat's value (e.g. the page's own mailbox size), keeping its icon and label. */
+  leadStatValue?: string
+}
+
+export function HeroVisual({ variant = "dashboard", leadStatValue }: HeroVisualProps) {
+  const base = VARIANTS[variant]
+  const config = leadStatValue ? { ...base, stats: base.stats.map((stat, index) => (index === 0 ? { ...stat, value: leadStatValue } : stat)) } : base
 
   return (
     <div className="relative w-full max-w-md">

@@ -74,10 +74,7 @@ export default async function PromoPage({ params }: PromoPageProps) {
             ))}
           </ul>
 
-          <div className="mt-4 flex flex-col items-center gap-3">
-            <p className="text-xs font-semibold tracking-wide text-white/60 uppercase">Offer ends in</p>
-            <CountdownTimer targetDate={page.endsAt} />
-          </div>
+          <CountdownTimer targetDate={page.endsAt} label="Offer ends in" className="mt-4" />
         </div>
       </SectionContainer>
 

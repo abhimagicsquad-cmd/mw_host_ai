@@ -11,6 +11,8 @@ export type HostingPageData = {
   bullets: string[]
   features: Feature[]
   faqs: FAQItem[]
+  /** Limits the pricing grid to these plan slugs (WordPress sold only Unlimited NVMe on its page). */
+  planSlugs?: string[]
 }
 
 export const hostingHubIntro = {
@@ -115,6 +117,7 @@ export const hostingPages: HostingPageData[] = [
   {
     slug: "unlimited-hosting",
     eyebrow: "Unlimited Hosting",
+    planSlugs: ["unlimited"],
     title: "Unlimited hosting, without the fine-print asterisk",
     description:
       "Generous storage and bandwidth limits designed for growing sites — with the same NVMe performance as every other plan, not a downgraded tier.",

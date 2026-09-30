@@ -58,8 +58,10 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
   const cmsPlans = await getPricingPlansByService("shared-hosting")
   const indiaPlans = cmsPlans.filter((plan) => plan.region !== "usa")
   const usaPlans = cmsPlans.filter((plan) => plan.region === "usa")
-  const plans =
+  const regionPlans =
     slug === "usa-web-hosting" ? (usaPlans.length ? usaPlans : usaSharedHostingPlans) : indiaPlans.length ? indiaPlans : sharedHostingPlans
+  const pagePlans = fallback?.planSlugs ? regionPlans.filter((plan) => fallback.planSlugs!.includes(plan.slug)) : []
+  const plans = pagePlans.length ? pagePlans : regionPlans
 
   return (
     <>

@@ -5,6 +5,7 @@ import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { PlanComparisonTable } from "@/components/sections/plan-comparison-table"
+import { PricingSection } from "@/components/sections/pricing-section"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { comparisonRows } from "@/constants/compare-hosting-data"
@@ -58,6 +59,9 @@ export default async function CompareHostingPlansPage() {
           <PlanComparisonTable plans={plans} rows={rows} />
         </div>
       </SectionContainer>
+
+      {/* WordPress lists the full plan grid under the table, each with its 1/2/3-year buy options. */}
+      <PricingSection eyebrow="Pricing" title="Pick your plan and billing period" plans={plans} background="alt" />
 
       <FAQSection eyebrow="FAQs" title="Choosing a plan" items={faqs} />
 

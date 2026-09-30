@@ -19,43 +19,80 @@ export const billingUrls = {
 } as const
 
 type BillingCycle = "monthly" | "quarterly" | "semiannually" | "annually" | "biennially" | "triennially"
-type Product = { pid: number; cycle?: BillingCycle; promo?: string }
 
-// Shared hosting prices on the site are the 3-year monthly equivalent, so their buttons add
-// the triennial cycle with the triennial promo — identical to the WordPress "3 Years" buttons.
-const SHARED = (pid: number): Product => ({ pid, cycle: "triennially", promo: "MWHTRIEANNUALSSD" })
+/** One billing-period choice on a plan card — the WordPress "1 Year @ Rs. 2124/- (Save 15%)" options. */
+export type BillingOption = { cycle: BillingCycle; label: string; total: string; save?: string; promo?: string }
+
+type Product = {
+  pid: number
+  /** The period the plan's headline price is quoted for, and the card's default choice. */
+  cycle?: BillingCycle
+  promo?: string
+  options?: BillingOption[]
+}
+
+// Shared hosting prices on the site are the 3-year monthly equivalent, so their buttons default
+// to the triennial cycle with the triennial promo; the 1- and 2-year options carry their own
+// promos — identical to the WordPress plan cards' period dropdown.
+const SHARED = (pid: number, [oneYear, twoYears, threeYears]: [string, string, string]): Product => ({
+  pid,
+  cycle: "triennially",
+  promo: "MWHTRIEANNUALSSD",
+  options: [
+    { cycle: "annually", label: "1 Year", total: oneYear, save: "15%", promo: "MWHANNUALSSD" },
+    { cycle: "biennially", label: "2 Years", total: twoYears, save: "24%", promo: "MWHBIANNUALSSD" },
+    { cycle: "triennially", label: "3 Years", total: threeYears, save: "30%", promo: "MWHTRIEANNUALSSD" },
+  ],
+})
 const SERVER = (pid: number, cycle?: BillingCycle): Product => ({ pid, cycle, promo: "MWH20LEGEND" })
+// VPS: priced monthly; 3/6/12-month terms use the same 20% promo, as on WordPress.
+const VPS = (pid: number, [month, quarter, half, year]: [string, string, string, string]): Product => ({
+  ...SERVER(pid, "monthly"),
+  options: [
+    { cycle: "monthly", label: "1 Month", total: month, save: "20%" },
+    { cycle: "quarterly", label: "3 Months", total: quarter, save: "20%" },
+    { cycle: "semiannually", label: "6 Months", total: half, save: "20%" },
+    { cycle: "annually", label: "1 Year", total: year, save: "20%" },
+  ],
+})
+// Annual-only plans: WordPress showed the yearly total on the button ("Buy Now @ ₹500 per year").
+const ANNUAL = (pid: number, promo: string, total: string, save?: string): Product => ({
+  pid,
+  cycle: "annually",
+  promo,
+  options: [{ cycle: "annually", label: "1 Year", total, save }],
+})
 
 /** Plan slug (Sanity / CMS / built-in plans) → WHMCS product. */
 export const BILLING_PRODUCTS: Record<string, Product> = {
   // Shared hosting — "NVMe Disk Mumbai" group
-  starter: SHARED(153),
-  basic: SHARED(154),
-  "basic-plus": SHARED(155),
-  economy: SHARED(156),
-  deluxe: SHARED(157),
-  unlimited: SHARED(158),
+  starter: SHARED(153, ["₹2,124", "₹3,798", "₹5,229"]),
+  basic: SHARED(154, ["₹4,249", "₹7,598", "₹10,460"]),
+  "basic-plus": SHARED(155, ["₹5,949", "₹10,638", "₹14,645"]),
+  economy: SHARED(156, ["₹9,349", "₹16,718", "₹23,015"]),
+  deluxe: SHARED(157, ["₹11,899", "₹21,278", "₹29,293"]),
+  unlimited: SHARED(158, ["₹16,999", "₹30,398", "₹41,848"]),
   // USA shared hosting — "Linux USA Shared Server" group, as on the WordPress USA page
-  "usa-starter": { pid: 128, cycle: "annually", promo: "MWHANNUALUSA" },
-  "usa-basic": { pid: 129, cycle: "annually", promo: "MWHANNUALUSA" },
-  "usa-basic-plus": { pid: 130, cycle: "annually", promo: "MWHANNUALUSA" },
-  "usa-economy": { pid: 131, cycle: "annually", promo: "MWHANNUALUSA" },
-  "usa-deluxe": { pid: 132, cycle: "annually", promo: "MWHANNUALUSA" },
-  "usa-unlimited": { pid: 133, cycle: "annually", promo: "MWHANNUALUSA" },
+  "usa-starter": ANNUAL(128, "MWHANNUALUSA", "₹500"),
+  "usa-basic": ANNUAL(129, "MWHANNUALUSA", "₹650"),
+  "usa-basic-plus": ANNUAL(130, "MWHANNUALUSA", "₹800"),
+  "usa-economy": ANNUAL(131, "MWHANNUALUSA", "₹999"),
+  "usa-deluxe": ANNUAL(132, "MWHANNUALUSA", "₹1,250"),
+  "usa-unlimited": ANNUAL(133, "MWHANNUALUSA", "₹1,999"),
   // /promo/50-off — the WordPress /50-off campaign products and promo
-  "starter-promo": { pid: 110, cycle: "annually", promo: "MWHANNUAL" },
-  "basic-promo": { pid: 111, cycle: "annually", promo: "MWHANNUAL" },
-  "basic-plus-promo": { pid: 112, cycle: "annually", promo: "MWHANNUAL" },
-  "economy-promo": { pid: 113, cycle: "annually", promo: "MWHANNUAL" },
-  "deluxe-promo": { pid: 114, cycle: "annually", promo: "MWHANNUAL" },
-  "unlimited-promo": { pid: 115, cycle: "annually", promo: "MWHANNUAL" },
+  "starter-promo": ANNUAL(110, "MWHANNUAL", "₹750", "50%"),
+  "basic-promo": ANNUAL(111, "MWHANNUAL", "₹1,194", "50%"),
+  "basic-plus-promo": ANNUAL(112, "MWHANNUAL", "₹1,494", "50%"),
+  "economy-promo": ANNUAL(113, "MWHANNUAL", "₹2,694", "50%"),
+  "deluxe-promo": ANNUAL(114, "MWHANNUAL", "₹3,594", "50%"),
+  "unlimited-promo": ANNUAL(115, "MWHANNUAL", "₹4,194", "50%"),
   // VPS — India / USA (monthly, as priced)
-  "vps-starter": SERVER(122, "monthly"),
-  "vps-basic": SERVER(123, "monthly"),
+  "vps-starter": VPS(122, ["₹4,372", "₹13,117", "₹26,235", "₹52,469"]),
+  "vps-basic": VPS(123, ["₹5,542", "₹16,627", "₹33,255", "₹66,509"]),
   // "vps-silver" (India) has no WHMCS product yet — it keeps the "talk to sales" lead form.
-  "vps-starter-usa": SERVER(119, "monthly"),
-  "vps-basic-usa": SERVER(120, "monthly"),
-  "vps-silver-usa": SERVER(121, "monthly"),
+  "vps-starter-usa": VPS(119, ["₹3,982", "₹11,947", "₹23,895", "₹47,789"]),
+  "vps-basic-usa": VPS(120, ["₹4,996", "₹14,989", "₹29,979", "₹59,957"]),
+  "vps-silver-usa": VPS(121, ["₹5,776", "₹17,329", "₹34,659", "₹69,317"]),
   // Dedicated servers — India / USA
   "dedicated-starter": SERVER(96),
   "dedicated-basic": SERVER(97),
@@ -76,7 +113,7 @@ export const BILLING_PRODUCTS: Record<string, Product> = {
   "enterprise-email": { pid: 80 },
 }
 
-export function cartAddUrl(product: Product): string {
+export function cartAddUrl(product: Pick<Product, "pid" | "cycle" | "promo">): string {
   const params = new URLSearchParams({ a: "add", pid: String(product.pid) })
   if (product.promo) params.set("promocode", product.promo)
   if (product.cycle) {
@@ -84,6 +121,34 @@ export function cartAddUrl(product: Product): string {
     params.set("skipconfig", "1")
   }
   return `${BILLING_BASE_URL}/cart.php?${params.toString()}`
+}
+
+export type PlanBillingChoice = BillingOption & { href: string; isDefault: boolean }
+
+/**
+ * The billing periods a plan can be bought for, each with its own WHMCS cart link, or null
+ * when the plan has no period options. Code-owned like the cart links, so it applies to plans
+ * coming from the CMS too.
+ */
+export function planBillingChoices(slug: string): PlanBillingChoice[] | null {
+  const product = BILLING_PRODUCTS[slug]
+  if (!product?.options?.length) return null
+  return product.options.map((option) => ({
+    ...option,
+    href: cartAddUrl({ pid: product.pid, cycle: option.cycle, promo: option.promo ?? product.promo }),
+    isDefault: option.cycle === product.cycle,
+  }))
+}
+
+/**
+ * A plan's purchase button: plans sold online go straight to their WHMCS cart (same product,
+ * cycle and promo as the WordPress site); anything else keeps its CMS-defined button (e.g. the
+ * "talk to sales" lead form).
+ */
+export function planPurchaseCta<T extends { label: string; href: string }>(plan: { slug: string; cta: T }): T | { label: string; href: string } {
+  const checkout = planCheckoutUrl(plan.slug)
+  if (!checkout) return plan.cta
+  return { label: plan.cta.href === "#lead" || !plan.cta.label ? "Buy Now" : plan.cta.label, href: checkout }
 }
 
 /** WHMCS checkout URL for a plan slug, or null if the plan isn't sold online. */

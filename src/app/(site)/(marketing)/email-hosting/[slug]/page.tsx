@@ -13,6 +13,7 @@ import { PricingCard } from "@/components/sections/pricing-card"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { emailIncludedFeatures, emailPages, getEmailPage } from "@/constants/email-pages-data"
+import { planPurchaseCta } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
 import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
@@ -61,6 +62,9 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
   const plan: PricingPlan = cms?.plan
     ? { ...cms.plan, features: cms.plan.features ?? [], cta: cms.plan.cta ?? { label: "Get started", href: "#lead" } }
     : fallback!.plan
+  // As on WordPress, "Buy Now" goes straight to the plan's WHMCS cart.
+  const buyCta = { ...planPurchaseCta(plan), label: "Buy Now" }
+  const mailboxStorage = (fallback ?? emailPages.find((page) => page.plan.slug === plan.slug))?.mailboxStorage
 
   return (
     <>
@@ -71,7 +75,7 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
         title={title}
         description={description}
         bullets={bullets}
-        primaryCta={copy?.primaryCta ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        primaryCta={copy?.primaryCta ?? buyCta}
         secondaryCta={copy?.secondaryCta ?? { label: "Talk to an expert", href: LEAD_CTA_HREF }}
         stats={
           copy?.heroStats?.length
@@ -82,7 +86,7 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
                 { label: "Support", value: "24/7" },
               ]
         }
-        media={<HeroVisual variant="mail" />}
+        media={<HeroVisual variant="mail" leadStatValue={mailboxStorage} />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Email Hosting", href: "/email-hosting" }, { label: eyebrow }]}
       />
 
@@ -112,7 +116,7 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
       <CTASection
         title={copy?.ctaTitle || "Ready to set up professional email?"}
         description={copy?.ctaDescription || "Tell us how many mailboxes you need and we'll get you set up."}
-        primaryCta={copy?.ctaPrimary ?? { label: "Get started", href: LEAD_CTA_HREF }}
+        primaryCta={copy?.ctaPrimary ?? buyCta}
         secondaryCta={copy?.ctaSecondary}
         background="navy"
       />
