@@ -95,7 +95,7 @@ export type TestimonialsBlockData = { _type: "testimonialsBlock"; _key: string; 
 export type FaqBlockData = { _type: "faqBlock"; _key: string; eyebrow?: string; title: string; description?: string; contactCta?: boolean; faqs: FaqItemData[] }
 export type CtaBannerBlockData = { _type: "ctaBannerBlock"; _key: string; title: string; description?: string; primaryCta?: CtaLinkData; secondaryCta?: CtaLinkData; background?: "default" | "alt" | "navy" }
 export type TldPricingBlockData = { _type: "tldPricingBlock"; _key: string; items: { tld: string; price: string; suffix?: string }[] }
-export type QuoteFormBlockData = { _type: "quoteFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; defaultService?: string; background?: "none" | "alt" }
+export type QuoteFormBlockData = { _type: "quoteFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; defaultService?: string; background?: "none" | "alt"; imageUrl?: string; imageAlt?: string }
 export type LeadFormBlockData = { _type: "leadFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; submitLabel?: string; background?: "none" | "alt" }
 export type RichTextBlockData = { _type: "richTextBlock"; _key: string; eyebrow?: string; title?: string; content: PortableTextBlock[] }
 

@@ -366,6 +366,8 @@ export const sectionSchemas: SectionSchema[] = [
       { kind: "text", name: "defaultService", label: "Pre-selected service", placeholder: "shared-hosting", help: "Optional service value the form starts with." },
       { kind: "text", name: "source", label: "Lead source tag" },
       { kind: "select", name: "background", label: "Background", options: [{ value: "alt", label: "Light grey" }, { value: "none", label: "Default" }] },
+      { kind: "image", name: "imageUrl", label: "Side image" },
+      { kind: "text", name: "imageAlt", label: "Side image alt text", help: "Describes the image for screen readers. Leave the image empty to show the default hosting image." },
     ],
     defaults: { title: "Request a detailed quote", background: "alt", source: "page-builder:quote" },
   },

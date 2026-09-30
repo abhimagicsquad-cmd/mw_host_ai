@@ -286,6 +286,8 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
                 title={block.title}
                 description={block.description}
                 background={block.background === "none" ? "none" : "alt"}
+                imageUrl={block.imageUrl}
+                imageAlt={block.imageAlt}
               >
                 <GetQuoteForm source={block.source || "page-builder:quote"} defaultService={block.defaultService || undefined} />
               </QuoteFormSection>
