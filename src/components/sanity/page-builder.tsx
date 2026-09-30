@@ -3,8 +3,6 @@ import { PortableText } from "@portabletext/react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { LazyGetQuoteForm as GetQuoteForm, LazyLeadForm as LeadForm } from "@/components/forms/lazy-forms"
-import { SectionContainer } from "@/components/layout/section-container"
-import { SectionHeading } from "@/components/layout/section-heading"
 import { AboutCredibilitySection } from "@/components/sections/about-credibility-section"
 import { BannerSection } from "@/components/sections/banner-section"
 import { ContentSection } from "@/components/sections/content-section"
@@ -16,6 +14,7 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { PageHero } from "@/components/sections/page-hero"
 import { PricingSection } from "@/components/sections/pricing-section"
+import { QuoteFormSection } from "@/components/sections/quote-form-section"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
@@ -281,12 +280,15 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
             return <TldPricingStrip key={block._key} items={block.items.map((item) => ({ ...item, suffix: item.suffix ?? "" }))} />
           case "quoteFormBlock":
             return (
-              <SectionContainer key={block._key} width="narrow" background={block.background === "none" ? "none" : "alt"}>
-                <SectionHeading eyebrow={block.eyebrow} title={block.title} description={block.description} />
-                <div className="mx-auto mt-10 max-w-xl">
-                  <GetQuoteForm source={block.source || "page-builder:quote"} defaultService={block.defaultService || undefined} />
-                </div>
-              </SectionContainer>
+              <QuoteFormSection
+                key={block._key}
+                eyebrow={block.eyebrow}
+                title={block.title}
+                description={block.description}
+                background={block.background === "none" ? "none" : "alt"}
+              >
+                <GetQuoteForm source={block.source || "page-builder:quote"} defaultService={block.defaultService || undefined} />
+              </QuoteFormSection>
             )
           case "leadFormBlock":
             return (
