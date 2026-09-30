@@ -80,7 +80,7 @@ export async function saveWebsiteSettingsAction(payload: string): Promise<Action
 
 export async function clearWebsiteCacheAction(): Promise<ActionState> {
   try {
-    const admin = await authorizeAction("system.import")
+    const admin = await authorizeAction("system.cache")
     refreshWebsite()
     await logActivity({ admin, action: "system.cache_cleared", entityType: "system", description: "Cleared the website content cache" })
     return { ok: true, message: "Website cache cleared — every page will re-read the CMS on its next visit." }
@@ -89,16 +89,3 @@ export async function clearWebsiteCacheAction(): Promise<ActionState> {
   }
 }
 
-/**
- * Formerly copied the header/footer menus and site settings from Sanity into the CMS. Sanity has
- * been retired and its menus and settings were copied into the dashboard on 2026-09-30, so this
- * only reports that; the dashboard (Menus, Settings) is the source for both.
- */
-export async function importMenusAndSettingsAction(): Promise<ActionState> {
-  try {
-    await authorizeAction("system.import")
-    return { ok: true, message: "Nothing to copy — menus and site settings are managed in the dashboard (Sanity has been retired)." }
-  } catch (error) {
-    return toActionError(error)
-  }
-}

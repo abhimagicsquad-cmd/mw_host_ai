@@ -7,7 +7,6 @@ import type { BlogPost } from "@/constants/blog-data"
 import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/types/cms-content"
 
 import { cmsAdminDb, cmsPublicDb } from "./db"
-import { markdownToPortableText } from "./rich-text"
 import { PRICING_COLLECTION_KEY, TEMPLATE_SECTION_PREFIX, templateForPath, templateSectionType, type TemplateKey } from "./templates"
 import type { GeneralSettings, PageRow, PageSectionRow, SeoRow, WebsiteSettings } from "./types"
 
@@ -59,7 +58,7 @@ export function toPageBuilderBlock(section: Pick<PageSectionRow, "id" | "type" |
   for (const field of ARRAY_FIELDS) if (field in data && !Array.isArray(data[field])) data[field] = []
 
   if (section.type === "richTextBlock") {
-    data.content = typeof data.content === "string" ? markdownToPortableText(data.content) : (data.content ?? [])
+    data.content = typeof data.content === "string" ? data.content : ""
   }
   if (section.type === "featureGridBlock" && data.columns) data.columns = Number(data.columns)
   if (section.type === "pricingBlock" && Array.isArray(data.plans)) {

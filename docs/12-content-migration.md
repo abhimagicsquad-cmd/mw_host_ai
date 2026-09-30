@@ -103,8 +103,8 @@ Public reads are cached under the `cms` tag, so direct database changes go live 
 
 **Removed:** `/studio`, `sanity.config.ts`, `src/sanity/*` (client, schemas, structure, queries), the `/api/revalidate` webhook, `scripts/migrate-content.mjs`, and the `sanity`, `next-sanity`, `@sanity/image-url`, `@sanity/vision` and `styled-components` packages. Content getters now live in `src/lib/cms/queries.ts`, content types in `src/types/cms-content.ts`, and the page builder in `src/components/page-builder/`.
 
-**Kept:** `@portabletext/react` renders dashboard rich text, which is stored as Markdown and converted on read. It is a renderer only and makes no Sanity calls.
+**Rich text:** `@portabletext/react` was replaced by `src/components/common/rich-text.tsx`, which renders the stored Markdown directly (same HTML).
 
-**Content Migration screen:** unchanged. Its importer now uses built-in content only, and "Copy menus & site settings" reports that there is nothing left to copy.
+**Retired dashboard pieces (cleanup, same day):** the Content Migration screen (`/admin/migration`), its import/publish actions, the migration planner and content audit, the "Copy menus & site settings" action and the `system.import` permission (now `system.cache`, which guards only Clear website cache). Pages are published from Pages as before.
 
 **Environment:** the `SANITY_*` and `NEXT_PUBLIC_SANITY_*` variables are no longer read and can be deleted from Vercel and `.env.local`.

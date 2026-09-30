@@ -1,7 +1,7 @@
 import type { ReactNode } from "react"
-import { PortableText } from "@portabletext/react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
+import { RichText } from "@/components/common/rich-text"
 import { LazyGetQuoteForm as GetQuoteForm, LazyLeadForm as LeadForm } from "@/components/forms/lazy-forms"
 import { AboutCredibilitySection } from "@/components/sections/about-credibility-section"
 import { BannerSection } from "@/components/sections/banner-section"
@@ -272,7 +272,7 @@ export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
           case "richTextBlock":
             return (
               <ContentSection key={block._key} eyebrow={block.eyebrow} title={block.title}>
-                <PortableText value={block.content} />
+                <RichText markdown={block.content} />
               </ContentSection>
             )
           case "tldPricingBlock":

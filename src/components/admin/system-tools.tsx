@@ -1,10 +1,8 @@
 "use client"
 
-import Link from "next/link"
 import { useState } from "react"
-import { ArrowRight, RefreshCw } from "lucide-react"
+import { RefreshCw } from "lucide-react"
 
-import { buttonVariants } from "@/components/ui/button"
 import { clearWebsiteCacheAction } from "@/lib/admin/actions/settings"
 import type { ActionState } from "@/lib/cms/types"
 
@@ -15,17 +13,8 @@ export function SystemTools() {
   const [cacheState, setCacheState] = useState<ActionState>()
 
   return (
-    <Panel title="Migration & maintenance" description="Content migration from Sanity and cache controls">
+    <Panel title="Maintenance" description="Website cache controls">
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-3">
-          <p className="text-sm text-muted-foreground">
-            See where every page&apos;s content comes from today, import it all into the CMS as drafts, preview it, and publish when it&apos;s been checked.
-          </p>
-          <Link href="/admin/migration" className={buttonVariants({ variant: "outline", className: "self-start" })}>
-            Open content migration
-            <ArrowRight />
-          </Link>
-        </div>
         <div className="flex flex-col gap-3">
           <p className="text-sm text-muted-foreground">
             Saving anything in the admin already refreshes the website. Use this only if you edited the database directly.

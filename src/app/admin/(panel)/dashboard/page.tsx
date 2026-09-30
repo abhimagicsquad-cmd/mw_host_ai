@@ -205,7 +205,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               ))}
             </ul>
           ) : (
-            <EmptyState icon={FileText} title="No CMS pages yet" description="Create a page or import existing content from Sanity below." />
+            <EmptyState icon={FileText} title="No CMS pages yet" description="Create your first page to get started." />
           )}
         </Panel>
 
@@ -242,7 +242,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </Panel>
       </div>
 
-      {can(admin.role, "system.import") ? <SystemTools /> : null}
+      {can(admin.role, "system.cache") ? <SystemTools /> : null}
 
       <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <HardDrive className="size-3.5" aria-hidden />

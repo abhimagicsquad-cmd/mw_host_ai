@@ -1,4 +1,3 @@
-import type { PortableTextBlock } from "@portabletext/react"
 
 export type Seo = {
   metaTitle?: string
@@ -92,7 +91,7 @@ export type CtaBannerBlockData = { _type: "ctaBannerBlock"; _key: string; title:
 export type TldPricingBlockData = { _type: "tldPricingBlock"; _key: string; items: { tld: string; price: string; suffix?: string }[] }
 export type QuoteFormBlockData = { _type: "quoteFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; defaultService?: string; background?: "none" | "alt"; imageUrl?: string; imageAlt?: string }
 export type LeadFormBlockData = { _type: "leadFormBlock"; _key: string; eyebrow?: string; title: string; description?: string; source?: string; submitLabel?: string; background?: "none" | "alt" }
-export type RichTextBlockData = { _type: "richTextBlock"; _key: string; eyebrow?: string; title?: string; content: PortableTextBlock[] }
+export type RichTextBlockData = { _type: "richTextBlock"; _key: string; eyebrow?: string; title?: string; /** Markdown subset — see src/lib/cms/rich-text.ts. */ content: string }
 
 export type PageBuilderBlock =
   | HeroBlockData

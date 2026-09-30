@@ -58,7 +58,7 @@ export function PricingEditor({
     <div className="flex flex-col gap-4">
       <div className={cn("flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4", published ? "border-emerald-300/60 bg-emerald-50 dark:bg-emerald-500/10" : "bg-card")}>
         <div className="text-sm">
-          <p className="font-medium">{published ? "The website uses these plans" : "Draft — the website still uses the Sanity plans"}</p>
+          <p className="font-medium">{published ? "The website uses these plans" : "Draft — the website still uses its built-in plans"}</p>
           <p className="text-muted-foreground">
             {Object.entries(byService)
               .map(([service, count]) => `${service}: ${count}`)

@@ -18,7 +18,6 @@ export const CMS_INTEGRATED_PATHS: Record<string, string> = {
 const RESERVED_PREFIXES = [
   "/admin",
   "/api",
-  "/studio",
   "/_next",
   "/order",
   "/become-our-affiliate",

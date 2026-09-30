@@ -1,65 +1,41 @@
-import type { PortableTextBlock } from "@portabletext/react"
-
 /**
- * The CMS stores rich text as a small Markdown subset (headings, paragraphs, bullet and
- * numbered lists, **bold**, *italic*, [links](url)) because it's editable in a plain
- * textarea. The website's renderers (PortableText) expect Portable Text, so content is
- * converted on read. `portableTextToMarkdown` is the reverse (Portable Text → Markdown).
+ * The dashboard stores rich text as a small Markdown subset (headings, paragraphs, bullet and
+ * numbered lists, quotes, **bold**, *italic*, [links](url)) because it's editable in a plain
+ * textarea. `parseRichText` turns it into blocks that `<RichText />` renders.
  */
 
-type Span = { _type: "span"; _key: string; text: string; marks: string[] }
-type MarkDef = { _type: "link"; _key: string; href: string }
-type Block = {
-  _type: "block"
-  _key: string
-  style: string
-  children: Span[]
-  markDefs: MarkDef[]
-  listItem?: "bullet" | "number"
-  level?: number
-}
+export type RichTextInline = { text: string; bold?: boolean; italic?: boolean; href?: string }
 
-let keyCounter = 0
-function nextKey() {
-  keyCounter = (keyCounter + 1) % 1_000_000
-  return `k${keyCounter.toString(36)}`
+export type RichTextBlock = {
+  type: "paragraph" | "h2" | "h3" | "h4" | "blockquote" | "bullet" | "number"
+  children: RichTextInline[]
 }
 
 const INLINE_PATTERN = /(\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\([^)\s]+\))/g
 
-function parseInline(text: string): { children: Span[]; markDefs: MarkDef[] } {
-  const children: Span[] = []
-  const markDefs: MarkDef[] = []
-
+function parseInline(text: string): RichTextInline[] {
+  const children: RichTextInline[] = []
   for (const part of text.split(INLINE_PATTERN)) {
     if (!part) continue
     if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
-      children.push({ _type: "span", _key: nextKey(), text: part.slice(2, -2), marks: ["strong"] })
+      children.push({ text: part.slice(2, -2), bold: true })
     } else if (part.startsWith("*") && part.endsWith("*") && part.length > 2) {
-      children.push({ _type: "span", _key: nextKey(), text: part.slice(1, -1), marks: ["em"] })
+      children.push({ text: part.slice(1, -1), italic: true })
     } else {
       const link = /^\[([^\]]+)\]\(([^)\s]+)\)$/.exec(part)
-      if (link) {
-        const def: MarkDef = { _type: "link", _key: nextKey(), href: link[2] }
-        markDefs.push(def)
-        children.push({ _type: "span", _key: nextKey(), text: link[1], marks: [def._key] })
-      } else {
-        children.push({ _type: "span", _key: nextKey(), text: part, marks: [] })
-      }
+      children.push(link ? { text: link[1], href: link[2] } : { text: part })
     }
   }
-
-  if (!children.length) children.push({ _type: "span", _key: nextKey(), text: "", marks: [] })
-  return { children, markDefs }
+  return children.length ? children : [{ text: "" }]
 }
 
-export function markdownToPortableText(markdown: string): PortableTextBlock[] {
-  const blocks: Block[] = []
+export function parseRichText(markdown: string): RichTextBlock[] {
+  const blocks: RichTextBlock[] = []
   let paragraph: string[] = []
 
   const flushParagraph = () => {
     if (!paragraph.length) return
-    blocks.push({ _type: "block", _key: nextKey(), style: "normal", ...parseInline(paragraph.join(" ")) })
+    blocks.push({ type: "paragraph", children: parseInline(paragraph.join(" ")) })
     paragraph = []
   }
 
@@ -77,69 +53,21 @@ export function markdownToPortableText(markdown: string): PortableTextBlock[] {
 
     if (heading) {
       flushParagraph()
-      blocks.push({ _type: "block", _key: nextKey(), style: `h${heading[1].length}`, ...parseInline(heading[2]) })
+      blocks.push({ type: `h${heading[1].length}` as RichTextBlock["type"], children: parseInline(heading[2]) })
     } else if (bullet) {
       flushParagraph()
-      blocks.push({ _type: "block", _key: nextKey(), style: "normal", listItem: "bullet", level: 1, ...parseInline(bullet[1]) })
+      blocks.push({ type: "bullet", children: parseInline(bullet[1]) })
     } else if (numbered) {
       flushParagraph()
-      blocks.push({ _type: "block", _key: nextKey(), style: "normal", listItem: "number", level: 1, ...parseInline(numbered[1]) })
+      blocks.push({ type: "number", children: parseInline(numbered[1]) })
     } else if (quote) {
       flushParagraph()
-      blocks.push({ _type: "block", _key: nextKey(), style: "blockquote", ...parseInline(quote[1]) })
+      blocks.push({ type: "blockquote", children: parseInline(quote[1]) })
     } else {
       paragraph.push(line)
     }
   }
   flushParagraph()
 
-  return blocks as unknown as PortableTextBlock[]
-}
-
-type LooseBlock = {
-  _type?: string
-  style?: string
-  listItem?: string
-  children?: { text?: string; marks?: string[] }[]
-  markDefs?: { _key: string; _type?: string; href?: string }[]
-}
-
-export function portableTextToMarkdown(value: unknown): string {
-  if (typeof value === "string") return value
-  if (!Array.isArray(value)) return ""
-
-  const lines: string[] = []
-  let previousWasList = false
-
-  for (const raw of value as LooseBlock[]) {
-    if (raw?._type !== "block") continue
-    const text = (raw.children ?? [])
-      .map((child) => {
-        let out = child.text ?? ""
-        for (const mark of child.marks ?? []) {
-          if (mark === "strong") out = `**${out}**`
-          else if (mark === "em") out = `*${out}*`
-          else {
-            const def = raw.markDefs?.find((d) => d._key === mark)
-            if (def?.href) out = `[${out}](${def.href})`
-          }
-        }
-        return out
-      })
-      .join("")
-
-    const isList = Boolean(raw.listItem)
-    if (lines.length && !(isList && previousWasList)) lines.push("")
-
-    if (raw.listItem === "bullet") lines.push(`- ${text}`)
-    else if (raw.listItem === "number") lines.push(`1. ${text}`)
-    else if (raw.style && /^h[2-4]$/.test(raw.style)) lines.push(`${"#".repeat(Number(raw.style[1]))} ${text}`)
-    else if (raw.style === "h1") lines.push(`## ${text}`)
-    else if (raw.style === "blockquote") lines.push(`> ${text}`)
-    else lines.push(text)
-
-    previousWasList = isList
-  }
-
-  return lines.join("\n")
+  return blocks
 }
