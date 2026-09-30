@@ -123,6 +123,7 @@ const nextConfig: NextConfig = {
       { source: "/:path*", headers: [...securityHeaders, { key: "Content-Security-Policy", value: csp() }] },
       // Admin: media previews may be any https image the editor pastes.
       { source: "/admin/:path*", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
+      { source: "/mwh-admin-login", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
       // Sanity Studio needs eval, its APIs/websockets and remote images.
       {
         source: "/studio/:path*",

@@ -69,7 +69,7 @@ export const getCurrentAdmin = cache(async (): Promise<CurrentAdmin | null> => {
 /** For admin pages: redirects to login when signed out, or to the dashboard when lacking `permission`. */
 export async function requireAdmin(permission?: Permission): Promise<CurrentAdmin> {
   const admin = await getCurrentAdmin()
-  if (!admin) redirect("/admin/login")
+  if (!admin) redirect("/mwh-admin-login")
   if (permission && !can(admin.role, permission)) redirect("/admin/dashboard?denied=1")
   return admin
 }

@@ -10,8 +10,8 @@ The custom dashboard is the website's content management system. Content comes f
 
 | | |
 |---|---|
-| Login page (today) | https://mw-host-ai.vercel.app/admin/login |
-| Login page (after the domain moves) | https://magicworkshost.com/admin/login |
+| Login page (today) | https://mw-host-ai.vercel.app/mwh-admin-login |
+| Login page (after the domain moves) | https://magicworkshost.com/mwh-admin-login |
 | Username | `abhiadmin` (Super Admin) |
 | Password | the existing password (shared separately, never stored in this repository) |
 

@@ -110,7 +110,7 @@ export async function logoutAction() {
   if (admin) await logActivity({ admin, action: "auth.logout", entityType: "auth", description: `${admin.username} signed out` })
   const store = await cookies()
   store.delete({ name: SESSION_COOKIE, path: "/admin" })
-  redirect("/admin/login")
+  redirect("/mwh-admin-login")
 }
 
 const changePasswordSchema = z

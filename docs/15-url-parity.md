@@ -18,7 +18,7 @@ The rebuild uses the WordPress site's URL structure, trailing slash included. Ev
   - Their canonical points to the main page, so search engines consolidate them without a redirect.
 - **Trailing slashes:** a slash-less page URL 308s to the slashed one. This happens in `src/proxy.ts`, not in `next.config`, because Next matches config redirect sources with an optional slash, and such a rule would loop.
   - `/admin/*`, `/api/*`, `/studio`, `/order/*`, generated images and files keep their exact URLs.
-  - The dashboard login stays at `/admin/login`.
+  - The dashboard login stays at `/mwh-admin-login`.
 - **Links and metadata:** every link, canonical tag, sitemap entry, breadcrumb, JSON-LD URL and search result is emitted through `publicPath()`.
   - Public components use `SiteLink`, which also maps hrefs stored in the CMS or in Sanity.
   - Internal links never go through a redirect. The crawl found 0 internal links that redirect.

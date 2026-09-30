@@ -11,7 +11,7 @@ import { getCurrentAdmin } from "@/lib/admin/auth"
  */
 export async function GET(request: NextRequest) {
   const admin = await getCurrentAdmin()
-  if (!admin) return NextResponse.redirect(new URL("/admin/login", request.url))
+  if (!admin) return NextResponse.redirect(new URL("/mwh-admin-login", request.url))
 
   const requested = request.nextUrl.searchParams.get("path") ?? "/"
   const path = requested.startsWith("/") && !requested.startsWith("//") && !requested.startsWith("/admin") ? requested : "/"
