@@ -214,6 +214,28 @@
     background-size: 24px 24px;
   }
 
+  /* "Trusted by" logo marquee (<LogoCloud />): the logo set is rendered twice and the track
+     slides by exactly half its width, so the loop has no visible jump. CSS-only, no JS. */
+  .logo-marquee-track {
+    animation: logo-marquee var(--marquee-duration, 36s) linear infinite;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .logo-marquee:hover .logo-marquee-track {
+      animation-play-state: paused;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo-marquee-track {
+      animation: none;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .logo-marquee-track [data-marquee-copy] {
+      display: none;
+    }
+  }
+
   .text-gradient-brand {
     background-image: linear-gradient(90deg, var(--brand-orange), #ff9a5c);
     background-clip: text;
@@ -302,4 +324,10 @@
 .bg-brand-navy .text-brand-orange,
 .bg-brand-navy-dark .text-brand-orange {
   color: #ff7a1a;
+}
+
+@keyframes logo-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
