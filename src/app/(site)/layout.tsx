@@ -1,3 +1,4 @@
+import { LeadAutoPopup } from "@/components/common/lead-auto-popup"
 import { PreviewBanner } from "@/components/common/preview-banner"
 import { Footer } from "@/components/layout/footer/footer"
 import { Header } from "@/components/layout/header/header"
@@ -22,6 +23,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </main>
       <Footer />
       <PreviewBanner />
+      <LeadAutoPopup />
     </>
   )
 }
