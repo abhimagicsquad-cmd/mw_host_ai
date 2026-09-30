@@ -12,7 +12,7 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { AffiliateEarningsCalculator } from "@/components/tools/affiliate-earnings-calculator"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAffiliatePage } from "@/sanity/lib/queries"
+import { getAffiliatePage } from "@/lib/cms/queries"
 
 const fallbackStats = [
   { label: "Recurring commission", value: "20%", icon: "BadgePercent" },

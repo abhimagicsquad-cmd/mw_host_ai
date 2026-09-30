@@ -1,12 +1,8 @@
 import type { PortableTextBlock } from "@portabletext/react"
-import type { Image as SanityImageAsset } from "sanity"
-
-export type SanityImage = SanityImageAsset
 
 export type Seo = {
   metaTitle?: string
   metaDescription?: string
-  ogImage?: SanityImage
 }
 
 export type CtaLinkData = {
@@ -71,8 +67,7 @@ export type TestimonialData = {
   role?: string
   company?: string
   quote: string
-  avatar?: SanityImage
-  /** Plain image URL — set by the custom CMS (media library) instead of a Sanity image. */
+  /** Image URL from the dashboard media library. */
   avatarUrl?: string
   rating?: number
 }
@@ -126,10 +121,7 @@ export type SiteSettingsData = {
   siteName?: string
   tagline?: string
   description?: string
-  logo?: SanityImage
-  favicon?: SanityImage
   headerCta?: CtaLinkData
-  footerContent?: PortableTextBlock[]
   contactPhone?: string
   contactPhoneHref?: string
   contactEmail?: string
@@ -140,19 +132,6 @@ export type SiteSettingsData = {
   socialLinks?: { platform: string; url: string }[]
   seoDefaults?: Seo
   globalCta?: CtaLinkData
-}
-
-export type BlogPostData = {
-  title: string
-  slug: string
-  excerpt: string
-  coverImage?: SanityImage
-  author?: { name: string; role?: string; avatar?: SanityImage }
-  category?: { title: string; slug: string }
-  publishedAt: string
-  readTime?: string
-  body: PortableTextBlock[]
-  seo?: Seo
 }
 
 export type BlogListingPageData = {

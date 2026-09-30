@@ -15,7 +15,7 @@ import { sharedHostingPlans, usaSharedHostingPlans } from "@/constants/pricing-p
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type HostingSlugPageProps = {
   params: Promise<{ slug: string }>

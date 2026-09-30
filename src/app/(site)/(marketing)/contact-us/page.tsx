@@ -7,10 +7,10 @@ import { FAQSection } from "@/components/sections/faq-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { QuoteFormSection } from "@/components/sections/quote-form-section"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { siteConfig } from "@/constants/site-config"
 import { buildPageMetadata } from "@/lib/seo"
-import { getCmsBuilderDocument, getContactPage } from "@/sanity/lib/queries"
+import { getCmsBuilderDocument, getContactPage } from "@/lib/cms/queries"
 
 export async function generateMetadata() {
   const cms = await getContactPage()
@@ -24,8 +24,8 @@ export async function generateMetadata() {
 }
 
 export default async function ContactUsPage() {
-  // A CMS contact page replaces the whole layout (its blocks include the forms);
-  // otherwise the built-in layout renders with any Sanity blocks as extra content.
+  // The dashboard's contact page replaces the whole layout (its blocks include the forms);
+  // otherwise the built-in layout renders.
   const cmsPage = await getCmsBuilderDocument("/contact-us")
   if (cmsPage?.pageBuilder?.length) {
     return (
@@ -36,8 +36,6 @@ export default async function ContactUsPage() {
     )
   }
 
-  const cms = await getContactPage()
-
   return (
     <>
       <PageHero
@@ -46,9 +44,7 @@ export default async function ContactUsPage() {
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Contact Us" }]}
       />
 
-      {/* Sanity supplementary content (legacy fallback). */}
       <CmsSchemaJsonLd path="/contact-us" />
-      {cms?.pageBuilder?.length ? <PageBuilder blocks={cms.pageBuilder} /> : null}
 
       <ContactSection
         eyebrow="Get in touch"

@@ -22,7 +22,7 @@ export type ImportReport = ActionState & { created?: string[]; skipped?: string[
  * Copies every page the website shows today into the CMS as DRAFTS. Drafts are invisible to
  * visitors, so this changes nothing on the live site; each page goes live only when
  * published. Existing CMS pages and the pricing collection are never overwritten, so it is
- * safe to run again (e.g. after adding content to Sanity).
+ * safe to run again (e.g. after adding built-in content).
  */
 export async function importAllContentAction(): Promise<ImportReport> {
   try {
@@ -59,7 +59,7 @@ export async function importAllContentAction(): Promise<ImportReport> {
         const { error: sectionsError } = await db().from("page_sections").insert(sections)
         if (sectionsError) throw new Error(`${page.path} sections: ${sectionsError.message}`)
       }
-      // SEO is deliberately not imported. Every Sanity SEO value on the site today equals the
+      // SEO is deliberately not imported. Every original (Sanity) SEO value equalled the
       // route's built-in default, so published CMS pages keep identical metadata without it —
       // and an SEO row can't reach the live site while its page is still a draft.
       created.push(page.path)

@@ -10,7 +10,7 @@ import { getArticlesByCategory, kbArticles, kbCategories } from "@/constants/kno
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllKBArticles, getAllKBCategories, getKnowledgeBasePage } from "@/sanity/lib/queries"
+import { getAllKBArticles, getAllKBCategories, getKnowledgeBasePage } from "@/lib/cms/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getKnowledgeBasePage()

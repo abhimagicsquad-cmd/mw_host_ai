@@ -8,9 +8,9 @@ import { PageHero } from "@/components/sections/page-hero"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAboutPage } from "@/sanity/lib/queries"
+import { getAboutPage } from "@/lib/cms/queries"
 
 export async function generateMetadata() {
   const cms = await getAboutPage()

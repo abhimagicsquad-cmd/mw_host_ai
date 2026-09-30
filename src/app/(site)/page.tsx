@@ -16,12 +16,12 @@ import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { trustHighlights } from "@/constants/trust-highlights-data"
 import { applySeoOverrides, buildPageMetadata } from "@/lib/seo"
-import { getHomePage, getPricingPlansByService } from "@/sanity/lib/queries"
+import { getHomePage, getPricingPlansByService } from "@/lib/cms/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getHomePage()
@@ -46,7 +46,7 @@ export default async function HomePage() {
     )
   }
 
-  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const cmsPlans = await getPricingPlansByService("shared-hosting", "india")
   const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (

@@ -63,7 +63,7 @@ const ANNUAL = (pid: number, promo: string, total: string, save?: string): Produ
   options: [{ cycle: "annually", label: "1 Year", total, save }],
 })
 
-/** Plan slug (Sanity / CMS / built-in plans) → WHMCS product. */
+/** Plan slug (dashboard Pricing Plans / built-in plans) → WHMCS product. */
 export const BILLING_PRODUCTS: Record<string, Product> = {
   // Shared hosting — "NVMe Disk Mumbai" group
   starter: SHARED(153, ["₹2,124", "₹3,798", "₹5,229"]),
@@ -168,7 +168,7 @@ export function domainRegisterUrl(query?: string): string {
 export const BILLING_ORIGIN = new URL(BILLING_BASE_URL).origin
 
 /**
- * Old content (Sanity / CMS) links the client area at clients.magicworkshost.com, a host that
+ * Old content (imported into the dashboard) links the client area at clients.magicworkshost.com, a host that
  * doesn't exist. Map it onto the real WHMCS location wherever such a link is rendered.
  */
 export function normalizeBillingHref(href: string): string {

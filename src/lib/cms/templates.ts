@@ -374,7 +374,7 @@ export function templateForPath(path: string): TemplateKey | null {
   return singletons[path] ?? null
 }
 
-/** Sanity `servicePage` (category, slug) ↔ website URL. */
+/** Service page (category, slug) ↔ website URL. */
 export function servicePagePath(category: string, slug: string): string {
   if (category === "ssl" && slug === "ssl-certificates") return "/ssl"
   if (category === "vps") return "/vps-hosting"

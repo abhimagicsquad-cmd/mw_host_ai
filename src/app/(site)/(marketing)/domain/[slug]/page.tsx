@@ -12,7 +12,7 @@ import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { domainIncludedFeatures, domainPages, getDomainPage, tldPricing } from "@/constants/domain-pages-data"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getServicePage } from "@/lib/cms/queries"
 
 type DomainSlugPageProps = {
   params: Promise<{ slug: string }>

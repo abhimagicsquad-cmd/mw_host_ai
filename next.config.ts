@@ -85,7 +85,7 @@ function csp(extra: { script?: string; connect?: string; img?: string; frame?: s
     // nonces without making every page dynamic; everything else is locked to this origin.
     `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${extra.script ?? ""}`,
     "style-src 'self' 'unsafe-inline'",
-    `img-src 'self' data: blob: https://cdn.sanity.io ${supabaseOrigin}${extra.img ?? ""}`,
+    `img-src 'self' data: blob: ${supabaseOrigin}${extra.img ?? ""}`,
     `font-src 'self' data:${extra.font ?? ""}`,
     `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com${extra.connect ?? ""}`,
     `frame-src https://challenges.cloudflare.com${extra.frame ?? ""}`,
@@ -117,10 +117,6 @@ const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowSVG: true,
   },
-  // The Studio (sanity/@sanity/vision) is client-only and incompatible with Next's
-  // "react-server" bundling condition (e.g. swr's default export) when reached from a
-  // Server Component — load it via Node's require() instead of bundling it.
-  serverExternalPackages: ["sanity", "@sanity/vision"],
   async redirects() {
     return [
       ...internalPathRedirects,
@@ -139,16 +135,6 @@ const nextConfig: NextConfig = {
       // Admin: media previews may be any https image the editor pastes.
       { source: "/admin/:path*", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
       { source: "/mwh-admin-login", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
-      // Sanity Studio needs eval, its APIs/websockets and remote images.
-      {
-        source: "/studio/:path*",
-        headers: [
-          {
-            key: "Content-Security-Policy",
-            value: csp({ script: " 'unsafe-eval'", connect: " https://*.sanity.io wss://*.sanity.io https://*.apicdn.sanity.io", img: " https:", frame: " https://*.sanity.io" }),
-          },
-        ],
-      },
     ];
   },
 };

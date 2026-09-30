@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { PortableText } from "@portabletext/react"
 import Link from "@/components/common/site-link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -12,7 +11,6 @@ import { CTASection } from "@/components/sections/cta-section"
 import { getBlogPost } from "@/constants/blog-data"
 import { getBlog } from "@/lib/cms/blog"
 import { buildPageMetadata } from "@/lib/seo"
-import { getBlogPostBySlug } from "@/sanity/lib/queries"
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>
@@ -23,31 +21,16 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }))
 }
 
-/** CMS post (built-in template) → Sanity post (Portable Text template) → built-in post. */
+/** Dashboard post (built-in template) → built-in post. */
 async function resolvePost(slug: string) {
   const blog = await getBlog()
-  if (blog.cmsSlugs.has(slug)) {
-    const post = blog.posts.find((candidate) => candidate.slug === slug)
-    if (post) return { blog, post, cmsPost: null }
-  }
-  const cmsPost = await getBlogPostBySlug(slug)
-  if (cmsPost) return { blog, post: undefined, cmsPost }
-  return { blog, post: getBlogPost(slug), cmsPost: null }
+  const post = blog.posts.find((candidate) => candidate.slug === slug) ?? getBlogPost(slug)
+  return { blog, post }
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const { post, cmsPost } = await resolvePost(slug)
-
-  if (cmsPost) {
-    return buildPageMetadata({
-      title: cmsPost.seo?.metaTitle ?? cmsPost.title,
-      description: cmsPost.seo?.metaDescription ?? cmsPost.excerpt,
-      path: `/blog/${cmsPost.slug}`,
-      ogType: "article",
-      publishedTime: cmsPost.publishedAt,
-    })
-  }
+  const { post } = await resolvePost(slug)
 
   if (!post) return {}
 
@@ -69,72 +52,7 @@ function publishedLabelToISO(label: string): string | undefined {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
-  const { blog, post, cmsPost } = await resolvePost(slug)
-
-  if (cmsPost) {
-    const breadcrumbs = [
-      { label: "Home", href: "/" },
-      { label: "Blog", href: "/blog" },
-      { label: cmsPost.title },
-    ]
-
-    return (
-      <>
-        <BreadcrumbJsonLd items={breadcrumbs} />
-        <BlogPostingJsonLd
-          title={cmsPost.title}
-          description={cmsPost.excerpt}
-          slug={cmsPost.slug}
-          authorName={cmsPost.author?.name ?? "MagicWorks Host Team"}
-          datePublished={cmsPost.publishedAt}
-          section={cmsPost.category?.title}
-        />
-
-        <SectionContainer width="narrow" background="alt" className="py-12 sm:py-16">
-          <Reveal className="flex flex-col gap-4">
-            <Link href="/blog" className="flex items-center gap-1.5 text-sm font-medium text-brand-orange hover:underline">
-              <ArrowLeft className="size-4" />
-              Back to blog
-            </Link>
-            {cmsPost.category ? (
-              <Link
-                href={`/blog/category/${cmsPost.category.slug}`}
-                className="w-fit rounded-full border border-brand-orange/30 bg-background px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-orange uppercase transition-colors hover:bg-brand-orange/10"
-              >
-                {cmsPost.category.title}
-              </Link>
-            ) : null}
-            <h1 className="text-3xl font-bold text-brand-navy sm:text-4xl">{cmsPost.title}</h1>
-            <p className="text-lg text-body-text">{cmsPost.excerpt}</p>
-            {cmsPost.author ? (
-              <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                <span>{cmsPost.author.name}</span>
-                {cmsPost.readTime ? (
-                  <>
-                    <span aria-hidden="true">&middot;</span>
-                    <span>{cmsPost.readTime}</span>
-                  </>
-                ) : null}
-              </div>
-            ) : null}
-          </Reveal>
-        </SectionContainer>
-
-        <SectionContainer width="narrow">
-          <article className="prose prose-slate max-w-none">
-            <PortableText value={cmsPost.body} />
-          </article>
-        </SectionContainer>
-
-        <CTASection
-          title="Want help putting this into practice?"
-          description="Our support team can walk through any of this on your actual site."
-          primaryCta={{ label: "Talk to us", href: LEAD_CTA_HREF }}
-          background="navy"
-        />
-      </>
-    )
-  }
+  const { blog, post } = await resolvePost(slug)
 
   if (!post) notFound()
 

@@ -10,7 +10,7 @@ const LOGIN_PATH = "/mwh-admin-login"
  *    same URL with the slash (one hop, query kept). Done here rather than in next.config
  *    because Next matches redirect sources with an optional trailing slash, so a config rule
  *    would also match — and loop on — the slashed URL. The matcher excludes the API, the
- *    admin (and its login page), Studio, the /order/ checkout forwarder, Next internals, generated images and
+ *    admin (and its login page), the /order/ checkout forwarder, Next internals, generated images and
  *    any path with a file extension.
  */
 export async function proxy(request: NextRequest) {
@@ -56,6 +56,6 @@ export const config = {
     "/admin",
     "/admin/:path*",
     "/mwh-admin-login",
-    "/((?!api|admin|mwh-admin-login|studio|order/|_next|opengraph-image|twitter-image|icon|apple-icon|.*\\.[a-zA-Z0-9]+$).+)",
+    "/((?!api|admin|mwh-admin-login|order/|_next|opengraph-image|twitter-image|icon|apple-icon|.*\\.[a-zA-Z0-9]+$).+)",
   ],
 }

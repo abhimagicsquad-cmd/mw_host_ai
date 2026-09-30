@@ -11,7 +11,7 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { comparisonRows } from "@/constants/compare-hosting-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { buildPageMetadata } from "@/lib/seo"
-import { getComparisonPage, getPricingPlansByService } from "@/sanity/lib/queries"
+import { getComparisonPage, getPricingPlansByService } from "@/lib/cms/queries"
 
 const fallbackFaqs = [
   { question: "Which plan should I start with?", answer: "Most new sites do well on Starter or Basic Plus NVMe — Basic Plus is our most popular tier for a reason." },
@@ -42,7 +42,7 @@ export default async function CompareHostingPlansPage() {
   const heroDescription = cms?.heroDescription ?? "The exact specs behind each plan, so you can pick with confidence instead of guessing."
   const rows = cms?.rows ?? comparisonRows
   const faqs = cms?.faqs ?? fallbackFaqs
-  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const cmsPlans = await getPricingPlansByService("shared-hosting", "india")
   const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (

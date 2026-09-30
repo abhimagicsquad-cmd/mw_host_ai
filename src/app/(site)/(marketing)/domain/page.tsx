@@ -8,10 +8,10 @@ import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { domainHubIntro, domainIncludedFeatures, domainPageIcons, domainPages, tldPricing } from "@/constants/domain-pages-data"
 import { buildPageMetadata } from "@/lib/seo"
-import { getServicesPage } from "@/sanity/lib/queries"
+import { getServicesPage } from "@/lib/cms/queries"
 
 const HUB_SLUG = "domain"
 

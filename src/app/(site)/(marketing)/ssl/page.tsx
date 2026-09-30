@@ -15,7 +15,7 @@ import { sslPlans } from "@/constants/pricing-plans"
 import { sslPageIcons, sslPages } from "@/constants/ssl-pages-data"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
+import { getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
 const SLUG = "ssl-certificates"

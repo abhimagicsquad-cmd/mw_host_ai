@@ -16,7 +16,7 @@ import { emailIncludedFeatures, emailPages, getEmailPage } from "@/constants/ema
 import { planPurchaseCta } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getServicePage } from "@/lib/cms/queries"
 import type { PricingPlan } from "@/types/content"
 
 type EmailSlugPageProps = {

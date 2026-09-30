@@ -4,7 +4,7 @@ import type { PortableTextBlock } from "@portabletext/react"
  * The CMS stores rich text as a small Markdown subset (headings, paragraphs, bullet and
  * numbered lists, **bold**, *italic*, [links](url)) because it's editable in a plain
  * textarea. The website's renderers (PortableText) expect Portable Text, so content is
- * converted on read. `portableTextToMarkdown` is the reverse, used by the Sanity importer.
+ * converted on read. `portableTextToMarkdown` is the reverse (Portable Text → Markdown).
  */
 
 type Span = { _type: "span"; _key: string; text: string; marks: string[] }

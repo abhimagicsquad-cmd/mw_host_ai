@@ -1,11 +1,11 @@
-import { iconOptions } from "@/sanity/lib/icon-options"
+import { iconOptions } from "@/lib/icon-options"
 
 import type { SectionType } from "./types"
 
 /**
  * Declarative field definitions for every page-builder block. The admin section editor
  * renders its form from these, so adding a block means: add a case to
- * src/components/sanity/page-builder.tsx, then describe its fields here.
+ * src/components/page-builder/page-builder.tsx, then describe its fields here.
  */
 export type FieldDef =
   | { kind: "text"; name: string; label: string; required?: boolean; placeholder?: string; help?: string }

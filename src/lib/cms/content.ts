@@ -4,7 +4,7 @@ import { draftMode } from "next/headers"
 import { cache } from "react"
 
 import type { BlogPost } from "@/constants/blog-data"
-import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/sanity/types"
+import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/types/cms-content"
 
 import { cmsAdminDb, cmsPublicDb } from "./db"
 import { markdownToPortableText } from "./rich-text"
@@ -14,7 +14,7 @@ import type { GeneralSettings, PageRow, PageSectionRow, SeoRow, WebsiteSettings 
 /**
  * Website-facing CMS reads. Every function returns null/[] when Supabase isn't configured,
  * the migration hasn't been run, or nothing is published — callers then fall back to
- * Sanity and finally to the hardcoded defaults, so the site never breaks because of the CMS.
+ * the built-in defaults (src/constants and the routes), so the site never breaks because of the CMS.
  *
  * Preview: when an admin turns on draft mode (/admin/preview), page reads skip the cache
  * and return the latest version of each page — draft or published — so migrated content
@@ -84,7 +84,7 @@ export const getPublishedCmsPage = cache(async (path: string): Promise<CmsPage |
   return page
 })
 
-/** CMS page-builder page in the Sanity `PageDocument` shape, or null if it has no builder sections. */
+/** CMS page-builder page as a `PageDocument`, or null if it has no builder sections. */
 export async function getCmsPageDocument(path: string): Promise<PageDocument | null> {
   const page = await getPublishedCmsPage(path)
   const blocks = page?.sections.filter((section) => !isTemplateSection(section)) ?? []

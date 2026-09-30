@@ -41,7 +41,7 @@ export const testimonials: Testimonial[] = [
 ]
 
 /**
- * Invented testimonials that shipped in early seed content (and still exist in Sanity and in
+ * Invented testimonials that shipped in early seed content (and may still exist in
  * migrated CMS drafts). They are never rendered.
  */
 export const PLACEHOLDER_TESTIMONIAL_NAMES = new Set([

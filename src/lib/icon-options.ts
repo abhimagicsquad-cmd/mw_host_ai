@@ -1,4 +1,4 @@
-/** Curated allow-list of lucide-react icon names editors can pick in Studio; kept in sync with `iconMap` in `@/lib/icon-map`. */
+/** Curated allow-list of lucide-react icon names editors can pick in the dashboard; kept in sync with `iconMap` in `@/lib/icon-map`. */
 export const iconOptions = [
   "Zap",
   "TrendingUp",

@@ -4,7 +4,6 @@ import { CONTENT_GROUPS, type ContentGroup, contentGroupForPath } from "@/lib/cm
 import { buildMigrationPlan, type MigrationSource } from "@/lib/cms/migration"
 import { templateForPath, templates } from "@/lib/cms/templates"
 import type { PageRow } from "@/lib/cms/types"
-import { getSanityNavigation, getSanitySiteSettings } from "@/sanity/lib/queries"
 
 export type LiveSource = "CMS" | "Sanity" | "Sanity + built-in" | "Built-in"
 
@@ -39,7 +38,7 @@ const FUNCTIONAL = [
 
 /**
  * Where every page's content comes from right now, and its CMS migration status. The
- * migration plan says what Sanity/hardcoded sources exist; the pages table says what is
+ * migration plan says what built-in sources exist (Sanity has been retired); the pages table says what is
  * already in the CMS and whether it is live.
  */
 export async function getContentAudit(cmsPages: PageRow[], pricing: { exists: boolean; published: boolean }, menus: { header: boolean; footer: boolean }, settingsSaved: boolean) {
@@ -77,39 +76,38 @@ export async function getContentAudit(cmsPages: PageRow[], pricing: { exists: bo
     })
   }
 
-  const [navigation, siteSettings] = await Promise.all([getSanityNavigation(), getSanitySiteSettings()])
   const shared: SharedAuditRow[] = [
     {
       label: "Pricing plans",
       href: "/admin/content/pricing",
       cms: pricing.exists ? (pricing.published ? "published" : "draft") : null,
-      sanity: plan.pricing.source === "sanity",
-      live: pricing.published ? "CMS" : plan.pricing.source === "sanity" ? "Sanity" : "Built-in",
+      sanity: false,
+      live: pricing.published ? "CMS" : "Built-in",
       note: `${plan.pricing.plans.length} plans`,
     },
     {
       label: "Header menu",
       href: "/admin/menus/header",
       cms: menus.header ? "live" : null,
-      sanity: Boolean(navigation?.mainMenu?.length),
-      live: menus.header ? "CMS" : navigation?.mainMenu?.length ? "Sanity" : "Built-in",
+      sanity: false,
+      live: menus.header ? "CMS" : "Built-in",
       note: "Saving in the CMS goes live immediately",
     },
     {
       label: "Footer menu",
       href: "/admin/menus/footer",
       cms: menus.footer ? "live" : null,
-      sanity: Boolean(navigation?.footerColumns?.length),
-      live: menus.footer ? "CMS" : navigation?.footerColumns?.length ? "Sanity" : "Built-in",
+      sanity: false,
+      live: menus.footer ? "CMS" : "Built-in",
       note: "Saving in the CMS goes live immediately",
     },
     {
       label: "Site settings (contact details, header button, social links)",
       href: "/admin/settings/general",
       cms: settingsSaved ? "live" : null,
-      sanity: Boolean(siteSettings),
-      live: settingsSaved ? "CMS" : siteSettings ? "Sanity" : "Built-in",
-      note: "Empty CMS fields keep the Sanity / built-in value",
+      sanity: false,
+      live: settingsSaved ? "CMS" : "Built-in",
+      note: "Empty CMS fields keep the built-in value",
     },
   ]
 

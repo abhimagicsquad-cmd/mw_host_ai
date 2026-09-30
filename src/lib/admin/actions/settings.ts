@@ -1,13 +1,11 @@
 "use server"
 
-import { updateTag } from "next/cache"
 import { z } from "zod"
 
 import { logActivity } from "@/lib/admin/activity"
 import { actorId, authorizeAction } from "@/lib/admin/auth"
 import { cmsAdminDb } from "@/lib/cms/db"
 import type { ActionState, GeneralSettings, WebsiteSettings } from "@/lib/cms/types"
-import { getSanityNavigation, getSanitySiteSettings } from "@/sanity/lib/queries"
 
 import { refreshWebsite, toActionError } from "./utils"
 
@@ -84,8 +82,6 @@ export async function clearWebsiteCacheAction(): Promise<ActionState> {
   try {
     const admin = await authorizeAction("system.import")
     refreshWebsite()
-    // Also drop cached Sanity reads — the fallback content for anything not yet in the CMS.
-    updateTag("sanity")
     await logActivity({ admin, action: "system.cache_cleared", entityType: "system", description: "Cleared the website content cache" })
     return { ok: true, message: "Website cache cleared — every page will re-read the CMS on its next visit." }
   } catch (error) {
@@ -94,69 +90,14 @@ export async function clearWebsiteCacheAction(): Promise<ActionState> {
 }
 
 /**
- * Copies the header/footer menus and site settings from Sanity into the CMS. Unlike pages,
- * these have no draft state — the website switches to the CMS copy immediately — so this is
- * a separate, explicit step. The copied values are identical to what Sanity serves today,
- * existing CMS values are never overwritten, and Sanity only fills empty fields.
+ * Formerly copied the header/footer menus and site settings from Sanity into the CMS. Sanity has
+ * been retired and its menus and settings were copied into the dashboard on 2026-09-30, so this
+ * only reports that; the dashboard (Menus, Settings) is the source for both.
  */
 export async function importMenusAndSettingsAction(): Promise<ActionState> {
   try {
-    const admin = await authorizeAction("system.import")
-    const report: string[] = []
-
-    const navigation = await getSanityNavigation()
-    const { data: menus } = await db().from("menus").select("location, items")
-    const menuItems = Object.fromEntries((menus ?? []).map((m) => [m.location, m.items]))
-    for (const [location, items] of [
-      ["header", navigation?.mainMenu],
-      ["footer", navigation?.footerColumns],
-    ] as const) {
-      const current = menuItems[location]
-      if (items?.length && !(Array.isArray(current) && current.length)) {
-        await db().from("menus").upsert({ location, items: JSON.parse(JSON.stringify(items)), updated_by: actorId(admin) }, { onConflict: "location" })
-        report.push(`${location} menu: imported ${items.length} items`)
-      }
-    }
-
-    const sanitySettings = await getSanitySiteSettings()
-    if (sanitySettings) {
-      const { data: rows } = await db().from("settings").select("key, value")
-      const current = Object.fromEntries((rows ?? []).map((r) => [r.key, (r.value ?? {}) as Record<string, unknown>]))
-      const general: GeneralSettings = {
-        siteName: sanitySettings.siteName,
-        tagline: sanitySettings.tagline,
-        description: sanitySettings.description,
-        contactPhone: sanitySettings.contactPhone,
-        contactPhoneHref: sanitySettings.contactPhoneHref,
-        contactEmail: sanitySettings.contactEmail,
-        contactAddress: sanitySettings.contactAddress,
-        salesHours: sanitySettings.salesHours,
-        accountingHours: sanitySettings.accountingHours,
-        supportHours: sanitySettings.supportHours,
-      }
-      const website: WebsiteSettings = {
-        headerCta: sanitySettings.headerCta,
-        globalCta: sanitySettings.globalCta,
-        socialLinks: sanitySettings.socialLinks,
-        defaultMetaTitle: sanitySettings.seoDefaults?.metaTitle,
-        defaultMetaDescription: sanitySettings.seoDefaults?.metaDescription,
-      }
-      // Existing CMS values win; Sanity only fills the gaps.
-      const mergedGeneral = JSON.parse(JSON.stringify({ ...general, ...current.general }))
-      const mergedWebsite = JSON.parse(JSON.stringify({ ...website, ...current.website }))
-      await db().from("settings").upsert(
-        [
-          { key: "general", value: mergedGeneral, updated_by: actorId(admin) },
-          { key: "website", value: mergedWebsite, updated_by: actorId(admin) },
-        ],
-        { onConflict: "key" }
-      )
-      report.push("site settings: merged")
-    }
-
-    await logActivity({ admin, action: "system.import", entityType: "system", description: "Copied menus and site settings from Sanity", metadata: { report } })
-    refreshWebsite()
-    return { ok: true, message: report.length ? report.join(" · ") : "Nothing to copy — the CMS already has menus and settings." }
+    await authorizeAction("system.import")
+    return { ok: true, message: "Nothing to copy — menus and site settings are managed in the dashboard (Sanity has been retired)." }
   } catch (error) {
     return toActionError(error)
   }

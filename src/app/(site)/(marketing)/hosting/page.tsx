@@ -9,13 +9,13 @@ import { ServiceGrid } from "@/components/sections/service-grid"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { hostingHubIntro, hostingPageIcons, hostingPages } from "@/constants/hosting-pages-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { buildPageMetadata } from "@/lib/seo"
-import { getPricingPlansByService, getServicesPage } from "@/sanity/lib/queries"
+import { getPricingPlansByService, getServicesPage } from "@/lib/cms/queries"
 
 const HUB_SLUG = "hosting"
 
@@ -45,7 +45,7 @@ export default async function HostingHubPage() {
     )
   }
 
-  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const cmsPlans = await getPricingPlansByService("shared-hosting", "india")
   const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (

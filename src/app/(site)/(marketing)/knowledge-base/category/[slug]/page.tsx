@@ -9,7 +9,7 @@ import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { getArticlesByCategory, getKBCategory, kbCategories } from "@/constants/knowledge-base-data"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/sanity/lib/queries"
+import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/lib/cms/queries"
 
 type KBCategoryPageProps = {
   params: Promise<{ slug: string }>

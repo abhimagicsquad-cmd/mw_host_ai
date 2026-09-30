@@ -6,10 +6,10 @@ import { CTASection } from "@/components/sections/cta-section"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { emailHubIntro, emailIncludedFeatures, emailPages } from "@/constants/email-pages-data"
 import { buildPageMetadata } from "@/lib/seo"
-import { getServicesPage } from "@/sanity/lib/queries"
+import { getServicesPage } from "@/lib/cms/queries"
 
 const HUB_SLUG = "email-hosting"
 

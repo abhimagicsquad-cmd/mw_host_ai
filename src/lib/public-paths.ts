@@ -83,7 +83,7 @@ const INTERNAL_TO_PUBLIC: Record<string, string> = Object.fromEntries(
 )
 
 /** Paths that are never pages (and so never get a trailing slash). */
-const NON_PAGE = /^\/(api|admin|studio|_next|opengraph-image|twitter-image|icon|apple-icon)(\/|$)/
+const NON_PAGE = /^\/(api|admin|_next|opengraph-image|twitter-image|icon|apple-icon)(\/|$)/
 
 /**
  * The public URL for an internal href: its WordPress URL when it has one, blog posts at

@@ -7,7 +7,7 @@ import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { legalDocuments, legalSlugs } from "@/constants/legal-content"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllLegalSlugs, getLegalPage } from "@/sanity/lib/queries"
+import { getAllLegalSlugs, getLegalPage } from "@/lib/cms/queries"
 
 type LegalPageProps = {
   params: Promise<{ slug: string }>

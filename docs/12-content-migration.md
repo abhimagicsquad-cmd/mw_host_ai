@@ -1,6 +1,6 @@
 # Content migration: Sanity & hardcoded content → custom CMS
 
-Status: **migration imported as drafts, verified, not yet published.** Sanity remains fully connected as the fallback. Branch: `feature/cms-content-migration`.
+Status: **complete — Sanity removed on 2026-09-30** (see [Sanity removed](#sanity-removed-2026-09-30)). The sections below describe the migration as it was carried out.
 
 ## Fallback chain (unchanged in spirit, now covering every page)
 
@@ -87,3 +87,24 @@ Small fixed elements of templates that have no CMS field yet: the footer trust b
 3. Export a Sanity dataset backup (`sanity dataset export production`).
 4. Remove in one PR: `/studio` route, `sanity.config.ts`, `src/sanity/schemaTypes`, `src/sanity/structure.ts`, `scripts/migrate-content.mjs`, the Sanity branches of `src/sanity/lib/queries.ts` (keep the CMS + hardcoded chain), `next-sanity`, `sanity`, `@sanity/*` packages, `/api/revalidate` webhook route, and the `SANITY_*` env vars.
 5. Keep the hardcoded fallbacks as the safety net (or retire them template by template once the CMS content is confirmed).
+
+## Sanity removed (2026-09-30)
+
+The dashboard is now the only content source: **dashboard (published) → built-in content** in `src/constants` and the routes.
+
+**Data moved before removal** (backups of every changed row and a full Sanity dataset export were taken first):
+
+- All 49 pages were already published in the dashboard.
+- Header and footer menus and the remaining site settings (name, tagline, description, address, business hours, header button) were copied from Sanity. Existing dashboard values were kept.
+- Pricing Plans were replaced with the WordPress-verified set and published: 27 plans (6 NVMe shared, VPS and dedicated India + USA, 5 SSL, 2 email). The six USA shared plans stay built-in for now. Add them to Pricing Plans with region "USA" once the region-aware code is deployed, so they don't appear in the India grids.
+- The compare page's table rows were updated to the six-plan WordPress specs.
+
+Public reads are cached under the `cms` tag, so direct database changes go live after **Clear website cache** in the dashboard's system tools (or after any dashboard save).
+
+**Removed:** `/studio`, `sanity.config.ts`, `src/sanity/*` (client, schemas, structure, queries), the `/api/revalidate` webhook, `scripts/migrate-content.mjs`, and the `sanity`, `next-sanity`, `@sanity/image-url`, `@sanity/vision` and `styled-components` packages. Content getters now live in `src/lib/cms/queries.ts`, content types in `src/types/cms-content.ts`, and the page builder in `src/components/page-builder/`.
+
+**Kept:** `@portabletext/react` renders dashboard rich text, which is stored as Markdown and converted on read. It is a renderer only and makes no Sanity calls.
+
+**Content Migration screen:** unchanged. Its importer now uses built-in content only, and "Copy menus & site settings" reports that there is nothing left to copy.
+
+**Environment:** the `SANITY_*` and `NEXT_PUBLIC_SANITY_*` variables are no longer read and can be deleted from Vercel and `.env.local`.

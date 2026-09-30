@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { CmsSchemaJsonLd } from "@/components/common/cms-schema-json-ld"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { getPublishedCmsPage, getPublishedCmsPaths, isTemplateSection } from "@/lib/cms/content"
 import { templateForPath } from "@/lib/cms/templates"
 import { buildPageMetadata } from "@/lib/seo"
-import { getCmsBuilderDocument } from "@/sanity/lib/queries"
+import { getCmsBuilderDocument } from "@/lib/cms/queries"
 
 import BlogPostPage, { generateMetadata as blogPostMetadata, generateStaticParams as blogPostStaticParams } from "../(blog)/blog-post"
 

@@ -22,7 +22,6 @@ import { TldPricingStrip } from "@/components/sections/tld-pricing-strip"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { resolveIcon } from "@/lib/icon-map"
-import { urlForImage } from "@/sanity/lib/image"
 import type {
   FeatureItemData,
   PageBuilderBlock,
@@ -30,7 +29,7 @@ import type {
   ServiceCardData,
   StatItemData,
   TestimonialData,
-} from "@/sanity/types"
+} from "@/types/cms-content"
 import type { CTA, Feature, PricingPlan, ServiceItem, Stat, Testimonial } from "@/types/content"
 
 /** Renders `title` as plain text, unless `highlightText` names a substring to wrap in the brand gradient span (e.g. "10X faster"). */
@@ -96,12 +95,12 @@ function toTestimonial(testimonial: TestimonialData): Testimonial {
     title: testimonial.role,
     company: testimonial.company,
     quote: testimonial.quote,
-    avatarUrl: testimonial.avatarUrl || urlForImage(testimonial.avatar)?.width(96).height(96).url(),
+    avatarUrl: testimonial.avatarUrl,
     rating: testimonial.rating,
   }
 }
 
-/** Renders the CMS-authored `pageBuilder` array by mapping each block to its existing section component — add a case here when a new block type is added to `sanity/schemaTypes/objects/page-builder.ts`. */
+/** Renders the CMS-authored `pageBuilder` array by mapping each block to its existing section component — add a case here (and its fields in src/lib/cms/section-schemas.ts) when a new block type is added. */
 export function PageBuilder({ blocks }: { blocks: PageBuilderBlock[] }) {
   return (
     <>

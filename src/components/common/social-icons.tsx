@@ -57,7 +57,7 @@ const socialIconByPlatform: Record<string, ComponentType<IconProps>> = {
   YouTube: TwitterIcon,
 }
 
-/** Maps a Sanity `socialLinks[].platform` value to its icon component, defaulting to Facebook's mark for unrecognized platforms. */
+/** Maps a dashboard `socialLinks[].platform` value to its icon component, defaulting to Facebook's mark for unrecognized platforms. */
 export function resolveSocialIcon(platform: string): ComponentType<IconProps> {
   return socialIconByPlatform[platform] ?? FacebookIcon
 }

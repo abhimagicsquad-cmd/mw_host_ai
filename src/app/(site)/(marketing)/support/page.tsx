@@ -12,7 +12,7 @@ import { siteConfig } from "@/constants/site-config"
 import { billingUrls, normalizeBillingHref } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getSupportPage } from "@/sanity/lib/queries"
+import { getSupportPage } from "@/lib/cms/queries"
 
 const fallbackChannels = [
   {

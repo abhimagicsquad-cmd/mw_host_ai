@@ -5,7 +5,7 @@ import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { Logo } from "@/components/common/logo"
 import { mainNav } from "@/constants/nav-items"
 import { toNavItems } from "@/lib/nav-mapper"
-import { getNavigation, getSiteSettings } from "@/sanity/lib/queries"
+import { getNavigation, getSiteSettings } from "@/lib/cms/queries"
 
 import { MobileNav } from "./mobile-nav"
 import { NavMenu } from "./nav-menu"

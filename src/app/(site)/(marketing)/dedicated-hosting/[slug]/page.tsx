@@ -14,7 +14,7 @@ import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/cons
 import { dedicatedPlans, dedicatedPlansUSA } from "@/constants/pricing-plans"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type DedicatedSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -58,7 +58,7 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
     ? cms.features.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) }))
     : dedicatedTrustFeatures
   const cmsPlans = await getPricingPlansByService("dedicated-server")
-  // Region-less CMS/Sanity plans are the India tiers; the USA tab keeps the built-in USA plans
+  // Region-less dashboard plans are the India tiers; the USA tab keeps the built-in USA plans
   // (the same USA products the WordPress site sells) until USA plans are added to the CMS.
   const cmsIndia = cmsPlans.filter((plan) => plan.region !== "usa")
   const cmsUsa = cmsPlans.filter((plan) => plan.region === "usa")

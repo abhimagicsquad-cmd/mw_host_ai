@@ -28,7 +28,7 @@ export function TestimonialsSection({
   cta,
 }: TestimonialsSectionProps) {
   // Never render placeholder testimonials. A section whose content only held placeholders
-  // (older Sanity / migrated CMS data) shows the real customer testimonials instead.
+  // (older migrated dashboard data) shows the real customer testimonials instead.
   const provided = withoutPlaceholderTestimonials(testimonials)
   const real = provided.length ? provided : defaultTestimonials
 

@@ -7,7 +7,7 @@ import { NewsletterSection } from "@/components/sections/newsletter-section"
 import { footerColumns } from "@/constants/nav-items"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
 import { toNavColumns } from "@/lib/nav-mapper"
-import { getNavigation, getSiteSettings } from "@/sanity/lib/queries"
+import { getNavigation, getSiteSettings } from "@/lib/cms/queries"
 
 import { FooterColumn } from "./footer-column"
 import { FooterCTABlock } from "./footer-cta-block"

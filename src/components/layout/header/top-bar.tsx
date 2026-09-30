@@ -4,7 +4,7 @@ import { Phone, LifeBuoy, LogIn } from "lucide-react"
 import { resolveSocialIcon } from "@/components/common/social-icons"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
 import { billingUrls } from "@/lib/billing"
-import { getSiteSettings } from "@/sanity/lib/queries"
+import { getSiteSettings } from "@/lib/cms/queries"
 
 export async function TopBar() {
   const settings = await getSiteSettings()

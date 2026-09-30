@@ -14,7 +14,7 @@ import { SectionHeading } from "@/components/layout/section-heading"
 import { sslPlans } from "@/constants/pricing-plans"
 import { getSslPage, sslPages } from "@/constants/ssl-pages-data"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getServicePage } from "@/sanity/lib/queries"
+import { getAllServicePageSlugs, getServicePage } from "@/lib/cms/queries"
 import type { PricingPlan } from "@/types/content"
 
 type SslSlugPageProps = {

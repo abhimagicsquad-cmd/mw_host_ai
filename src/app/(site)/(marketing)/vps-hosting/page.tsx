@@ -16,7 +16,7 @@ import { vpsPlans, vpsPlansUSA } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
+import { getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
 const SLUG = "vps-hosting"
@@ -68,7 +68,7 @@ export default async function VpsHostingPage() {
   const faqs = cms?.faqs ?? defaultFaqs
   const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("vps-hosting")
-  // Region-less CMS/Sanity plans are the India tiers; the USA tab keeps the built-in USA plans
+  // Region-less dashboard plans are the India tiers; the USA tab keeps the built-in USA plans
   // (the same USA products the WordPress site sells) until USA plans are added to the CMS.
   const cmsIndia = cmsPlans.filter((plan) => plan.region !== "usa")
   const cmsUsa = cmsPlans.filter((plan) => plan.region === "usa")

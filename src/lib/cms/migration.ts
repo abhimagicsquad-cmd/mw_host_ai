@@ -15,35 +15,17 @@ import { siteConfig } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { testimonials } from "@/constants/testimonials"
 import { iconMap } from "@/lib/icon-map"
-import { sanityFetch } from "@/sanity/lib/client"
-import { urlForImage } from "@/sanity/lib/image"
-import {
-  getAllSanityPricingPlans,
-  getSanityAboutPage,
-  getSanityAffiliatePage,
-  getSanityAllKBArticles,
-  getSanityAllKBCategories,
-  getSanityAllLegalSlugs,
-  getSanityComparisonPage,
-  getSanityContactPage,
-  getSanityHomePage,
-  getSanityKnowledgeBasePage,
-  getSanityLegalPage,
-  getSanityServicesPage,
-  getSanitySupportPage,
-  getSanityThankYouPage,
-} from "@/sanity/lib/queries"
-import type { FeatureItemData, PageBuilderBlock, PageDocument, PricingPlanData, TestimonialData } from "@/sanity/types"
+import type { FeatureItemData, PricingPlanData } from "@/types/cms-content"
 import type { Feature, PricingPlan } from "@/types/content"
 
-import { portableTextToMarkdown } from "./rich-text"
 import { servicePagePath, type TemplateKey, templateForPath, templates, templateSectionType } from "./templates"
 import type { PageType } from "./types"
 
 /**
- * Builds the complete set of CMS pages from what the website shows today — Sanity where it
- * has a document, otherwise the hardcoded content in src/constants and the route files —
- * so every page becomes editable in the dashboard with identical output. The plan is pure
+ * Builds the complete set of CMS pages from the website's built-in content (src/constants and
+ * the route files), so every page can be (re)created in the dashboard with identical output.
+ * Sanity, the original source for some pages, has been retired: its content was imported and
+ * published before removal, and the importer never overwrites existing dashboard pages. The plan is pure
  * data; `planToRows` turns it into database rows and the admin action writes them as drafts.
  */
 
@@ -82,31 +64,6 @@ function features(list: Feature[], warnings: string[], where: string): FeatureIt
 
 const faqs = (list: { question: string; answer: unknown }[]) => list.map((f) => ({ question: f.question, answer: String(f.answer) }))
 
-/** Sanity page-builder block → CMS section data (drops Sanity keys, converts rich text + images). */
-function blockToSection(block: PageBuilderBlock, servicePlanSlugs: Map<string, string>) {
-  const { _type, _key, ...data } = block as PageBuilderBlock & Record<string, unknown>
-  void _key
-  if (_type === "richTextBlock") data.content = portableTextToMarkdown(data.content)
-  if (_type === "testimonialsBlock" && Array.isArray(data.testimonials)) {
-    data.testimonials = (data.testimonials as TestimonialData[]).map(({ avatar, ...t }) => ({
-      ...t,
-      avatarUrl: t.avatarUrl ?? urlForImage(avatar)?.width(192).height(192).url(),
-    }))
-  }
-  // A pricing block showing exactly one service's full plan list becomes a live reference
-  // to that service in the Pricing Plans collection (so prices are edited in one place).
-  if (_type === "pricingBlock" && Array.isArray(data.plans) && data.plans.length) {
-    const plans = data.plans as PricingPlanData[]
-    const service = plans[0]?.service
-    const slugs = plans.map((p) => p.slug).join(",")
-    if (service && plans.every((p) => p.service === service) && servicePlanSlugs.get(service) === slugs) {
-      data.service = service
-      data.plans = []
-    }
-  }
-  return { type: _type, data: JSON.parse(JSON.stringify(data)) as Record<string, unknown> }
-}
-
 const pageHero = (title: string, description: string, crumb: string) => ({
   type: "pageHeroBlock",
   data: { title, description, breadcrumbs: [{ label: "Home", href: "/" }, { label: crumb }], background: "navy" },
@@ -117,30 +74,10 @@ const cta = (title: string, description: string, label: string, background = "na
   data: { title, description, primaryCta: { label, href: LEAD_CTA_HREF }, background },
 })
 
-type SanityServiceDoc = {
-  category: string
-  slug: string
-  eyebrow?: string
-  heroTitle?: string
-  heroDescription?: string
-  bullets?: string[]
-  features?: FeatureItemData[]
-  managed?: boolean
-  planSlug?: string
-  faqs?: { question: string; answer: string }[]
-  seo?: { metaTitle?: string; metaDescription?: string }
-}
-
-/** Sanity meta titles are short titles the site suffixes with " | MagicWorks Host"; CMS meta titles are exact, so add it. */
-function seoOf(seo?: { metaTitle?: string; metaDescription?: string }) {
-  if (!seo?.metaTitle && !seo?.metaDescription) return undefined
-  return { meta_title: seo.metaTitle ? `${seo.metaTitle} | ${siteConfig.name}` : null, meta_description: seo.metaDescription ?? null }
-}
-
-function templatePage(path: string, title: string, data: Record<string, unknown>, source: MigrationSource, notes: string[] = [], seo?: PlannedPage["seo"]): PlannedPage {
+function templatePage(path: string, title: string, data: Record<string, unknown>, source: MigrationSource, notes: string[] = []): PlannedPage {
   const template = templateForPath(path)
   if (!template) throw new Error(`No template for ${path}`)
-  return { path, title, pageType: templates[template].pageType, source, template, data: JSON.parse(JSON.stringify(data)), seo, notes }
+  return { path, title, pageType: templates[template].pageType, source, template, data: JSON.parse(JSON.stringify(data)), notes }
 }
 
 export async function buildMigrationPlan(): Promise<MigrationPlan> {
@@ -148,51 +85,22 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
   const pages: PlannedPage[] = []
 
   // ---- Pricing plans (shared collection) --------------------------------------------
-  const sanityPlans = await getAllSanityPricingPlans()
-  const pricingPlans: PricingPlanData[] = sanityPlans.length
-    ? sanityPlans
-    : allPricingPlans.map((plan: PricingPlan) => ({ ...plan, cta: plan.cta && { label: plan.cta.label, href: plan.cta.href } }))
-  const servicePlanSlugs = new Map<string, string>()
-  for (const plan of pricingPlans) {
-    if (!plan.service) continue
-    servicePlanSlugs.set(plan.service, [servicePlanSlugs.get(plan.service), plan.slug].filter(Boolean).join(","))
-  }
-
-  // ---- Page-builder pages: Home + About (Sanity) ------------------------------------
-  for (const [path, title, load] of [
-    ["/", "Home", getSanityHomePage],
-    ["/about-us", "About Us", getSanityAboutPage],
-  ] as const) {
-    const doc: PageDocument | null = await load()
-    if (!doc?.pageBuilder?.length) {
-      warnings.push(`${path}: no Sanity page-builder content — left on its built-in design`)
-      continue
-    }
-    pages.push({
-      path,
-      title,
-      pageType: path === "/" ? "home" : "static",
-      source: "sanity",
-      sections: doc.pageBuilder.map((block) => blockToSection(block, servicePlanSlugs)),
-      seo: seoOf(doc.seo),
-      notes: [`${doc.pageBuilder.length} sections from Sanity`],
-    })
-  }
+  const pricingPlans: PricingPlanData[] = allPricingPlans.map((plan: PricingPlan) => ({ ...plan, cta: plan.cta && { label: plan.cta.label, href: plan.cta.href } }))
+  // Home and About were Sanity page-builder pages; they live in the dashboard (no built-in copy).
+  warnings.push("/, /about-us: managed in the dashboard only (originally imported from Sanity)")
 
   // ---- Contact (hardcoded layout → sections, incl. both forms) -----------------------
-  const contactSanity = await getSanityContactPage()
   pages.push({
     path: "/contact-us",
     title: "Contact Us",
     pageType: "static",
-    source: contactSanity?.pageBuilder?.length ? "sanity+hardcoded" : "hardcoded",
+    source: "hardcoded",
     sections: [
       pageHero(
         "Let's talk about your website",
         "Questions about a plan, a migration, or something urgent? Reach us directly or send your details below — we usually reply within a few hours.",
         "Contact Us"
       ),
-      ...(contactSanity?.pageBuilder ?? []).map((block) => blockToSection(block, servicePlanSlugs)),
       {
         type: "leadFormBlock",
         data: {
@@ -231,19 +139,17 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
       },
       cta("Prefer to talk it through first?", "Share your number and a good time to call — we'll ring you back, no obligation.", "Request a callback"),
     ],
-    seo: seoOf(contactSanity?.seo),
     notes: ["Built-in layout converted to sections; both lead forms kept as form sections"],
   })
 
-  // ---- Service hubs (hardcoded layouts → sections; SEO from Sanity) ------------------
-  const [hostingSeo, domainSeo, emailSeo] = await Promise.all(["hosting", "domain", "email-hosting"].map((slug) => getSanityServicesPage(slug)))
+  // ---- Service hubs (hardcoded layouts → sections) -----------------------------------
   const hubWhere = "hub"
 
   pages.push({
     path: "/hosting",
     title: "Web Hosting (hub)",
     pageType: "service",
-    source: hostingSeo?.seo ? "sanity+hardcoded" : "hardcoded",
+    source: "hardcoded",
     sections: [
       {
         type: "pageHeroBlock",
@@ -299,7 +205,6 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
       },
       cta("Not sure which hosting page fits your project?", "Tell us what you're building — we'll point you at the right plan directly.", "Get a recommendation"),
     ],
-    seo: seoOf(hostingSeo?.seo),
     notes: ["Built-in layout converted to sections; pricing linked to the shared-hosting plans"],
   })
 
@@ -307,7 +212,7 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
     path: "/domain",
     title: "Domains (hub)",
     pageType: "service",
-    source: domainSeo?.seo ? "sanity+hardcoded" : "hardcoded",
+    source: "hardcoded",
     sections: [
       {
         type: "pageHeroBlock",
@@ -354,7 +259,6 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
       },
       cta("Not sure which domain extension to pick?", "Tell us about your business and we'll recommend the right TLD.", "Ask us"),
     ],
-    seo: seoOf(domainSeo?.seo),
     notes: ["Built-in layout converted to sections"],
   })
 
@@ -362,7 +266,7 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
     path: "/email-hosting",
     title: "Email Hosting (hub)",
     pageType: "service",
-    source: emailSeo?.seo ? "sanity+hardcoded" : "hardcoded",
+    source: "hardcoded",
     sections: [
       {
         type: "pageHeroBlock",
@@ -402,17 +306,10 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
       },
       cta("Not sure which email tier fits your team?", "Tell us how many mailboxes you need — we'll recommend a plan.", "Ask us"),
     ],
-    seo: seoOf(emailSeo?.seo),
     notes: ["Built-in layout converted to sections"],
   })
 
-  // ---- Service pages (template): Sanity docs + hardcoded-only pages --------------------
-  const sanityServices =
-    (await sanityFetch<SanityServiceDoc[]>(/* groq */ `*[_type == "servicePage"]{
-      category, "slug": slug.current, eyebrow, heroTitle, heroDescription, bullets, features, managed,
-      "planSlug": plan->slug.current, faqs, seo
-    }`)) ?? []
-  const bySanityKey = new Map(sanityServices.map((doc) => [`${doc.category}/${doc.slug}`, doc]))
+  // ---- Service pages (template) ------------------------------------------------------
 
   type LocalService = {
     category: string
@@ -435,95 +332,57 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
   ]
   const localByKey = new Map(local.map((p) => [`${p.category}/${p.slug}`, p]))
 
-  for (const key of new Set([...bySanityKey.keys(), ...localByKey.keys()])) {
-    const sanity = bySanityKey.get(key)
-    const fallback = localByKey.get(key)
+  for (const [key, fallback] of localByKey) {
     const [category, slug] = key.split("/")
     const path = servicePagePath(category, slug)
     const data = {
-      eyebrow: sanity?.eyebrow ?? fallback?.eyebrow ?? "",
-      heroTitle: sanity?.heroTitle ?? fallback?.title ?? "",
-      heroDescription: sanity?.heroDescription ?? fallback?.description ?? "",
-      bullets: sanity?.bullets ?? fallback?.bullets ?? [],
+      eyebrow: fallback.eyebrow,
+      heroTitle: fallback.title,
+      heroDescription: fallback.description,
+      bullets: fallback.bullets,
       // Hosting/SSL/VPS pages render per-page features; for the others the route's shared list applies.
-      features: sanity?.features ?? (fallback?.features ? features(fallback.features, warnings, path) : []),
-      // Only link a Pricing Plans entry where Sanity already did. Built-in-only pages (the SSL
-      // certificate pages) keep their built-in plan, whose button goes to checkout.
-      planSlug: sanity?.planSlug ?? "",
-      managed: sanity?.managed ?? fallback?.managed ?? false,
-      faqs: sanity?.faqs ?? (fallback ? faqs(fallback.faqs) : []),
+      features: fallback.features ? features(fallback.features, warnings, path) : [],
+      // Built-in pages keep their built-in plan (the email pages link their Pricing Plans entry).
+      planSlug: fallback.planSlug && category === "email" ? fallback.planSlug : "",
+      managed: fallback.managed ?? false,
+      faqs: faqs(fallback.faqs),
       copy: {},
     }
-    // /ssl and /vps-hosting keep their route defaults when Sanity lacks a doc — nothing to copy.
-    if (!sanity && !fallback) continue
-    pages.push(
-      templatePage(path, data.eyebrow || slug, data, sanity && fallback ? "sanity+hardcoded" : sanity ? "sanity" : "hardcoded", [], seoOf(sanity?.seo))
-    )
+    pages.push(templatePage(path, data.eyebrow || slug, data, "hardcoded"))
   }
 
   // ---- Legal ---------------------------------------------------------------------------
-  const legalSlugs = new Set([...(await getSanityAllLegalSlugs()), ...Object.keys(legalDocuments)])
-  for (const slug of legalSlugs) {
-    const sanity = await getSanityLegalPage(slug)
-    const fallback = legalDocuments[slug]
-    const doc = sanity ?? fallback
-    if (!doc) continue
+  for (const [slug, doc] of Object.entries(legalDocuments)) {
     pages.push(
       templatePage(
         `/legal/${slug}`,
         doc.title,
         { title: doc.title, summary: doc.summary, lastUpdated: doc.lastUpdated, sections: doc.sections },
-        sanity ? "sanity" : "hardcoded",
-        [],
-        seoOf(sanity?.seo)
+        "hardcoded"
       )
     )
   }
 
-  // ---- Company singletons (Sanity) ---------------------------------------------------
-  const [support, affiliate, comparison, thankYou] = await Promise.all([
-    getSanitySupportPage(),
-    getSanityAffiliatePage(),
-    getSanityComparisonPage(),
-    getSanityThankYouPage(),
-  ])
-  const strip = <T extends { seo?: unknown }>(doc: T) => {
-    const { seo, ...rest } = doc
-    void seo
-    return rest as Record<string, unknown>
-  }
-  if (support) pages.push(templatePage("/support", "Support", strip(support), "sanity", [], seoOf(support.seo)))
-  else warnings.push("/support: no Sanity document — page keeps its built-in content")
-  if (affiliate) pages.push(templatePage("/become-our-affiliate", "Affiliate Program", strip(affiliate), "sanity", [], seoOf(affiliate.seo)))
-  else warnings.push("/become-our-affiliate: no Sanity document — page keeps its built-in content")
-  if (comparison) pages.push(templatePage("/compare-hosting-plans", "Compare Hosting Plans", strip(comparison), "sanity", [], seoOf(comparison.seo)))
-  else warnings.push("/compare-hosting-plans: no Sanity document — page keeps its built-in content")
-  if (thankYou) pages.push(templatePage("/thank-you", "Thank You", thankYou as unknown as Record<string, unknown>, "sanity", ["Used for the contact-form thank-you message"]))
-  else warnings.push("/thank-you: no Sanity document — page keeps its built-in content")
+  // ---- Company singletons: originally Sanity documents, now managed in the dashboard only ----
+  warnings.push("/support, /become-our-affiliate, /compare-hosting-plans, /thank-you: managed in the dashboard only (originally imported from Sanity)")
 
   // ---- Knowledge base (one page: hero + categories + articles) ------------------------
-  const [kbPage, kbCats, kbArts] = await Promise.all([getSanityKnowledgeBasePage(), getSanityAllKBCategories(), getSanityAllKBArticles()])
   pages.push(
     templatePage(
       "/knowledge-base",
       "Knowledge Base",
       {
-        heroTitle: kbPage?.heroTitle ?? "",
-        heroDescription: kbPage?.heroDescription ?? "",
-        categories: kbCats.length
-          ? kbCats
-          : kbCategories.map((c) => ({ name: c.name, slug: c.slug, description: c.description, icon: iconName(c.icon, warnings, "/knowledge-base") })),
-        articles: (kbArts.length
-          ? kbArts.map(({ category, ...a }) => ({ ...a, categorySlug: category.slug }))
-          : kbArticles.map(({ categorySlug, ...a }) => ({ ...a, categorySlug }))) as Record<string, unknown>[],
+        heroTitle: "",
+        heroDescription: "",
+        categories: kbCategories.map((c) => ({ name: c.name, slug: c.slug, description: c.description, icon: iconName(c.icon, warnings, "/knowledge-base") })),
+        articles: kbArticles.map(({ categorySlug, ...a }) => ({ ...a, categorySlug })) as Record<string, unknown>[],
       },
-      kbPage && kbCats.length ? "sanity" : kbPage ? "sanity+hardcoded" : "hardcoded",
-      [`${kbCats.length || kbCategories.length} categories, ${kbArts.length || kbArticles.length} articles`],
-      seoOf(kbPage?.seo)
+      "hardcoded",
+      [`${kbCategories.length} categories, ${kbArticles.length} articles`]
     )
   )
 
-  // ---- Blog: home + every post (hardcoded; Sanity has none) --------------------------
+  // ---- Blog: home + every post (hardcoded) ------------------------------------------
   pages.push(
     templatePage(
       "/blog",
@@ -547,7 +406,7 @@ export async function buildMigrationPlan(): Promise<MigrationPlan> {
     pages.push(templatePage(`/promo/${slug}`, promo.eyebrow, { ...rest, faqs: faqs(promo.faqs) }, "hardcoded"))
   }
 
-  return { pages, pricing: { plans: JSON.parse(JSON.stringify(pricingPlans)), source: sanityPlans.length ? "sanity" : "hardcoded" }, warnings }
+  return { pages, pricing: { plans: JSON.parse(JSON.stringify(pricingPlans)), source: "hardcoded" }, warnings }
 }
 
 /** Section rows for a planned page (builder sections, or its single template section). */

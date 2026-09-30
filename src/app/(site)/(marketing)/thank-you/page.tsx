@@ -8,7 +8,7 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getThankYouPage } from "@/sanity/lib/queries"
+import { getThankYouPage } from "@/lib/cms/queries"
 
 export const generateMetadata = () => buildPageMetadata({
   title: "Thank You",
@@ -83,7 +83,7 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const { type: rawType, ref } = await searchParams
   const type: ThankYouType = VALID_TYPES.includes(rawType as ThankYouType) ? (rawType as ThankYouType) : "contact"
 
-  // The Sanity `thankYouPage` singleton only models one generic message — it stays the
+  // The dashboard's thank-you page only models one generic message — it stays the
   // "contact" fallback's CMS override; the other types always use their local copy.
   const cms = type === "contact" ? await getThankYouPage() : null
   const fallback = getTypeContent(type, ref)
