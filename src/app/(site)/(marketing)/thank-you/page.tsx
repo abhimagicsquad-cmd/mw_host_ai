@@ -1,5 +1,6 @@
 import { CheckCircle2 } from "lucide-react"
 
+import { ConversionTracker } from "@/components/common/conversion-tracker"
 import { CTAButton } from "@/components/common/cta-button"
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
@@ -94,6 +95,8 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
 
   return (
     <>
+      {/* Same Google Ads conversions the WordPress thank-you pages fired (test-mode orders don't count). */}
+      {type !== "order" ? <ConversionTracker kind={type === "affiliate" ? "affiliate" : "lead"} /> : null}
       <SectionContainer background="navy" width="wide" padded={false} className="relative overflow-hidden py-16 sm:py-20">
         <div className="pointer-events-none absolute -top-1/2 left-1/2 size-[32rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
         <div className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-15 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,black,transparent)]" />

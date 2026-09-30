@@ -6,6 +6,7 @@ import { CheckCircle2, Loader2, Mail } from "lucide-react"
 import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { trackConversion } from "@/lib/analytics"
 import { cn } from "@/lib/utils"
 
 type NewsletterSectionProps = {
@@ -71,6 +72,8 @@ export function NewsletterSection({ className }: NewsletterSectionProps) {
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
 
       if (data.success) {
+        // WordPress sent subscribers to a thank-you page that fired this conversion.
+        trackConversion("lead")
         setStatus("success")
         setEmail("")
         return

@@ -63,7 +63,22 @@ const wordpressPatternRedirects = [
 
 const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : "https://*.supabase.co";
 
-function csp(extra: { script?: string; connect?: string; img?: string; frame?: string } = {}) {
+/**
+ * Public-site third parties (see src/lib/analytics.ts): Google Ads gtag, Microsoft Clarity and
+ * Tidio live chat — the same tracking and chat the WordPress site ran.
+ */
+const tracking = {
+  script: " https://www.googletagmanager.com https://*.googleadservices.com https://googleads.g.doubleclick.net https://*.clarity.ms https://code.tidio.co https://*.tidio.co https://*.tidiochat.com",
+  // Ads conversions post to the visitor's country Google host (google.co.in, google.de, …) and
+  // doubleclick, which can't be listed exhaustively — so any https endpoint and image. Scripts,
+  // frames and fonts stay allowlisted.
+  connect: " https: wss://*.tidio.co",
+  img: " https:",
+  frame: " https://*.doubleclick.net https://www.googletagmanager.com https://*.tidio.co https://*.tidiochat.com",
+  font: " https://*.tidio.co https://*.tidiochat.com",
+};
+
+function csp(extra: { script?: string; connect?: string; img?: string; frame?: string; font?: string } = {}) {
   return [
     "default-src 'self'",
     // Next.js injects inline bootstrap scripts into statically rendered pages, which rules out
@@ -71,7 +86,7 @@ function csp(extra: { script?: string; connect?: string; img?: string; frame?: s
     `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${extra.script ?? ""}`,
     "style-src 'self' 'unsafe-inline'",
     `img-src 'self' data: blob: https://cdn.sanity.io ${supabaseOrigin}${extra.img ?? ""}`,
-    "font-src 'self' data:",
+    `font-src 'self' data:${extra.font ?? ""}`,
     `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com${extra.connect ?? ""}`,
     `frame-src https://challenges.cloudflare.com${extra.frame ?? ""}`,
     "frame-ancestors 'none'",
@@ -120,7 +135,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      { source: "/:path*", headers: [...securityHeaders, { key: "Content-Security-Policy", value: csp() }] },
+      { source: "/:path*", headers: [...securityHeaders, { key: "Content-Security-Policy", value: csp(tracking) }] },
       // Admin: media previews may be any https image the editor pastes.
       { source: "/admin/:path*", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
       { source: "/mwh-admin-login", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },

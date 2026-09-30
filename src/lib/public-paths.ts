@@ -65,8 +65,8 @@ export const WORDPRESS_ROUTES: Record<string, string> = {
  */
 export const WORDPRESS_ALIASES: Record<string, string> = {
   "/resources/": "/blog", // WordPress had its blog index at both /blog/ and /resources/
-  "/thank-you-for-subscribing/": "/thank-you",
-  "/thank-you-for-interest-in-affiliate-program/": "/thank-you",
+  "/thank-you-for-subscribing/": "/thank-you?type=newsletter",
+  "/thank-you-for-interest-in-affiliate-program/": "/thank-you?type=affiliate",
   "/migration-status/": "/support", // a one-off "we're migrating" notice; support is its successor
   "/demo/": "/", // WordPress theme demo copies of the home page
   "/demo-2/": "/",

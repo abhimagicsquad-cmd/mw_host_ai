@@ -23,6 +23,17 @@ type FooterProps = {
   showCta?: boolean
 }
 
+// Every WordPress footer policy link (its "Legal Policies" column), kept in the bottom bar.
+const legalLinks = [
+  { label: "Privacy Policy", href: "/legal/privacy-policy" },
+  { label: "Terms of Service", href: "/legal/terms-of-service" },
+  { label: "Service Level Agreement", href: "/legal/service-level-agreement" },
+  { label: "Acceptable Use Policy", href: "/legal/acceptable-use-policy" },
+  { label: "Mail Policy", href: "/legal/mail-policy" },
+  { label: "Resource Abuse Policy", href: "/legal/resource-abuse-policy" },
+  { label: "Affiliate Programme Terms", href: "/legal/affiliate-programme-terms" },
+]
+
 const fallbackFooterColumns = [footerColumns.quickLinks, footerColumns.services, footerColumns.resources]
 
 export async function Footer({ showCta = true }: FooterProps) {
@@ -104,18 +115,17 @@ export async function Footer({ showCta = true }: FooterProps) {
       </div>
 
       <div className="border-t border-white/10 bg-brand-navy-dark">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/60 sm:flex-row sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-4 text-center lg:flex-row lg:text-left text-xs text-white/60 sm:px-6 lg:px-8">
           <p>
             © 2012–{year} {siteName}. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            <Link href="/legal/privacy-policy" className="hover:text-white">
-              Privacy Policy
-            </Link>
-            <Link href="/legal/terms-of-service" className="hover:text-white">
-              Terms of Service
-            </Link>
-          </div>
+          <nav aria-label="Legal policies" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            {legalLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="hover:text-white">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
     </footer>

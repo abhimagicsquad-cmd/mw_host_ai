@@ -1,3 +1,5 @@
+import { AnalyticsScripts } from "@/components/common/analytics-scripts"
+import { FloatingContact } from "@/components/common/floating-contact"
 import { LeadAutoPopup } from "@/components/common/lead-auto-popup"
 import { PreviewBanner } from "@/components/common/preview-banner"
 import { Footer } from "@/components/layout/footer/footer"
@@ -23,7 +25,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </main>
       <Footer />
       <PreviewBanner />
+      <FloatingContact />
       <LeadAutoPopup />
+      <AnalyticsScripts />
     </>
   )
 }
