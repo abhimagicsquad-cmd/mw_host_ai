@@ -171,11 +171,6 @@ export function domainOrderUrl(mode: DomainOrderMode, query?: string): string {
   return `${BILLING_BASE_URL}/cart.php?${params.toString()}`
 }
 
-export const domainRegisterUrl = (query?: string) => domainOrderUrl("register", query)
-
-/** Hostname of the billing system, for CSP `form-action`/`connect-src`. */
-export const BILLING_ORIGIN = new URL(BILLING_BASE_URL).origin
-
 /**
  * Old content (imported into the dashboard) links the client area at clients.magicworkshost.com, a host that
  * doesn't exist. Map it onto the real WHMCS location wherever such a link is rendered.

@@ -20,8 +20,17 @@ function getClientIp(request: Request) {
   return request.headers.get("x-real-ip") ?? "unknown"
 }
 
+/** Drops stale entries so the in-memory maps can't grow without bound. */
+function pruneStale(now: number) {
+  if (requestLog.size < 1000) return
+  for (const [key, timestamps] of requestLog) {
+    if (timestamps.every((timestamp) => now - timestamp >= RATE_LIMIT_WINDOW_MS)) requestLog.delete(key)
+  }
+}
+
 function isRateLimited(ip: string) {
   const now = Date.now()
+  pruneStale(now)
   const timestamps = (requestLog.get(ip) ?? []).filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS)
   timestamps.push(now)
   requestLog.set(ip, timestamps)

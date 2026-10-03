@@ -10,11 +10,6 @@ export const newsletterFormSchema = z.object({
 
 export type NewsletterFormValues = z.infer<typeof newsletterFormSchema>
 
-export const newsletterFormDefaultValues: NewsletterFormValues = {
-  email: "",
-  website: "",
-}
-
 export const newsletterApiPayloadSchema = newsletterFormSchema.extend({
   source: z.string().max(60).optional(),
   formRenderedAt: z.number().optional(),

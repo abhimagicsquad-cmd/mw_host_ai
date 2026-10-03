@@ -8,7 +8,7 @@ import { cmsAdminDb, isMissingTableError } from "@/lib/cms/db"
 import type { AdminRole, SafeUser } from "@/lib/cms/types"
 
 import { can, type Permission } from "./permissions"
-import { SESSION_COOKIE, verifySession } from "./session"
+import { credentialVersion, SESSION_COOKIE, verifySession } from "./session"
 
 export type CurrentAdmin = Pick<SafeUser, "id" | "username" | "email" | "full_name" | "role" | "must_change_password"> & {
   /** True for the env-configured break-glass login (only works while no CMS users exist). */
@@ -50,10 +50,12 @@ export const getCurrentAdmin = cache(async (): Promise<CurrentAdmin | null> => {
   if (!cmsAdminDb) return null
   const { data, error } = await cmsAdminDb
     .from("users")
-    .select("id, username, email, full_name, role, must_change_password, is_active")
+    .select("id, username, email, full_name, role, must_change_password, is_active, password_hash")
     .eq("id", session.sub)
     .maybeSingle()
   if (error || !data || !data.is_active) return null
+  // A password change since sign-in revokes the session.
+  if (session.cv && session.cv !== (await credentialVersion(data.password_hash))) return null
 
   return {
     id: data.id,

@@ -8,6 +8,7 @@ import { legalDocuments } from "@/constants/legal-content"
 import { siteConfig, socialLinks } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { billingUrls } from "@/lib/billing"
+import { getPricingPlansByService } from "@/lib/cms/queries"
 import { publicPath } from "@/lib/public-paths"
 
 export const dynamic = "force-static"
@@ -17,8 +18,28 @@ export const dynamic = "force-static"
  * (the emerging llmstxt.org convention): who the company is, what it sells, and the
  * canonical page for each topic, so AI answers cite the right URL.
  */
-export function GET() {
+type PricedPlan = { name: string; price: string }
+
+const priceValue = (price: string) => Number(price.replace(/[^d.]/g, "")) || Number.POSITIVE_INFINITY
+
+/** The cheapest plan's price as displayed (e.g. "₹145"). */
+const fromPrice = (plans: PricedPlan[]) => plans.reduce((min, plan) => (priceValue(plan.price) < priceValue(min.price) ? plan : min), plans[0]).price
+
+/** The dashboard's published India plans for a service, or the built-in plans when there are none. */
+async function plansFor(service: string, fallback: PricedPlan[]): Promise<PricedPlan[]> {
+  const plans = await getPricingPlansByService(service, "india")
+  return plans.length ? plans : fallback
+}
+
+export async function GET() {
   const u = (path: string) => `${siteConfig.url}${publicPath(path)}`
+  // Same price source as the pages (dashboard Pricing Plans first), so AI answers quote current prices.
+  const [shared, vps, dedicated, ssl] = await Promise.all([
+    plansFor("shared-hosting", sharedHostingPlans),
+    plansFor("vps-hosting", vpsPlans),
+    plansFor("dedicated-server", dedicatedPlans),
+    plansFor("ssl", sslPlans),
+  ])
   const list = (items: { href: string; label: string; note?: string }[]) =>
     items.map((item) => `- [${item.label}](${item.href})${item.note ? `: ${item.note}` : ""}`).join("\n")
 
@@ -32,9 +53,9 @@ export function GET() {
 - Profiles: ${socialLinks.map((link) => link.href).join(", ")}
 
 ## Prices at a glance (INR)
-- Shared NVMe hosting: from ${sharedHostingPlans[0].price}/month on a 3-year term (${sharedHostingPlans.map((plan) => `${plan.name} ${plan.price}`).join(", ")}); 1-, 2- and 3-year terms available
-- VPS (India): from ${vpsPlans[0].price}/month; dedicated servers (India): from ${dedicatedPlans[0].price}/month
-- SSL certificates: from ${sslPlans[0].price}/year
+- Shared NVMe hosting: from ${fromPrice(shared)}/month on a 3-year term (${shared.map((plan) => `${plan.name} ${plan.price}`).join(", ")}); 1-, 2- and 3-year terms available
+- VPS (India): from ${fromPrice(vps)}/month; dedicated servers (India): from ${fromPrice(dedicated)}/month
+- SSL certificates: from ${fromPrice(ssl)}/year
 - Domain registration per year: ${tldPricing.map((tld) => `${tld.tld} ${tld.price}`).join(", ")}
 - Domain transfer (adds 1 year): ${tldTransferPricing.map((tld) => `${tld.tld} ${tld.price}`).join(", ")}
 

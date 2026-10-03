@@ -148,7 +148,9 @@ export function BlogPostingJsonLd({ title, description, slug, authorName, datePu
         ...(wordCount ? { wordCount } : {}),
         ...(section ? { articleSection: section } : {}),
         inLanguage: "en-IN",
-        author: isTeam ? { "@type": "Organization", "@id": ORG_ID, name: authorName } : { "@type": "Person", name: authorName, worksFor: { "@id": ORG_ID } },
+        // Team posts are authored by the Organization itself — same @id, so the same name
+        // (a different name on the same @id reads as two conflicting entities).
+        author: isTeam ? { "@type": "Organization", "@id": ORG_ID, name: siteConfig.name, url: siteConfig.url } : { "@type": "Person", name: authorName, worksFor: { "@id": ORG_ID } },
         publisher: {
           "@type": "Organization",
           "@id": ORG_ID,
@@ -166,14 +168,21 @@ function parsePriceNumber(price: string) {
 }
 
 type ProductJsonLdProps = {
+  /** The service's plain name ("WordPress Hosting") — what people and AI engines search for. */
   name: string
+  /** The page's marketing headline, kept as the product's slogan. */
+  slogan?: string
   description: string
   path: string
   plans: { name: string; price: string }[]
 }
 
-/** Product structured data for a pricing page — a single Offer for one plan, or an AggregateOffer across a tier grid. */
-export function ProductJsonLd({ name, description, path, plans }: ProductJsonLdProps) {
+/**
+ * Product + Service structured data for a pricing page: offers (a single Offer for one plan,
+ * or an AggregateOffer across a tier grid), and a Service entity provided by the Organization
+ * so the service connects to the company in knowledge graphs.
+ */
+export function ProductJsonLd({ name, slogan, description, path, plans }: ProductJsonLdProps) {
   const prices = plans.map((plan) => parsePriceNumber(plan.price)).filter((value): value is number => typeof value === "number")
   if (prices.length === 0) return null
 
@@ -188,13 +197,30 @@ export function ProductJsonLd({ name, description, path, plans }: ProductJsonLdP
     <JsonLd
       data={{
         "@context": "https://schema.org",
-        "@type": "Product",
-        name,
-        description,
-        url,
-        image: SHARE_IMAGE_URL,
-        brand: { "@type": "Brand", name: siteConfig.name },
-        offers,
+        "@graph": [
+          {
+            "@type": "Product",
+            "@id": `${url}#product`,
+            name,
+            ...(slogan && slogan !== name ? { slogan } : {}),
+            description,
+            url,
+            image: SHARE_IMAGE_URL,
+            brand: { "@type": "Brand", name: siteConfig.name },
+            offers,
+          },
+          {
+            "@type": "Service",
+            "@id": `${url}#service`,
+            name,
+            serviceType: name,
+            description,
+            url,
+            provider: { "@id": ORG_ID },
+            brand: { "@type": "Brand", name: siteConfig.name },
+            offers,
+          },
+        ],
       }}
     />
   )

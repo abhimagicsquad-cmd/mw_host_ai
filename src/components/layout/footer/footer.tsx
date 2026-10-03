@@ -94,7 +94,7 @@ export async function Footer({ showCta = true }: FooterProps) {
 
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-3">
-              <p className="text-sm font-semibold text-white">Contact Information</p>
+              <h2 className="text-sm font-semibold text-white">Contact Information</h2>
               <a href={phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
                 <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
                 {phone}
@@ -119,9 +119,10 @@ export async function Footer({ showCta = true }: FooterProps) {
           <p>
             © 2012–{year} {siteName}. All rights reserved.
           </p>
-          <nav aria-label="Legal policies" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <nav aria-label="Legal policies" className="flex flex-wrap items-center justify-center gap-x-4">
             {legalLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:text-white">
+              // py-1: a 24px-tall tap target (WCAG 2.5.8) for the small text links.
+              <Link key={link.href} href={link.href} className="inline-block py-1 hover:text-white">
                 {link.label}
               </Link>
             ))}

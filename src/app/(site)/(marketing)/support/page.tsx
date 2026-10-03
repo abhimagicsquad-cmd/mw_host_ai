@@ -11,7 +11,7 @@ import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
 import { billingUrls, normalizeBillingHref } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getSupportPage } from "@/lib/cms/queries"
 
 const fallbackChannels = [
@@ -61,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const cms = await getSupportPage()
   if (!cms?.seo?.metaTitle) {
     return buildPageMetadata({
-      title: "Support",
+      title: defaultSeoTitle("/support") ?? "Support",
       description: "Reach MagicWorks Host support by phone, ticket, or knowledge base — 24/7 support on every plan.",
       path: "/support",
     })

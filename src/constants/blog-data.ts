@@ -329,7 +329,3 @@ export function getBlogCategoryName(slug: string) {
 export function getBlogPost(slug: string) {
   return blogPosts.find((post) => post.slug === slug)
 }
-
-export function getRelatedPosts(post: BlogPost, limit = 3) {
-  return blogPosts.filter((candidate) => candidate.slug !== post.slug && candidate.categorySlug === post.categorySlug).slice(0, limit)
-}

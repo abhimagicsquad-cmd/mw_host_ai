@@ -16,7 +16,7 @@ import { sharedHostingPlans, usaSharedHostingPlans } from "@/constants/pricing-p
 import { siteConfig } from "@/constants/site-config"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type HostingSlugPageProps = {
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: HostingSlugPageProps): Promis
   if (!cms && !page) return {}
 
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle(`/hosting/${slug}`) ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/hosting/${slug}`,
   })
@@ -67,7 +67,7 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path={`/hosting/${slug}`} plans={plans} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path={`/hosting/${slug}`} plans={plans} />
 
       <HeroSection
         eyebrow={eyebrow}

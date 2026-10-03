@@ -8,7 +8,7 @@ import { PageHero } from "@/components/sections/page-hero"
 import { ServiceGrid } from "@/components/sections/service-grid"
 import { PageBuilder } from "@/components/page-builder/page-builder"
 import { emailHubIntro, emailIncludedFeatures, emailPages } from "@/constants/email-pages-data"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getServicesPage } from "@/lib/cms/queries"
 
 const HUB_SLUG = "email-hosting"
@@ -21,7 +21,7 @@ const fallbackMetadata = {
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicesPage(HUB_SLUG)
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? fallbackMetadata.title,
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/email-hosting") ?? fallbackMetadata.title,
     description: cms?.seo?.metaDescription ?? fallbackMetadata.description,
     path: "/email-hosting",
   })

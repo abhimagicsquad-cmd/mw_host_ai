@@ -10,13 +10,13 @@ import { QuoteFormSection } from "@/components/sections/quote-form-section"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { PageBuilder } from "@/components/page-builder/page-builder"
 import { siteConfig } from "@/constants/site-config"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getCmsBuilderDocument, getContactPage } from "@/lib/cms/queries"
 
 export async function generateMetadata() {
   const cms = await getContactPage()
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? "Contact Us",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/contact-us") ?? "Contact Us",
     description:
       cms?.seo?.metaDescription ??
       "Get in touch with MagicWorks Host — call, email, or send us your details and our team will respond within a few hours.",

@@ -15,7 +15,7 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { vpsPlans, vpsPlansUSA } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -40,7 +40,7 @@ const defaultFaqs: FAQItem[] = [
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicePage("vps", SLUG)
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? "VPS Hosting",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/vps-hosting") ?? cms?.heroTitle ?? "VPS Hosting",
     description:
       cms?.seo?.metaDescription ??
       cms?.heroDescription ??
@@ -77,7 +77,7 @@ export default async function VpsHostingPage() {
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path="/vps-hosting" plans={[...indiaPlans, ...usaPlans]} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path="/vps-hosting" plans={[...indiaPlans, ...usaPlans]} />
 
       <HeroSection
         eyebrow={eyebrow}

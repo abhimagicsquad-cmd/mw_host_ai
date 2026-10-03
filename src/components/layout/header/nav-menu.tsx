@@ -37,7 +37,9 @@ export function NavMenu({ items }: NavMenuProps) {
               >
                 {item.label}
               </NavigationMenuTrigger>
-              <NavigationMenuContent>
+              {/* keepMounted: the dropdown links ship in the server HTML (hidden until opened), so
+                  crawlers can follow the service pages, not just users who hover the menu. */}
+              <NavigationMenuContent keepMounted>
                 <div className="flex gap-6 p-6">
                   {item.columns.map((column, columnIndex) => (
                     <div key={column.heading ?? columnIndex} className="flex w-56 flex-col gap-1">

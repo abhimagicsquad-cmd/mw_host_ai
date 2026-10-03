@@ -186,6 +186,14 @@ export const getPublishedCmsPaths = cache(async (): Promise<{ path: string; upda
   return data
 })
 
+/** Route paths an editor marked "noindex" under SEO — kept out of the sitemap. */
+export const getNoIndexSeoPaths = cache(async (): Promise<string[]> => {
+  if (!cmsPublicDb) return []
+  const { data, error } = await cmsPublicDb.from("seo").select("path").eq("no_index", true)
+  if (error || !data) return []
+  return data.map((row) => row.path as string)
+})
+
 type BlogPostTemplate = Omit<BlogPost, "slug">
 
 /** CMS blog posts in the same shape as the built-in posts, so they render with the same template. */
@@ -205,10 +213,4 @@ export async function getCmsBlogPosts(): Promise<BlogPost[]> {
       sections: (post.sections ?? []).map((section) => ({ heading: section.heading, body: (section.body ?? []).filter(Boolean) })),
     }
   })
-}
-
-export async function getCmsBlogPost(slug: string): Promise<BlogPost | null> {
-  const data = await getCmsTemplate<Partial<BlogPostTemplate>>("blogPost", `/blog/${slug}`)
-  if (!data) return null
-  return (await getCmsBlogPosts()).find((post) => post.slug === slug) ?? null
 }

@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { Pause, Play } from "lucide-react"
 
 import { SectionContainer } from "@/components/layout/section-container"
 import type { LogoItem } from "@/types/content"
@@ -44,17 +45,30 @@ function LogoList({ logos, copy = false }: { logos: LogoItem[]; copy?: boolean }
 }
 
 /**
- * Customer logo strip that scrolls continuously right-to-left (pauses on hover with a mouse;
- * static and wrapped for prefers-reduced-motion). Pure CSS — see `.logo-marquee` in globals.css.
+ * Customer logo strip that scrolls continuously right-to-left. Pure CSS — see `.logo-marquee`
+ * in globals.css. It pauses on mouse hover and while a logo link has keyboard focus, has a
+ * Pause/Play toggle for touch and keyboard users (WCAG 2.2.2), and is static and wrapped for
+ * prefers-reduced-motion. The toggle is a labelled checkbox, so it works without JavaScript.
  */
 export function LogoCloud({ title = "Trusted by businesses across India", logos, background = "none" }: LogoCloudProps) {
   return (
     <SectionContainer background={background} width="wide" padded={false} className="py-10">
-      {title ? <p className="mb-6 text-center text-sm font-medium text-muted-foreground">{title}</p> : null}
-      <div className="logo-marquee overflow-hidden" role="region" aria-label={title || "Customer logos"}>
-        <div className="logo-marquee-track flex w-max" style={{ "--marquee-duration": `${Math.max(20, logos.length * 4)}s` } as React.CSSProperties}>
-          <LogoList logos={logos} />
-          <LogoList logos={logos} copy />
+      <div className="logo-marquee" role="region" aria-label={title || "Customer logos"}>
+        <div className="relative mb-6 flex min-h-7 items-center justify-center">
+          {title ? <p className="text-center text-sm font-medium text-muted-foreground">{title}</p> : null}
+          <label className="logo-marquee-toggle absolute right-0 flex cursor-pointer items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground ring-1 ring-border hover:text-brand-navy has-focus-visible:ring-2 has-focus-visible:ring-ring">
+            <input type="checkbox" className="peer sr-only" aria-label="Pause logo animation" />
+            <Pause className="size-3.5 peer-checked:hidden" aria-hidden="true" />
+            <Play className="hidden size-3.5 peer-checked:block" aria-hidden="true" />
+            <span className="peer-checked:hidden" aria-hidden="true">Pause</span>
+            <span className="hidden peer-checked:inline" aria-hidden="true">Play</span>
+          </label>
+        </div>
+        <div className="overflow-hidden">
+          <div className="logo-marquee-track flex w-max" style={{ "--marquee-duration": `${Math.max(20, logos.length * 4)}s` } as React.CSSProperties}>
+            <LogoList logos={logos} />
+            <LogoList logos={logos} copy />
+          </div>
         </div>
       </div>
     </SectionContainer>

@@ -16,7 +16,7 @@ import { sslPlans } from "@/constants/pricing-plans"
 import { sslPageIcons, sslPages } from "@/constants/ssl-pages-data"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -43,7 +43,7 @@ const defaultFaqs: FAQItem[] = [
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicePage("ssl", SLUG)
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? "SSL Certificates",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/ssl") ?? cms?.heroTitle ?? "SSL Certificates",
     description:
       cms?.seo?.metaDescription ??
       cms?.heroDescription ??
@@ -75,7 +75,7 @@ export default async function SslPage() {
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path="/ssl" plans={plans} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path="/ssl" plans={plans} />
 
       <HeroSection
         eyebrow={eyebrow}

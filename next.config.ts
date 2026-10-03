@@ -118,7 +118,13 @@ const nextConfig: NextConfig = {
   // only, so the admin and API keep their slash-less URLs.
   skipTrailingSlashRedirect: true,
   images: {
+    // AVIF first (smaller), WebP fallback — picked per request from the Accept header.
+    formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
+    // SVGs served by the optimizer can't run script, and download rather than render when
+    // opened directly (the hardening the Next.js docs pair with dangerouslyAllowSVG).
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   async redirects() {
     return [

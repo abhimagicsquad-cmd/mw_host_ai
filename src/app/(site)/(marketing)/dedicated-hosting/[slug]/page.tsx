@@ -15,7 +15,7 @@ import { dedicatedPages, dedicatedTrustFeatures, getDedicatedPage } from "@/cons
 import { dedicatedPlans, dedicatedPlansUSA } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type DedicatedSlugPageProps = {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: DedicatedSlugPageProps): Prom
   if (!cms && !page) return {}
 
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle(`/dedicated-hosting/${slug}`) ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/dedicated-hosting/${slug}`,
   })
@@ -71,7 +71,7 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path={`/dedicated-hosting/${slug}`} plans={[...indiaPlans, ...usaPlans]} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path={`/dedicated-hosting/${slug}`} plans={[...indiaPlans, ...usaPlans]} />
 
       <HeroSection
         eyebrow={eyebrow}

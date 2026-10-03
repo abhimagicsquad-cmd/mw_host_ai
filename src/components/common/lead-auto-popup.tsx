@@ -8,7 +8,8 @@ const LeadDialog = dynamic(() => import("@/components/common/lead-dialog").then(
 })
 
 const SESSION_KEY = "mwh:lead-auto-popup-shown"
-const DELAY_MS = 4000
+/** Share of the page scrolled before the dialog opens — the visitor has read past the fold. */
+const SCROLL_DEPTH = 0.5
 
 function hasBeenShown() {
   try {
@@ -27,9 +28,19 @@ function markShown() {
   }
 }
 
+/** True while the visitor is typing in a field — never interrupt that with a dialog. */
+function isTyping() {
+  const active = document.activeElement
+  return active instanceof HTMLElement && (active.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName))
+}
+
 /**
- * Opens the shared lead dialog once per browser session, 4s after the first page load.
- * Mounted in the site layout so it persists across client-side navigations.
+ * Opens the shared lead dialog once per browser session, on engagement rather than a timer:
+ * when the visitor has scrolled through half the page, or (mouse users) moves the pointer
+ * out through the top of the window to leave. A timed popup interrupts people mid-read,
+ * steals focus from keyboard and screen-reader users and counts as an intrusive
+ * interstitial on mobile. Mounted in the site layout so it persists across client-side
+ * navigations.
  */
 export function LeadAutoPopup() {
   const [open, setOpen] = useState(false)
@@ -39,15 +50,37 @@ export function LeadAutoPopup() {
   useEffect(() => {
     if (hasBeenShown()) return
 
-    const timer = window.setTimeout(() => {
+    let frame = 0
+    const cleanup = () => {
+      window.removeEventListener("scroll", onScroll)
+      document.documentElement.removeEventListener("mouseleave", onExitIntent)
+      window.cancelAnimationFrame(frame)
+    }
+    const trigger = () => {
+      // Don't stack on a dialog the visitor already opened (lead CTA, mobile nav, etc.) or
+      // interrupt typing — wait for the next trigger instead.
+      if (document.querySelector('[role="dialog"]') || isTyping()) return
+      cleanup()
       markShown()
-      // Don't stack on top of a dialog the visitor already opened (lead CTA, mobile nav, etc.).
-      if (document.querySelector('[role="dialog"]')) return
       setHasOpened(true)
       setOpen(true)
-    }, DELAY_MS)
+    }
+    const onScroll = () => {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        const { scrollHeight } = document.documentElement
+        if (window.scrollY + window.innerHeight >= scrollHeight * SCROLL_DEPTH && window.scrollY > 0) trigger()
+      })
+    }
+    const onExitIntent = (event: MouseEvent) => {
+      if (event.clientY <= 0) trigger()
+    }
 
-    return () => window.clearTimeout(timer)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      document.documentElement.addEventListener("mouseleave", onExitIntent)
+    }
+    return cleanup
   }, [])
 
   if (!hasOpened) return null

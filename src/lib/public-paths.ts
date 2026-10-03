@@ -115,9 +115,3 @@ export function publicPath(href: string): string {
 
   return `${bare}/${rest}`
 }
-
-/** The internal route path for a public URL (inverse of `publicPath`, for pages that need it). */
-export function internalPath(publicUrl: string): string {
-  const withSlash = publicUrl.endsWith("/") ? publicUrl : `${publicUrl}/`
-  return WORDPRESS_ROUTES[withSlash] ?? (publicUrl.replace(/\/+$/, "") || "/")
-}

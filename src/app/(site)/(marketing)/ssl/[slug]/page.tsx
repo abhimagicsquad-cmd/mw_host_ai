@@ -66,7 +66,7 @@ export default async function SslSlugPage({ params }: SslSlugPageProps) {
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path={`/ssl/${slug}`} plans={[plan]} />
+      <ProductJsonLd name={/ssl/i.test(eyebrow) ? eyebrow : `${eyebrow} SSL Certificate`} slogan={title} description={description} path={`/ssl/${slug}`} plans={[plan]} />
 
       <HeroSection
         eyebrow={eyebrow}

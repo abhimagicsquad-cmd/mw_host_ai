@@ -4,13 +4,13 @@ import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { getBlog } from "@/lib/cms/blog"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 
 export async function generateMetadata() {
   // The listing's `title` is the on-page heading; the <title> tag is managed under SEO.
   const { listing } = await getBlog()
   return buildPageMetadata({
-    title: listing?.seo?.metaTitle ?? "Blog",
+    title: listing?.seo?.metaTitle ?? defaultSeoTitle("/blog") ?? "Blog",
     description: listing?.seo?.metaDescription ?? "Hosting performance, security, and WordPress articles from the MagicWorks Host team.",
     path: "/blog",
   })

@@ -8,7 +8,7 @@ type FooterColumnProps = {
 export function FooterColumn({ heading, links }: FooterColumnProps) {
   return (
     <nav aria-label={heading} className="flex flex-col gap-3">
-      <p className="text-sm font-semibold text-white">{heading}</p>
+      <h2 className="text-sm font-semibold text-white">{heading}</h2>
       <ul className="flex flex-col gap-2.5">
         {links.map((link) => (
           <li key={link.href}>

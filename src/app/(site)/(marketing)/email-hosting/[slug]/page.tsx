@@ -70,7 +70,7 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path={`/email-hosting/${slug}`} plans={[plan]} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path={`/email-hosting/${slug}`} plans={[plan]} />
 
       <HeroSection
         eyebrow={eyebrow}

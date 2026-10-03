@@ -10,7 +10,10 @@ import { kbCategories } from "@/constants/knowledge-base-data"
 import { legalSlugs } from "@/constants/legal-content"
 import { siteConfig } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
-import { getPublishedCmsPaths } from "@/lib/cms/content"
+import { getNoIndexSeoPaths, getPublishedCmsPaths } from "@/lib/cms/content"
+
+/** Built-in routes rendered with noindex (search results, form confirmations) — never listed. */
+const NOINDEX_ROUTES = ["/search", "/thank-you"]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
@@ -32,6 +35,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/compare-hosting-plans"), changeFrequency: "monthly", priority: 0.7 },
     { url: url("/become-our-affiliate"), changeFrequency: "monthly", priority: 0.4 },
     { url: url("/sitemap-page"), changeFrequency: "yearly", priority: 0.2 },
+    // Free tools (the WordPress calculator URLs).
+    { url: url("/tools/bandwidth-calculator"), changeFrequency: "yearly", priority: 0.4 },
+    { url: url("/tools/data-unit-calculator"), changeFrequency: "yearly", priority: 0.4 },
+    { url: url("/tools/transfer-time-calculator"), changeFrequency: "yearly", priority: 0.4 },
   ]
 
   const hostingRoutes = hostingPages.map((page) => ({
@@ -100,6 +107,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Pages created in the admin CMS (built-in URLs they override are already listed above).
+  // noindex pages (built-in ones like /thank-you, and any an editor marked noindex under SEO)
+  // are left out: a sitemap should only list URLs meant to be indexed.
+  const noIndex = new Set([...NOINDEX_ROUTES, ...(await getNoIndexSeoPaths())].map((path) => url(path)))
   const known = new Set(builtIn.map((entry) => entry.url))
   const cmsRoutes = (await getPublishedCmsPaths())
     .map((page) => ({
@@ -110,5 +120,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
     .filter((entry) => !known.has(entry.url))
 
-  return [...builtIn, ...cmsRoutes]
+  return [...builtIn, ...cmsRoutes].filter((entry) => !noIndex.has(entry.url))
 }

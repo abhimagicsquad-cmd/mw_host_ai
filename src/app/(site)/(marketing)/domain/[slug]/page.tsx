@@ -19,7 +19,7 @@ import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { billingUrls } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
 import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type DomainSlugPageProps = {
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: DomainSlugPageProps): Promise
   if (!cms && !page) return {}
 
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle(`/domain/${slug}`) ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/domain/${slug}`,
   })
@@ -77,7 +77,8 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
     <>
       {/* Offers for the TLD prices shown on the page (registration, or transfer on the transfer page). */}
       <ProductJsonLd
-        name={title}
+        name={eyebrow}
+        slogan={title}
         description={description}
         path={`/domain/${slug}`}
         plans={prices.map((tld) => ({ name: `${tld.tld} domain${isTransfer ? " transfer" : ""}`, price: tld.price }))}

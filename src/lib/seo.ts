@@ -27,6 +27,32 @@ export const DEFAULT_SHARE_IMAGE = {
   alt: `${siteConfig.name} — ${siteConfig.tagline}`,
 }
 
+/**
+ * Keyword-led <title>s for pages whose on-page headline is a slogan without the service
+ * name ("Dedicated resources, without dedicated-server pricing" on the VPS page). Keyed by
+ * internal route path. Used after the dashboard's SEO title and before the headline, so an
+ * editor can still override any of them. Every phrase restates what the page itself says.
+ */
+const DEFAULT_SEO_TITLES: Record<string, string> = {
+  "/vps-hosting": "VPS Hosting with Full Root Access & NVMe Storage",
+  "/ssl": "Buy SSL Certificates – DV, OV, EV & Wildcard SSL",
+  "/hosting": "Web Hosting Plans – NVMe Shared Hosting",
+  "/hosting/seo-hosting": "SEO Hosting – Fast NVMe Hosting for Core Web Vitals",
+  "/dedicated-hosting/dedicated-server": "Dedicated Server Hosting – Bare Metal, Full Root Access",
+  "/domain": "Domain Names – Register, Transfer & Renew",
+  "/domain/domain-name-registration": "Domain Name Registration – Register a Domain in Minutes",
+  "/email-hosting": "Email Hosting – Professional Email on Your Domain",
+  "/support": "24/7 Web Hosting Support",
+  "/about-us": "About MagicWorks Host – Pune Web Hosting Since 2012",
+  "/contact-us": "Contact Us – Hosting Sales & Support",
+  "/blog": "Web Hosting Blog – Speed, Security & WordPress Guides",
+}
+
+/** The keyword-led default <title> for an internal route path, if it has one. */
+export function defaultSeoTitle(path: string): string | undefined {
+  return DEFAULT_SEO_TITLES[path]
+}
+
 const TITLE_MAX = 60
 const DESCRIPTION_MIN = 70
 const DESCRIPTION_MAX = 160
