@@ -51,8 +51,9 @@ export function FloatingContact() {
           setHasOpened(true)
           setOpen(true)
         }}
-        className="fixed top-1/3 right-0 z-40 rounded-r-md bg-brand-orange px-1.5 py-3 text-xs font-semibold sm:px-2 sm:py-4 sm:text-sm tracking-wide text-white shadow-lg transition-colors [writing-mode:vertical-rl] hover:bg-brand-orange-hover focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none print:hidden"
-        style={{ transform: "rotate(180deg)" }}
+        // Vertical text reads top-to-bottom (no rotation). The tab sits flush against the
+        // right edge, so only its left (inner) corners are rounded.
+        className="fixed top-1/3 right-0 z-40 rounded-l-md bg-brand-orange px-1.5 py-3 text-xs font-semibold sm:px-2 sm:py-4 sm:text-sm tracking-wide text-white shadow-lg transition-colors [writing-mode:vertical-rl] hover:bg-brand-orange-hover focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none print:hidden"
       >
         Enquire Now
       </button>
