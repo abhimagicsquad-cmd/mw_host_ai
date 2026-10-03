@@ -3,8 +3,10 @@ import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages, tldPricing, tldTransferPricing } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
 import { hostingPages } from "@/constants/hosting-pages-data"
+import { guideHref, kbGuides } from "@/constants/kb-guides"
 import { dedicatedPlans, sharedHostingPlans, sslPlans, vpsPlans } from "@/constants/pricing-plans"
 import { legalDocuments } from "@/constants/legal-content"
+import { serviceLandingPath, serviceLandings } from "@/constants/service-landing-data"
 import { siteConfig, socialLinks } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { billingUrls } from "@/lib/billing"
@@ -45,7 +47,7 @@ export async function GET() {
 
   const body = `# ${siteConfig.name}
 
-> ${siteConfig.name} (${siteConfig.legalName}) is a web hosting company based in Pune, India, operating since ${siteConfig.foundingYear}. It sells NVMe shared hosting (India and USA data centres), VPS hosting, dedicated servers, domain registration, SSL certificates and business email, with 24/7 phone and ticket support. Prices are in Indian Rupees (INR).
+> ${siteConfig.name} (${siteConfig.legalName}) is a web hosting company based in Pune, India, operating since ${siteConfig.foundingYear}. It sells NVMe shared hosting (India and USA data centres), WordPress hosting, VPS and cloud VPS hosting, dedicated servers, domain registration, SSL certificates and business email, and offers reseller hosting and website development, maintenance, migration and security services on request, with 24/7 phone and ticket support. Prices are in Indian Rupees (INR).
 
 - Contact: ${siteConfig.contact.email}, ${siteConfig.contact.phone}
 - Address: ${siteConfig.contact.address}
@@ -66,9 +68,10 @@ ${list([
   { href: u("/compare-hosting-plans"), label: "Compare hosting plans", note: "feature-by-feature comparison table" },
 ])}
 
-## VPS and dedicated servers
+## VPS, cloud and dedicated servers
 ${list([
   { href: u("/vps-hosting"), label: "VPS hosting", note: "India and USA VPS plans with full root access" },
+  ...serviceLandings.filter((service) => service.cluster === "hosting").map((service) => ({ href: u(serviceLandingPath(service.slug)), label: service.name, note: service.description })),
   ...dedicatedPages.map((page) => ({ href: u(`/dedicated-hosting/${page.slug}`), label: page.eyebrow, note: page.description })),
 ])}
 
@@ -91,9 +94,18 @@ ${list([
   ...emailPages.map((page) => ({ href: u(`/email-hosting/${page.slug}`), label: page.eyebrow, note: page.description })),
 ])}
 
+## Website services (quoted per project; migration is free on annual hosting plans)
+${list([
+  { href: u("/services"), label: "Website services", note: "development, maintenance, migration and security" },
+  ...serviceLandings.filter((service) => service.cluster === "business").map((service) => ({ href: u(serviceLandingPath(service.slug)), label: service.name, note: service.answer.answer })),
+])}
+
+## Guides (answer-first explainers)
+${list(kbGuides.map((guide) => ({ href: u(guideHref(guide.slug)), label: guide.title, note: guide.answer })))}
+
 ## Help and company
 ${list([
-  { href: u("/knowledge-base"), label: "Knowledge base", note: "how-to guides for cPanel, domains, email, SSL and billing" },
+  { href: u("/knowledge-base"), label: "Knowledge base", note: "guides on hosting, WordPress, domains, SSL, security and migration, plus cPanel, email and billing help" },
   { href: u("/support"), label: "Support", note: "24/7 phone, ticket and self-serve help" },
   { href: u("/about-us"), label: "About us" },
   { href: u("/contact-us"), label: "Contact us" },

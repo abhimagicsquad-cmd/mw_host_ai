@@ -6,18 +6,17 @@ import { KnowledgeBaseExplorer } from "@/components/sections/knowledge-base-expl
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { getArticlesByCategory, kbArticles, kbCategories } from "@/constants/knowledge-base-data"
 import { siteConfig } from "@/constants/site-config"
-import { resolveIcon } from "@/lib/icon-map"
+import { getHelpCentre } from "@/lib/help-centre"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllKBArticles, getAllKBCategories, getKnowledgeBasePage } from "@/lib/cms/queries"
+import { getKnowledgeBasePage } from "@/lib/cms/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getKnowledgeBasePage()
   if (!cms?.seo?.metaTitle) {
     return buildPageMetadata({
       title: "Knowledge Base",
-      description: "Search MagicWorks Host help articles on billing, domains, hosting, SSL, and email — or ask our support team directly.",
+      description: "Guides and help articles on web hosting, WordPress, domains, SSL, security and website migration — or ask the MagicWorks Host support team directly.",
       path: "/knowledge-base",
     })
   }
@@ -29,46 +28,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function KnowledgeBasePage() {
-  const [page, cmsCategories, cmsArticles] = await Promise.all([
-    getKnowledgeBasePage(),
-    getAllKBCategories(),
-    getAllKBArticles(),
-  ])
+  const [page, helpCentre] = await Promise.all([getKnowledgeBasePage(), getHelpCentre()])
 
   const heroTitle = page?.heroTitle ?? "How can we help?"
   const heroDescription = page?.heroDescription ?? "Search our growing library of hosting, billing, and account help articles."
 
-  const categories = cmsCategories.length
-    ? cmsCategories.map((category) => ({
-        slug: category.slug,
-        name: category.name,
-        description: category.description,
-        icon: resolveIcon(category.icon),
-        articleCount: cmsArticles.filter((article) => article.category.slug === category.slug).length,
-      }))
-    : kbCategories.map((category) => ({
-        slug: category.slug,
-        name: category.name,
-        description: category.description,
-        icon: category.icon,
-        articleCount: getArticlesByCategory(category.slug).length,
-      }))
-
-  const explorerCategories = cmsCategories.length
-    ? cmsCategories.map(({ slug, name }) => ({ slug, name }))
-    : kbCategories.map(({ slug, name }) => ({ slug, name }))
-
-  const explorerArticles = cmsArticles.length
-    ? cmsArticles.map((article) => ({
-        slug: article.slug,
-        title: article.title,
-        excerpt: article.excerpt,
-        categorySlug: article.category.slug,
-        readTime: article.readTime,
-        featured: article.featured,
-        popular: article.popular,
-      }))
-    : kbArticles
+  const categories = helpCentre.categories.map((category) => ({
+    ...category,
+    articleCount: helpCentre.articles.filter((article) => article.categorySlug === category.slug).length,
+  }))
+  const explorerCategories = helpCentre.categories.map(({ slug, name }) => ({ slug, name }))
+  const explorerArticles = helpCentre.articles
 
   return (
     <>

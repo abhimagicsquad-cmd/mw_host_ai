@@ -6,8 +6,10 @@ import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
 import { hostingPages } from "@/constants/hosting-pages-data"
+import { guideCategories, guideHref, kbGuides } from "@/constants/kb-guides"
 import { kbCategories } from "@/constants/knowledge-base-data"
 import { legalSlugs } from "@/constants/legal-content"
+import { serviceLandingPath, serviceLandings } from "@/constants/service-landing-data"
 import { siteConfig } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { getNoIndexSeoPaths, getPublishedCmsPaths } from "@/lib/cms/content"
@@ -87,11 +89,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const sslRoutes = sslPages.map((page) => ({ url: url(`/ssl/${page.slug}`), changeFrequency: "monthly" as const, priority: 0.6 }))
 
-  const kbCategoryRoutes = kbCategories.map((category) => ({
-    url: url(`/knowledge-base/category/${category.slug}`),
+  const kbCategoryRoutes = [...new Set([...kbCategories, ...guideCategories].map((category) => category.slug))].map((slug) => ({
+    url: url(`/knowledge-base/category/${slug}`),
     changeFrequency: "weekly" as const,
     priority: 0.5,
   }))
+
+  const guideRoutes = kbGuides.map((guide) => ({
+    url: url(guideHref(guide.slug)),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+    lastModified: new Date(guide.updated),
+  }))
+
+  const serviceLandingRoutes = [
+    { url: url("/services"), changeFrequency: "monthly" as const, priority: 0.7 },
+    ...serviceLandings.map((service) => ({ url: url(serviceLandingPath(service.slug)), changeFrequency: "monthly" as const, priority: 0.7 })),
+  ]
 
   const builtIn = [
     ...staticRoutes,
@@ -104,6 +118,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogCategoryRoutes,
     ...sslRoutes,
     ...kbCategoryRoutes,
+    ...guideRoutes,
+    ...serviceLandingRoutes,
   ]
 
   // Pages created in the admin CMS (built-in URLs they override are already listed above).

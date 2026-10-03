@@ -46,6 +46,15 @@ export const WORDPRESS_ROUTES: Record<string, string> = {
   "/business-email-hosting/": "/email-hosting/business",
   "/enterprise-email-hosting/": "/email-hosting/enterprise",
 
+  // Service pages added for launch (no WordPress equivalent), at flat URLs like the rest.
+  "/cloud-hosting/": "/services/cloud-hosting",
+  "/reseller-hosting/": "/services/reseller-hosting",
+  "/website-services/": "/services",
+  "/website-development/": "/services/website-development",
+  "/website-maintenance/": "/services/website-maintenance",
+  "/website-migration/": "/services/website-migration",
+  "/website-security/": "/services/website-security",
+
   "/web-hosting-bandwidth-calculator/": "/tools/bandwidth-calculator",
   "/data-unit-calculator/": "/tools/data-unit-calculator",
   "/download-upload-time-calculator/": "/tools/transfer-time-calculator",

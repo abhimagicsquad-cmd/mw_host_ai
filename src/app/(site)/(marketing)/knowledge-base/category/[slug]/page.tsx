@@ -3,13 +3,16 @@ import Link from "@/components/common/site-link"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { ItemListJsonLd } from "@/components/common/json-ld"
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
-import { getArticlesByCategory, getKBCategory, kbCategories } from "@/constants/knowledge-base-data"
+import { guideCategories } from "@/constants/kb-guides"
+import { kbCategories } from "@/constants/knowledge-base-data"
+import { getHelpCentre } from "@/lib/help-centre"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/lib/cms/queries"
+import { getAllKBCategories } from "@/lib/cms/queries"
 
 type KBCategoryPageProps = {
   params: Promise<{ slug: string }>
@@ -17,71 +20,66 @@ type KBCategoryPageProps = {
 
 export async function generateStaticParams() {
   const cmsCategories = await getAllKBCategories()
-  const slugs = new Set([...kbCategories.map((category) => category.slug), ...cmsCategories.map((c) => c.slug)])
+  const slugs = new Set([...kbCategories.map((category) => category.slug), ...cmsCategories.map((c) => c.slug), ...guideCategories.map((c) => c.slug)])
   return [...slugs].map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: KBCategoryPageProps): Promise<Metadata> {
   const { slug } = await params
-  const cms = await getKBCategoryBySlug(slug)
-  const fallback = getKBCategory(slug)
-
-  if (!cms && !fallback) return {}
-
-  const name = cms?.name ?? fallback!.name
-  const description = cms?.description ?? fallback!.description
+  const category = (await getHelpCentre()).categories.find((item) => item.slug === slug)
+  if (!category) return {}
 
   return buildPageMetadata({
-    title: `${name} Help Articles`,
-    description,
+    title: `${category.name} Help Articles`,
+    description: category.description,
     path: `/knowledge-base/category/${slug}`,
   })
 }
 
 export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
   const { slug } = await params
-  const [cms, cmsCategories] = await Promise.all([getKBCategoryBySlug(slug), getAllKBCategories()])
-  const fallback = getKBCategory(slug)
+  const { categories, articles: allArticles } = await getHelpCentre()
+  const category = categories.find((item) => item.slug === slug)
+  if (!category) notFound()
 
-  if (!cms && !fallback) notFound()
-
-  const name = cms?.name ?? fallback!.name
-  const description = cms?.description ?? fallback!.description
-
-  const articles = cms
-    ? (await getKBArticlesByCategory(slug)).map((article) => ({
-        slug: article.slug,
-        title: article.title,
-        excerpt: article.excerpt,
-        readTime: article.readTime,
-      }))
-    : getArticlesByCategory(slug)
-
-  const otherCategories = cms
-    ? cmsCategories.filter((item) => item.slug !== slug).map(({ slug, name }) => ({ slug, name }))
-    : kbCategories.filter((item) => item.slug !== slug).map(({ slug, name }) => ({ slug, name }))
+  const articles = allArticles.filter((article) => article.categorySlug === slug)
+  const guides = articles.filter((article) => article.href)
+  const otherCategories = categories.filter((item) => item.slug !== slug)
 
   const breadcrumbs = [
     { label: "Home", href: "/" },
     { label: "Knowledge Base", href: "/knowledge-base" },
-    { label: name },
+    { label: category.name },
   ]
 
   return (
     <>
+      {guides.length ? <ItemListJsonLd name={`${category.name} guides`} items={guides.map((guide) => ({ name: guide.title, path: guide.href! }))} /> : null}
 
-      <PageHero title={name} description={description} breadcrumbs={breadcrumbs} />
+      <PageHero title={category.name} description={category.description} breadcrumbs={breadcrumbs} />
 
       <SectionContainer width="wide">
         {articles.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
-            {articles.map((article) => (
-              <div key={article.slug} className="flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-5">
-                <p className="text-sm font-semibold text-brand-navy">{article.title}</p>
-                <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>
-                <p className="mt-auto text-xs text-muted-foreground">{article.readTime}</p>
-              </div>
-            ))}
+            {articles.map((article) => {
+              const className = "flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-5"
+              const body = (
+                <>
+                  <p className="text-sm font-semibold text-brand-navy">{article.title}</p>
+                  <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>
+                  <p className="mt-auto text-xs text-muted-foreground">{article.readTime}</p>
+                </>
+              )
+              return article.href ? (
+                <Link key={article.slug} href={article.href} className={`${className} transition-shadow hover:shadow-md`}>
+                  {body}
+                </Link>
+              ) : (
+                <div key={article.slug} className={className}>
+                  {body}
+                </div>
+              )
+            })}
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border-alt bg-surface-alt px-6 py-14 text-center">
@@ -97,7 +95,7 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
       </SectionContainer>
 
       <SectionContainer width="wide" background="alt">
-        <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Other categories</p>
+        <h2 className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Other categories</h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {otherCategories.map((other) => (
             <Link

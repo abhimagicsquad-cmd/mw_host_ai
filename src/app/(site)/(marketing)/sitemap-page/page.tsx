@@ -7,8 +7,10 @@ import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
 import { hostingPages } from "@/constants/hosting-pages-data"
+import { guideCategories, guideHref, kbGuides } from "@/constants/kb-guides"
 import { kbCategories } from "@/constants/knowledge-base-data"
 import { legalDocuments } from "@/constants/legal-content"
+import { serviceLandingPath, serviceLandings } from "@/constants/service-landing-data"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { buildPageMetadata } from "@/lib/seo"
 
@@ -36,6 +38,7 @@ const sitemapGroups: { heading: string; links: { label: string; href: string }[]
     links: [
       { label: "Hosting Overview", href: "/hosting" },
       ...hostingPages.map((page) => ({ label: page.eyebrow, href: `/hosting/${page.slug}` })),
+      ...serviceLandings.filter((service) => service.cluster === "hosting").map((service) => ({ label: service.name, href: serviceLandingPath(service.slug) })),
       { label: "VPS Hosting", href: "/vps-hosting" },
       ...dedicatedPages.map((page) => ({ label: page.eyebrow, href: `/dedicated-hosting/${page.slug}` })),
       { label: "Compare Hosting Plans", href: "/compare-hosting-plans" },
@@ -59,6 +62,17 @@ const sitemapGroups: { heading: string; links: { label: string; href: string }[]
     ],
   },
   {
+    heading: "Website Services",
+    links: [
+      { label: "All Website Services", href: "/services" },
+      ...serviceLandings.filter((service) => service.cluster === "business").map((service) => ({ label: service.name, href: serviceLandingPath(service.slug) })),
+    ],
+  },
+  {
+    heading: "Guides",
+    links: kbGuides.map((guide) => ({ label: guide.title, href: guideHref(guide.slug) })),
+  },
+  {
     heading: "Free Tools",
     links: [
       { label: "Bandwidth Calculator", href: "/tools/bandwidth-calculator" },
@@ -68,7 +82,10 @@ const sitemapGroups: { heading: string; links: { label: string; href: string }[]
   },
   {
     heading: "Help Centre",
-    links: kbCategories.map((category) => ({ label: category.name, href: `/knowledge-base/category/${category.slug}` })),
+    links: [...kbCategories, ...guideCategories.filter((guide) => !kbCategories.some((category) => category.slug === guide.slug))].map((category) => ({
+      label: category.name,
+      href: `/knowledge-base/category/${category.slug}`,
+    })),
   },
   {
     // Every blog topic with posts — including the WordPress category archives (/category/<slug>/).

@@ -6,6 +6,7 @@ import { resolveSocialIcon } from "@/components/common/social-icons"
 import { NewsletterSection } from "@/components/sections/newsletter-section"
 import { footerColumns } from "@/constants/nav-items"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
+import { withAddedFooterLinks } from "@/lib/nav-augment"
 import { toNavColumns } from "@/lib/nav-mapper"
 import { getNavigation, getSiteSettings } from "@/lib/cms/queries"
 
@@ -46,7 +47,7 @@ export async function Footer({ showCta = true }: FooterProps) {
   const phoneHref = settings?.contactPhoneHref ?? siteConfig.contact.phoneHref
   const email = settings?.contactEmail ?? siteConfig.contact.email
   const address = settings?.contactAddress ?? siteConfig.contact.address
-  const columns = navigation?.footerColumns?.length ? toNavColumns(navigation.footerColumns) : fallbackFooterColumns
+  const columns = withAddedFooterLinks(navigation?.footerColumns?.length ? toNavColumns(navigation.footerColumns) : fallbackFooterColumns)
   const socials =
     settings?.socialLinks?.map((social) => ({
       label: social.platform,

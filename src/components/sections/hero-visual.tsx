@@ -15,7 +15,7 @@ import {
 type StatTile = { icon: LucideIcon; value: string; label: string }
 type FloatingBadge = { icon: LucideIcon; label: string; sublabel: string; tone: "orange" | "emerald" }
 
-type HeroVisualVariant = "dashboard" | "security" | "server" | "mail" | "domain" | "affiliate"
+type HeroVisualVariant = "dashboard" | "security" | "server" | "mail" | "domain" | "affiliate" | "service"
 
 type VisualConfig = {
   statusLabel: string
@@ -87,6 +87,20 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
     ],
     badgeTop: { icon: ShieldCheck, label: "Auto-renewal", sublabel: "Never lose your domain", tone: "orange" },
     badgeBottom: { icon: ArrowUpRight, label: "Free", sublabel: "Domain forwarding", tone: "emerald" },
+  },
+  // Facts only (each is stated elsewhere on the site) — used by the website-service and
+  // cloud/reseller pages, which have no measured figures of their own to show.
+  service: {
+    statusLabel: "Support online 24/7",
+    metricLabel: "In business since",
+    metricValue: "2012",
+    barValues: [36, 44, 52, 60, 70, 82, 94],
+    stats: [
+      { icon: Gauge, value: "NVMe", label: "Storage, every plan" },
+      { icon: Lock, value: "Free SSL", label: "On every plan" },
+    ],
+    badgeTop: { icon: ShieldCheck, label: "Daily scans", sublabel: "Malware scanning", tone: "orange" },
+    badgeBottom: { icon: ArrowUpRight, label: "Free migration", sublabel: "On annual plans", tone: "emerald" },
   },
   affiliate: {
     statusLabel: "Earnings growing",

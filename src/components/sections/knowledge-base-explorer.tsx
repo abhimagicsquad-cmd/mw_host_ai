@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import { Search } from "lucide-react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
+import Link from "@/components/common/site-link"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -20,7 +21,11 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
   const [query, setQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState<string>("all")
 
-  const popularArticles = useMemo(() => articles.filter((article) => article.popular).slice(0, 5), [articles])
+  // Guides (articles with their own page) first, then the dashboard's popular picks.
+  const popularArticles = useMemo(
+    () => [...articles.filter((article) => article.href), ...articles.filter((article) => article.popular && !article.href)].slice(0, 6),
+    [articles]
+  )
 
   const filteredArticles = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
@@ -84,22 +89,35 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
 
         {filteredArticles.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
-            {filteredArticles.map((article) => (
-              <div
-                key={article.slug}
-                className="flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-5 transition-shadow hover:shadow-md"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <Badge variant="outline" className="text-muted-foreground">
-                    {categoryName(article.categorySlug)}
-                  </Badge>
-                  {article.featured ? <Badge className="bg-brand-orange text-white">Featured</Badge> : null}
+            {filteredArticles.map((article) => {
+              const body = (
+                <>
+                  <div className="flex items-center justify-between gap-2">
+                    <Badge variant="outline" className="text-muted-foreground">
+                      {categoryName(article.categorySlug)}
+                    </Badge>
+                    {article.href ? (
+                      <Badge className="bg-brand-navy text-white">Guide</Badge>
+                    ) : article.featured ? (
+                      <Badge className="bg-brand-orange text-white">Featured</Badge>
+                    ) : null}
+                  </div>
+                  <p className="text-sm font-semibold text-brand-navy">{article.title}</p>
+                  <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>
+                  <p className="mt-auto text-xs text-muted-foreground">{article.readTime}</p>
+                </>
+              )
+              const className = "flex flex-col gap-2 rounded-2xl border border-border-alt bg-background p-5 transition-shadow hover:shadow-md"
+              return article.href ? (
+                <Link key={article.slug} href={article.href} className={className}>
+                  {body}
+                </Link>
+              ) : (
+                <div key={article.slug} className={className}>
+                  {body}
                 </div>
-                <p className="text-sm font-semibold text-brand-navy">{article.title}</p>
-                <p className="text-sm leading-relaxed text-body-text">{article.excerpt}</p>
-                <p className="mt-auto text-xs text-muted-foreground">{article.readTime}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-border-alt bg-surface-alt px-6 py-14 text-center">
@@ -115,12 +133,21 @@ export function KnowledgeBaseExplorer({ categories, articles }: KnowledgeBaseExp
       </div>
 
       <aside className="flex flex-col gap-4">
-        <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Popular topics</p>
+        <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">Start here</p>
         <ul className="flex flex-col gap-3">
           {popularArticles.map((article) => (
-            <li key={article.slug} className="rounded-xl border border-border-alt bg-background p-4">
-              <p className="text-sm font-medium text-brand-navy">{article.title}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{categoryName(article.categorySlug)}</p>
+            <li key={article.slug}>
+              {article.href ? (
+                <Link href={article.href} className="block rounded-xl border border-border-alt bg-background p-4 transition-colors hover:border-brand-orange/40">
+                  <span className="block text-sm font-medium text-brand-navy">{article.title}</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">{categoryName(article.categorySlug)}</span>
+                </Link>
+              ) : (
+                <div className="rounded-xl border border-border-alt bg-background p-4">
+                  <p className="text-sm font-medium text-brand-navy">{article.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{categoryName(article.categorySlug)}</p>
+                </div>
+              )}
             </li>
           ))}
         </ul>
