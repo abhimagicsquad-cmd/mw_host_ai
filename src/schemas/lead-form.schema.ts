@@ -10,11 +10,14 @@ export const leadMessageField = z
   .optional()
   .or(z.literal(""))
 
+/** Service value of affiliate-programme applications (the affiliate signup form; not in the dropdown). */
+export const AFFILIATE_SERVICE_VALUE = "affiliate-programme"
+
 export const serviceField = z
   .string()
   .min(1, "Please select a service.")
   .refine(
-    (value) => serviceOptions.some((option) => option.value === value),
+    (value) => value === AFFILIATE_SERVICE_VALUE || serviceOptions.some((option) => option.value === value),
     "Please select a valid service."
   )
 
@@ -53,6 +56,7 @@ export const leadApiPayloadSchema = leadFormSchema.extend({
   company: z.string().trim().max(120).optional().or(z.literal("")),
   hostingType: z.string().max(60).optional().or(z.literal("")),
   pageUrl: z.string().max(500).optional().or(z.literal("")),
+  turnstileToken: z.string().max(2048).nullish(),
 })
 
 export type LeadApiPayload = z.infer<typeof leadApiPayloadSchema>

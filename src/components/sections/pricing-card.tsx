@@ -2,6 +2,8 @@ import { Check } from "lucide-react"
 
 import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
 import { Badge } from "@/components/ui/badge"
+import { PlanBillingPicker } from "@/components/sections/plan-billing-picker"
+import { planBillingChoices, planPurchaseCta } from "@/lib/billing"
 import { cn } from "@/lib/utils"
 import type { PricingPlan } from "@/types/content"
 
@@ -10,6 +12,13 @@ type PricingCardProps = {
 }
 
 export function PricingCard({ plan }: PricingCardProps) {
+  const cta = planPurchaseCta(plan)
+  const billingChoices = planBillingChoices(plan.slug)
+  // The headline price is the default period's rate, so its saving is the discount shown
+  // (e.g. "Save 30% on 3 Years", as on WordPress) rather than a free-text CMS label.
+  const defaultChoice = billingChoices?.find((choice) => choice.isDefault)
+  const discountLabel = defaultChoice?.save && billingChoices!.length > 1 ? `Save ${defaultChoice.save} on ${defaultChoice.label}` : plan.discountLabel
+
   return (
     <div
       className={cn(
@@ -35,7 +44,7 @@ export function PricingCard({ plan }: PricingCardProps) {
       {plan.regularPrice ? (
         <p className="text-sm text-muted-foreground">
           <span className="line-through">{plan.regularPrice}</span>
-          {plan.discountLabel ? <span className="ml-2 text-brand-orange">{plan.discountLabel}</span> : null}
+          {discountLabel ? <span className="ml-2 text-brand-orange">{discountLabel}</span> : null}
         </p>
       ) : null}
 
@@ -48,15 +57,19 @@ export function PricingCard({ plan }: PricingCardProps) {
         ))}
       </ul>
 
-      <CTAOrLeadButton
-        cta={plan.cta}
-        source={`pricing:${plan.slug}`}
-        variant={plan.featured ? "primary" : "outline"}
-        className="mt-auto w-full justify-center"
-        dialogTitle={`Get started with ${plan.name}`}
-        dialogDescription={`Share your details and we'll help you get set up on the ${plan.name} plan.`}
-        defaultService={plan.service}
-      />
+      {billingChoices ? (
+        <PlanBillingPicker planName={plan.name} choices={billingChoices} ctaLabel={cta.label} featured={plan.featured} />
+      ) : (
+        <CTAOrLeadButton
+          cta={cta}
+          source={`pricing:${plan.slug}`}
+          variant={plan.featured ? "primary" : "outline"}
+          className="mt-auto w-full justify-center"
+          dialogTitle={`Get started with ${plan.name}`}
+          dialogDescription={`Share your details and we'll help you get set up on the ${plan.name} plan.`}
+          defaultService={plan.service}
+        />
+      )}
     </div>
   )
 }

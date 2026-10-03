@@ -4,17 +4,16 @@ import { draftMode } from "next/headers"
 import { cache } from "react"
 
 import type { BlogPost } from "@/constants/blog-data"
-import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/sanity/types"
+import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/types/cms-content"
 
 import { cmsAdminDb, cmsPublicDb } from "./db"
-import { markdownToPortableText } from "./rich-text"
 import { PRICING_COLLECTION_KEY, TEMPLATE_SECTION_PREFIX, templateForPath, templateSectionType, type TemplateKey } from "./templates"
 import type { GeneralSettings, PageRow, PageSectionRow, SeoRow, WebsiteSettings } from "./types"
 
 /**
  * Website-facing CMS reads. Every function returns null/[] when Supabase isn't configured,
  * the migration hasn't been run, or nothing is published — callers then fall back to
- * Sanity and finally to the hardcoded defaults, so the site never breaks because of the CMS.
+ * the built-in defaults (src/constants and the routes), so the site never breaks because of the CMS.
  *
  * Preview: when an admin turns on draft mode (/admin/preview), page reads skip the cache
  * and return the latest version of each page — draft or published — so migrated content
@@ -59,7 +58,7 @@ export function toPageBuilderBlock(section: Pick<PageSectionRow, "id" | "type" |
   for (const field of ARRAY_FIELDS) if (field in data && !Array.isArray(data[field])) data[field] = []
 
   if (section.type === "richTextBlock") {
-    data.content = typeof data.content === "string" ? markdownToPortableText(data.content) : (data.content ?? [])
+    data.content = typeof data.content === "string" ? data.content : ""
   }
   if (section.type === "featureGridBlock" && data.columns) data.columns = Number(data.columns)
   if (section.type === "pricingBlock" && Array.isArray(data.plans)) {
@@ -84,7 +83,7 @@ export const getPublishedCmsPage = cache(async (path: string): Promise<CmsPage |
   return page
 })
 
-/** CMS page-builder page in the Sanity `PageDocument` shape, or null if it has no builder sections. */
+/** CMS page-builder page as a `PageDocument`, or null if it has no builder sections. */
 export async function getCmsPageDocument(path: string): Promise<PageDocument | null> {
   const page = await getPublishedCmsPage(path)
   const blocks = page?.sections.filter((section) => !isTemplateSection(section)) ?? []
@@ -187,6 +186,14 @@ export const getPublishedCmsPaths = cache(async (): Promise<{ path: string; upda
   return data
 })
 
+/** Route paths an editor marked "noindex" under SEO — kept out of the sitemap. */
+export const getNoIndexSeoPaths = cache(async (): Promise<string[]> => {
+  if (!cmsPublicDb) return []
+  const { data, error } = await cmsPublicDb.from("seo").select("path").eq("no_index", true)
+  if (error || !data) return []
+  return data.map((row) => row.path as string)
+})
+
 type BlogPostTemplate = Omit<BlogPost, "slug">
 
 /** CMS blog posts in the same shape as the built-in posts, so they render with the same template. */
@@ -206,10 +213,4 @@ export async function getCmsBlogPosts(): Promise<BlogPost[]> {
       sections: (post.sections ?? []).map((section) => ({ heading: section.heading, body: (section.body ?? []).filter(Boolean) })),
     }
   })
-}
-
-export async function getCmsBlogPost(slug: string): Promise<BlogPost | null> {
-  const data = await getCmsTemplate<Partial<BlogPostTemplate>>("blogPost", `/blog/${slug}`)
-  if (!data) return null
-  return (await getCmsBlogPosts()).find((post) => post.slug === slug) ?? null
 }

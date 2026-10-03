@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { CreditCard, Mail, MapPin, Phone, RotateCcw, ShieldCheck, Zap } from "lucide-react"
 
 import { Logo } from "@/components/common/logo"
@@ -7,7 +7,7 @@ import { NewsletterSection } from "@/components/sections/newsletter-section"
 import { footerColumns } from "@/constants/nav-items"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
 import { toNavColumns } from "@/lib/nav-mapper"
-import { getNavigation, getSiteSettings } from "@/sanity/lib/queries"
+import { getNavigation, getSiteSettings } from "@/lib/cms/queries"
 
 import { FooterColumn } from "./footer-column"
 import { FooterCTABlock } from "./footer-cta-block"
@@ -22,6 +22,17 @@ const trustBadges = [
 type FooterProps = {
   showCta?: boolean
 }
+
+// Every WordPress footer policy link (its "Legal Policies" column), kept in the bottom bar.
+const legalLinks = [
+  { label: "Privacy Policy", href: "/legal/privacy-policy" },
+  { label: "Terms of Service", href: "/legal/terms-of-service" },
+  { label: "Service Level Agreement", href: "/legal/service-level-agreement" },
+  { label: "Acceptable Use Policy", href: "/legal/acceptable-use-policy" },
+  { label: "Mail Policy", href: "/legal/mail-policy" },
+  { label: "Resource Abuse Policy", href: "/legal/resource-abuse-policy" },
+  { label: "Affiliate Programme Terms", href: "/legal/affiliate-programme-terms" },
+]
 
 const fallbackFooterColumns = [footerColumns.quickLinks, footerColumns.services, footerColumns.resources]
 
@@ -46,7 +57,7 @@ export async function Footer({ showCta = true }: FooterProps) {
   return (
     <footer className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
-        {showCta ? <FooterCTABlock contactPhone={phone} contactPhoneHref={phoneHref} /> : null}
+        {showCta ? <FooterCTABlock contactPhone={phone} contactPhoneHref={phoneHref} contactEmail={email} /> : null}
 
         <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-b border-white/10 py-6 sm:justify-between">
           {trustBadges.map((badge) => (
@@ -83,7 +94,7 @@ export async function Footer({ showCta = true }: FooterProps) {
 
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-3">
-              <p className="text-sm font-semibold text-white">Contact Information</p>
+              <h2 className="text-sm font-semibold text-white">Contact Information</h2>
               <a href={phoneHref} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
                 <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
                 {phone}
@@ -104,18 +115,18 @@ export async function Footer({ showCta = true }: FooterProps) {
       </div>
 
       <div className="border-t border-white/10 bg-brand-navy-dark">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-white/60 sm:flex-row sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-4 text-center lg:flex-row lg:text-left text-xs text-white/60 sm:px-6 lg:px-8">
           <p>
             © 2012–{year} {siteName}. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            <Link href="/legal/privacy-policy" className="hover:text-white">
-              Privacy Policy
-            </Link>
-            <Link href="/legal/terms-of-service" className="hover:text-white">
-              Terms of Service
-            </Link>
-          </div>
+          <nav aria-label="Legal policies" className="flex flex-wrap items-center justify-center gap-x-4">
+            {legalLinks.map((link) => (
+              // py-1: a 24px-tall tap target (WCAG 2.5.8) for the small text links.
+              <Link key={link.href} href={link.href} className="inline-block py-1 hover:text-white">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
     </footer>

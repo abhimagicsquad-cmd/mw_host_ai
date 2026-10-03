@@ -50,9 +50,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import type { IconOptionName } from "@/sanity/lib/icon-options"
+import type { IconOptionName } from "@/lib/icon-options"
 
-/** Resolves a CMS-authored icon name (see `sanity/lib/icon-options.ts`) to its lucide-react component. */
+/** Resolves a CMS-authored icon name (see `lib/icon-options.ts`) to its lucide-react component. */
 export const iconMap: Record<IconOptionName, LucideIcon> = {
   Zap,
   TrendingUp,

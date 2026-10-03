@@ -1,13 +1,15 @@
 import { CheckCircle2 } from "lucide-react"
 
+import { ConversionTracker } from "@/components/common/conversion-tracker"
 import { CTAButton } from "@/components/common/cta-button"
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
+import { billingUrls } from "@/lib/billing"
 import { buildPageMetadata } from "@/lib/seo"
-import { getThankYouPage } from "@/sanity/lib/queries"
+import { getThankYouPage } from "@/lib/cms/queries"
 
 export const generateMetadata = () => buildPageMetadata({
   title: "Thank You",
@@ -82,7 +84,7 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const { type: rawType, ref } = await searchParams
   const type: ThankYouType = VALID_TYPES.includes(rawType as ThankYouType) ? (rawType as ThankYouType) : "contact"
 
-  // The Sanity `thankYouPage` singleton only models one generic message — it stays the
+  // The dashboard's thank-you page only models one generic message — it stays the
   // "contact" fallback's CMS override; the other types always use their local copy.
   const cms = type === "contact" ? await getThankYouPage() : null
   const fallback = getTypeContent(type, ref)
@@ -90,10 +92,15 @@ export default async function ThankYouPage({ searchParams }: ThankYouPageProps) 
   const heading = cms?.heading ?? fallback.heading
   const description = cms?.description ?? fallback.description
   const steps = cms?.steps ?? fallback.steps
-  const ctas = cms?.ctas ?? fallbackCtas
+  const ctas =
+    type === "affiliate"
+      ? [{ label: "Complete affiliate registration", href: billingUrls.affiliates, icon: "HeartHandshake", variant: "primary" as const }, ...fallbackCtas.slice(1)]
+      : (cms?.ctas ?? fallbackCtas)
 
   return (
     <>
+      {/* Same Google Ads conversions the WordPress thank-you pages fired (test-mode orders don't count). */}
+      {type !== "order" ? <ConversionTracker kind={type === "affiliate" ? "affiliate" : "lead"} /> : null}
       <SectionContainer background="navy" width="wide" padded={false} className="relative overflow-hidden py-16 sm:py-20">
         <div className="pointer-events-none absolute -top-1/2 left-1/2 size-[32rem] -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
         <div className="bg-dot-pattern pointer-events-none absolute inset-0 opacity-15 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_40%,black,transparent)]" />

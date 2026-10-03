@@ -8,6 +8,8 @@ export type EmailPageData = {
   title: string
   description: string
   bullets: string[]
+  /** Storage per mailbox, shown in the hero. */
+  mailboxStorage: string
   plan: PricingPlan
   faqs: FAQItem[]
 }
@@ -31,12 +33,13 @@ export const emailPages: EmailPageData[] = [
     title: "Business email that looks the part",
     description: "OX Business Email on your own domain — reliable, spam-filtered, and simple to set up.",
     bullets: ["1 account with 5GB storage per mailbox", "Works with Outlook, Gmail, and IMAP clients", "Enterprise-grade spam and malware filtering", "Simple per-mailbox billing"],
+    mailboxStorage: "5GB",
     plan: {
       slug: "business-email",
       name: "Business Email",
       price: "₹45",
       priceSuffix: "/mailbox/mo",
-      features: ["5GB storage per mailbox", "Webmail + IMAP/POP access", "Spam & malware filtering", "Your own domain"],
+      features: ["5GB storage per mailbox", "Webmail + IMAP/POP access", "Spam & malware filtering", "Inbuilt virus protection", "Mobile and tablet support (iOS, Android)", "Social media support (Twitter, Facebook)", "Your own domain"],
       cta: { label: "Get started", href: "/order/business-email" },
       service: "business-email",
     },
@@ -52,12 +55,13 @@ export const emailPages: EmailPageData[] = [
     title: "Enterprise email with room to collaborate",
     description: "More storage and built-in collaboration tools for teams that live in their inbox and shared calendars.",
     bullets: ["25GB mailbox + 5GB file storage", "Shared calendars and collaboration tools", "Enterprise-grade spam and malware filtering", "Priority support"],
+    mailboxStorage: "25GB",
     plan: {
       slug: "enterprise-email",
       name: "Enterprise Email",
       price: "₹99",
       priceSuffix: "/mailbox/mo",
-      features: ["25GB mailbox storage", "5GB file storage", "Shared calendars & collaboration tools", "Priority support"],
+      features: ["25GB mailbox storage", "5GB file storage", "Collaboration: calendars, contacts, files and tasks", "Inbuilt virus protection", "Mobile and tablet support (iOS, Android)", "Social media support (Twitter, Facebook)", "Priority support"],
       cta: { label: "Get started", href: "/order/enterprise-email" },
       service: "enterprise-email",
       featured: true,

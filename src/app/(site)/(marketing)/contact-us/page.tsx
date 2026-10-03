@@ -4,19 +4,19 @@ import { LeadForm } from "@/components/forms/lead-form"
 import { ContactSection } from "@/components/sections/contact-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { OfficeMapSection } from "@/components/sections/office-map-section"
 import { PageHero } from "@/components/sections/page-hero"
-import { SectionContainer } from "@/components/layout/section-container"
-import { SectionHeading } from "@/components/layout/section-heading"
+import { QuoteFormSection } from "@/components/sections/quote-form-section"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { siteConfig } from "@/constants/site-config"
-import { buildPageMetadata } from "@/lib/seo"
-import { getCmsBuilderDocument, getContactPage } from "@/sanity/lib/queries"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
+import { getCmsBuilderDocument, getContactPage } from "@/lib/cms/queries"
 
 export async function generateMetadata() {
   const cms = await getContactPage()
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? "Contact Us",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/contact-us") ?? "Contact Us",
     description:
       cms?.seo?.metaDescription ??
       "Get in touch with MagicWorks Host — call, email, or send us your details and our team will respond within a few hours.",
@@ -25,19 +25,22 @@ export async function generateMetadata() {
 }
 
 export default async function ContactUsPage() {
-  // A CMS contact page replaces the whole layout (its blocks include the forms);
-  // otherwise the built-in layout renders with any Sanity blocks as extra content.
+  // The dashboard's contact page replaces the whole layout (its blocks include the forms);
+  // otherwise the built-in layout renders.
   const cmsPage = await getCmsBuilderDocument("/contact-us")
   if (cmsPage?.pageBuilder?.length) {
+    // The office map (as on WordPress) goes before the page's closing call-to-action banner.
+    const blocks = cmsPage.pageBuilder
+    const closingCta = blocks.at(-1)?._type === "ctaBannerBlock" ? blocks.slice(-1) : []
     return (
       <>
         <CmsSchemaJsonLd path="/contact-us" />
-        <PageBuilder blocks={cmsPage.pageBuilder} />
+        <PageBuilder blocks={closingCta.length ? blocks.slice(0, -1) : blocks} />
+        <OfficeMapSection />
+        {closingCta.length ? <PageBuilder blocks={closingCta} /> : null}
       </>
     )
   }
-
-  const cms = await getContactPage()
 
   return (
     <>
@@ -47,9 +50,7 @@ export default async function ContactUsPage() {
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Contact Us" }]}
       />
 
-      {/* Sanity supplementary content (legacy fallback). */}
       <CmsSchemaJsonLd path="/contact-us" />
-      {cms?.pageBuilder?.length ? <PageBuilder blocks={cms.pageBuilder} /> : null}
 
       <ContactSection
         eyebrow="Get in touch"
@@ -59,16 +60,13 @@ export default async function ContactUsPage() {
         <LeadForm source="contact-page" submitLabel="Send message" />
       </ContactSection>
 
-      <SectionContainer width="narrow" background="alt">
-        <SectionHeading
-          eyebrow="Planning something bigger"
-          title="Request a detailed quote"
-          description="Tell us your service, hosting type, and requirements and we'll follow up with pricing tailored to your project."
-        />
-        <div className="mx-auto mt-10 max-w-xl">
-          <GetQuoteForm source="contact-page:quote" />
-        </div>
-      </SectionContainer>
+      <QuoteFormSection
+        eyebrow="Planning something bigger"
+        title="Request a detailed quote"
+        description="Tell us your service, hosting type, and requirements and we'll follow up with pricing tailored to your project."
+      >
+        <GetQuoteForm source="contact-page:quote" />
+      </QuoteFormSection>
 
       <FAQSection
         eyebrow="Before you reach out"
@@ -89,6 +87,8 @@ export default async function ContactUsPage() {
           },
         ]}
       />
+
+      <OfficeMapSection />
 
       <CTASection
         title="Prefer to talk it through first?"

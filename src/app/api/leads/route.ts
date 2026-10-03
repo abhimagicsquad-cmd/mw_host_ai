@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { siteConfig } from "@/constants/site-config"
 import { sendLeadNotificationEmail } from "@/lib/email"
 import { storeLead } from "@/lib/leads-store"
+import { verifyTurnstile } from "@/lib/turnstile"
 import { leadApiPayloadSchema } from "@/schemas/lead-form.schema"
 
 export const runtime = "nodejs"
@@ -23,8 +24,20 @@ function getClientIp(request: Request) {
   return request.headers.get("x-real-ip") ?? "unknown"
 }
 
+/** Drops stale entries so the in-memory maps can't grow without bound. */
+function pruneStale(now: number) {
+  if (requestLog.size < 1000) return
+  for (const [key, timestamps] of requestLog) {
+    if (timestamps.every((timestamp) => now - timestamp >= RATE_LIMIT_WINDOW_MS)) requestLog.delete(key)
+  }
+  for (const [key, seenAt] of recentSubmissions) {
+    if (now - seenAt >= DUPLICATE_WINDOW_MS) recentSubmissions.delete(key)
+  }
+}
+
 function isRateLimited(ip: string) {
   const now = Date.now()
+  pruneStale(now)
   const timestamps = (requestLog.get(ip) ?? []).filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS)
   timestamps.push(now)
   requestLog.set(ip, timestamps)
@@ -63,8 +76,12 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl } =
+  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl, turnstileToken } =
     parsed.data
+
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return NextResponse.json({ success: false, message: "The security check failed. Please try again." }, { status: 403 })
+  }
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
@@ -80,7 +97,7 @@ export async function POST(request: Request) {
 
   const [storeResult, emailResult] = await Promise.all([
     storeLead({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
-    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType }),
+    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
   ])
 
   if (!storeResult.stored && !storeResult.skipped) {

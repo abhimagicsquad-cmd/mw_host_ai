@@ -1,5 +1,7 @@
 # MagicWorksHost.com → Next.js + Sanity Migration Blueprint
 
+> **Update (2026-09-30):** Sanity has been removed. The custom dashboard at `/admin` (Supabase) is the only content source; pages fall back to the built-in content in `src/constants` when the dashboard has none. The Sanity references below are historical — see [docs/12-content-migration.md](docs/12-content-migration.md#sanity-removed-2026-09-30).
+
 This repository contains the forensic audit and migration blueprint for rebuilding **magicworkshost.com** (a WordPress-based web hosting reseller site) in Next.js (App Router) + TypeScript + Tailwind + Shadcn UI + Sanity CMS + Vercel.
 
 **UI foundation is built; real pages are not.** The Next.js + TypeScript + Tailwind + Shadcn UI project is scaffolded and the full reusable component layer (Header, Footer, nav system, mobile drawer, CTA/form/section components) is in place and verified — see `docs/08-ui-foundation-summary.md`. No real site routes (Home, About, Contact, hosting/domain/SSL/email families, etc.) exist yet; that's the next phase, pending approval.

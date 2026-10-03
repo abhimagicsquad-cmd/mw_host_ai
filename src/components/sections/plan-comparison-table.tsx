@@ -1,6 +1,7 @@
 import { ArrowLeftRight, Check, Minus } from "lucide-react"
 
 import { CTAOrLeadButton } from "@/components/common/cta-or-lead-button"
+import { planPurchaseCta } from "@/lib/billing"
 import { cn } from "@/lib/utils"
 import type { ComparisonRow } from "@/constants/compare-hosting-data"
 import type { PricingPlan } from "@/types/content"
@@ -50,15 +51,12 @@ export function PlanComparisonTable({ plans, rows }: PlanComparisonTableProps) {
             {rows.map((row, index) => (
               <tr key={row.label} className={cn(index % 2 === 0 ? "bg-background" : "bg-surface-alt/50")}>
                 <td className="p-4 font-medium text-brand-navy">{row.label}</td>
-                {row.values.map((value, valueIndex) => (
+                {plans.map((plan, planIndex) => (
                   <td
-                    key={valueIndex}
-                    className={cn(
-                      "p-4 text-center text-body-text",
-                      plans[valueIndex]?.featured && "bg-brand-orange/5 font-medium text-brand-navy"
-                    )}
+                    key={plan.slug}
+                    className={cn("p-4 text-center text-body-text", plan.featured && "bg-brand-orange/5 font-medium text-brand-navy")}
                   >
-                    {renderCellValue(value)}
+                    {renderCellValue(row.bySlug?.[plan.slug] ?? row.values[planIndex] ?? "—")}
                   </td>
                 ))}
               </tr>
@@ -68,7 +66,7 @@ export function PlanComparisonTable({ plans, rows }: PlanComparisonTableProps) {
               {plans.map((plan) => (
                 <td key={plan.slug} className="p-4 text-center">
                   <CTAOrLeadButton
-                    cta={plan.cta}
+                    cta={planPurchaseCta(plan)}
                     source={`compare:${plan.slug}`}
                     size="sm"
                     variant={plan.featured ? "primary" : "outline"}

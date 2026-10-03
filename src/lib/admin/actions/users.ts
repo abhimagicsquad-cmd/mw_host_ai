@@ -6,8 +6,9 @@ import { z } from "zod"
 import { logActivity } from "@/lib/admin/activity"
 import { authorizeAction } from "@/lib/admin/auth"
 import { hashPassword, validatePasswordStrength } from "@/lib/admin/password"
+import { setSessionCookie } from "@/lib/admin/session-cookie"
 import { cmsAdminDb } from "@/lib/cms/db"
-import type { ActionState } from "@/lib/cms/types"
+import type { ActionState, AdminRole } from "@/lib/cms/types"
 
 import { toActionError } from "./utils"
 
@@ -96,6 +97,10 @@ export async function updateUserAction(userId: string, _prev: ActionState, formD
 
     const { error } = await db().from("users").update(update).eq("id", userId)
     if (error) throw error
+    // A password reset revokes that user's sessions; keep the admin's own browser signed in.
+    if (userId === admin.id && typeof update.password_hash === "string") {
+      await setSessionCookie({ sub: admin.id, username: fields.username, role: fields.role as AdminRole, passwordHash: update.password_hash })
+    }
 
     await logActivity({
       admin,

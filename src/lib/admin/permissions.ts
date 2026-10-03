@@ -23,7 +23,7 @@ export type Permission =
   | "users.manage"
   | "settings.manage"
   | "activity.view"
-  | "system.import"
+  | "system.cache"
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
   "pages.edit": "Create & edit pages and content",
@@ -36,7 +36,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "users.manage": "Create, edit & delete admin users",
   "settings.manage": "Change general & website settings",
   "activity.view": "View activity logs",
-  "system.import": "Import content from Sanity & clear site cache",
+  "system.cache": "Clear the website cache",
 }
 
 const MATRIX: Record<AdminRole, Permission[]> = {
@@ -51,7 +51,7 @@ const MATRIX: Record<AdminRole, Permission[]> = {
     "forms.view",
     "settings.manage",
     "activity.view",
-    "system.import",
+    "system.cache",
   ],
   editor: ["pages.edit", "pages.publish", "media.manage", "seo.manage", "menus.manage"],
 }

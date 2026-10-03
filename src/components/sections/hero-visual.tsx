@@ -102,8 +102,15 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
   },
 }
 
-export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVariant }) {
-  const config = VARIANTS[variant]
+type HeroVisualProps = {
+  variant?: HeroVisualVariant
+  /** Replaces the first stat's value (e.g. the page's own mailbox size), keeping its icon and label. */
+  leadStatValue?: string
+}
+
+export function HeroVisual({ variant = "dashboard", leadStatValue }: HeroVisualProps) {
+  const base = VARIANTS[variant]
+  const config = leadStatValue ? { ...base, stats: base.stats.map((stat, index) => (index === 0 ? { ...stat, value: leadStatValue } : stat)) } : base
 
   return (
     <div className="relative w-full max-w-md">
@@ -149,7 +156,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
               </span>
               <div>
                 <p className="text-sm font-semibold text-white">{stat.value}</p>
-                <p className="text-[11px] text-white/50">{stat.label}</p>
+                <p className="text-xs text-white/70">{stat.label}</p>
               </div>
             </div>
           ))}
@@ -162,7 +169,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
         </span>
         <div>
           <p className="text-xs font-semibold text-brand-navy">{config.badgeTop.label}</p>
-          <p className="text-[11px] text-muted-foreground">{config.badgeTop.sublabel}</p>
+          <p className="text-xs text-muted-foreground">{config.badgeTop.sublabel}</p>
         </div>
       </div>
 
@@ -172,7 +179,7 @@ export function HeroVisual({ variant = "dashboard" }: { variant?: HeroVisualVari
         </span>
         <div>
           <p className="text-xs font-semibold text-brand-navy">{config.badgeBottom.label}</p>
-          <p className="text-[11px] text-muted-foreground">{config.badgeBottom.sublabel}</p>
+          <p className="text-xs text-muted-foreground">{config.badgeBottom.sublabel}</p>
         </div>
       </div>
     </div>

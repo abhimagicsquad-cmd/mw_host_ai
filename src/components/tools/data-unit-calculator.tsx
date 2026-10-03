@@ -9,6 +9,7 @@ import { byteUnits, formatNumber, fromBytes, toBytes, type ByteUnit } from "@/li
 
 export function DataUnitCalculator() {
   const valueId = useId()
+  const unitId = useId()
   const [value, setValue] = useState("1")
   const [unit, setUnit] = useState<ByteUnit>("GB")
 
@@ -24,9 +25,9 @@ export function DataUnitCalculator() {
           <Input id={valueId} type="number" min="0" step="any" value={value} onChange={(event) => setValue(event.target.value)} />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label>Unit</Label>
+          <Label htmlFor={unitId}>Unit</Label>
           <Select value={unit} onValueChange={(next) => setUnit(next as ByteUnit)}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger id={unitId} className="w-full" aria-label="Unit">
               <SelectValue placeholder="Unit">{(current: string) => current}</SelectValue>
             </SelectTrigger>
             <SelectContent>

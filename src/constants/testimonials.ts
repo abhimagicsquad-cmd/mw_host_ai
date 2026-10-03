@@ -1,66 +1,60 @@
 import type { Testimonial } from "@/types/content"
 
 /**
- * Original, honestly-authored testimonials grounded in this site's real feature claims
- * (NVMe speed, uptime, cPanel simplicity, 24/7 support, migration experience). These are
- * NOT copied from the reference site (magicworkshost.com) — none of these names/companies
- * correspond to that site's actual customers.
+ * Customer testimonials, migrated verbatim from the "homepage testimonials" on the live
+ * WordPress site (magicworkshost.com), with the customer photos it shows. Add or edit
+ * testimonials in the CMS (Testimonials section); these are the default set.
  */
 export const testimonials: Testimonial[] = [
   {
-    name: "Anita Sharma",
-    title: "Founder",
-    company: "Craftly Studio",
-    quote: "Migration was seamless and our site has never been faster. Support responds within minutes, not days.",
-    rating: 5,
+    name: "Mr. Vishal Bhatia",
+    title: "Director",
+    company: "SimpliDistance",
+    quote:
+      "I wanted to pass along my praise for both the ease of Magic Host programs, and in particular, improving conversions over the period of time. Mr. Sudhir Dixit has rightly remarked the growth prospects we can gain in future from our website.",
+    avatarUrl: "/images/testimonials/vishal-bhatia.jpg",
   },
   {
-    name: "Rohit Verma",
-    title: "CTO",
-    company: "Bharat Retail Co.",
-    quote: "NVMe hosting cut our page load time in half. Couldn't be happier with the switch.",
-    rating: 5,
+    name: "Mr. Prashant Karhade",
+    title: "Head",
+    company: "Business Practices Group at Nitor Infotech",
+    quote:
+      "I had some questions regarding DNS record updates & web root directory. We were actually taking efforts upon traffic on our new website as well. Magic Host has been extremely helpful with this task, and for that, I thank entire Magic Host Team",
+    avatarUrl: "/images/testimonials/prashant-karhade.jpg",
   },
   {
-    name: "Priya Nair",
-    title: "Marketing Lead",
-    company: "Nair & Co.",
-    quote: "The cPanel setup is intuitive even for our non-technical team members. Zero learning curve.",
-    rating: 4,
+    name: "Mr. Swapnil Mahajan",
+    title: "Director",
+    company: "Recrotech Design System",
+    quote:
+      "Magic Host helped me resolving problems we were facing while uploading CGI scripts. They really did a good job & I feel confident of the selection I made for Web Hosting services.",
+    avatarUrl: "/images/testimonials/swapnil-mahajan.jpg",
   },
   {
-    name: "Karan Mehta",
-    title: "Founder",
-    company: "Mehta Digital Works",
-    quote: "Full root access on the VPS plan means we can configure exactly what we need — no waiting on a support ticket for basic changes.",
-    rating: 5,
-  },
-  {
-    name: "Sneha Kulkarni",
-    title: "IT Manager",
-    company: "Kulkarni Textiles",
-    quote: "We've been on the same shared hosting plan for over a year now and haven't had a single unplanned outage. Uptime has genuinely matched the 99.9% commitment.",
-    rating: 5,
-  },
-  {
-    name: "Arjun Rao",
-    title: "Founder",
-    company: "Rao Consulting",
-    quote: "Switching our team to business email on our own domain took less than an afternoon, and the spam filtering has been better than our old provider.",
-    rating: 4,
-  },
-  {
-    name: "Deepika Joshi",
-    title: "Operations Head",
-    company: "Joshi Logistics",
-    quote: "Getting SSL set up across our subdomains used to be a headache. The wildcard certificate and their team's help made it a one-time job.",
-    rating: 5,
-  },
-  {
-    name: "Meera Iyer",
-    title: "CEO",
-    company: "Iyer Creative Studio",
-    quote: "We moved to a dedicated server as we grew and the difference in consistency during traffic spikes was immediate. Support has stayed just as responsive.",
-    rating: 5,
+    name: "Mr. Ashish Mukharji",
+    title: "Director",
+    company: "SpectroLabs System",
+    quote:
+      "I really appreciate all the efforts by Magic host team for my website. My website has been deteriorated over past 6 to 8 months. However, Magic Host Definately helped us carrying out our business functions uninterrupted.",
+    avatarUrl: "/images/testimonials/asish-mukharji.jpg",
   },
 ]
+
+/**
+ * Invented testimonials that shipped in early seed content (and may still exist in
+ * migrated CMS drafts). They are never rendered.
+ */
+export const PLACEHOLDER_TESTIMONIAL_NAMES = new Set([
+  "Anita Sharma",
+  "Rohit Verma",
+  "Priya Nair",
+  "Karan Mehta",
+  "Sneha Kulkarni",
+  "Arjun Rao",
+  "Deepika Joshi",
+  "Meera Iyer",
+])
+
+export function withoutPlaceholderTestimonials<T extends { name: string }>(items: T[]): T[] {
+  return items.filter((item) => !PLACEHOLDER_TESTIMONIAL_NAMES.has(item.name.trim()))
+}

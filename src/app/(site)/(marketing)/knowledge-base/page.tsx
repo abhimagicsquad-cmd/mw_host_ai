@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 import { CTASection } from "@/components/sections/cta-section"
 import { KnowledgeBaseExplorer } from "@/components/sections/knowledge-base-explorer"
@@ -10,7 +10,7 @@ import { getArticlesByCategory, kbArticles, kbCategories } from "@/constants/kno
 import { siteConfig } from "@/constants/site-config"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllKBArticles, getAllKBCategories, getKnowledgeBasePage } from "@/sanity/lib/queries"
+import { getAllKBArticles, getAllKBCategories, getKnowledgeBasePage } from "@/lib/cms/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getKnowledgeBasePage()

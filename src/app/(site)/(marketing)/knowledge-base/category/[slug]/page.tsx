@@ -1,16 +1,15 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { BreadcrumbJsonLd } from "@/components/common/json-ld"
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { getArticlesByCategory, getKBCategory, kbCategories } from "@/constants/knowledge-base-data"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/sanity/lib/queries"
+import { getAllKBCategories, getKBArticlesByCategory, getKBCategoryBySlug } from "@/lib/cms/queries"
 
 type KBCategoryPageProps = {
   params: Promise<{ slug: string }>
@@ -70,7 +69,6 @@ export default async function KBCategoryPage({ params }: KBCategoryPageProps) {
 
   return (
     <>
-      <BreadcrumbJsonLd items={breadcrumbs} />
 
       <PageHero title={name} description={description} breadcrumbs={breadcrumbs} />
 

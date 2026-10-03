@@ -11,7 +11,6 @@ export type AdminNavIcon =
   | "users"
   | "settings"
   | "activity"
-  | "migration"
 
 export type AdminNavLink = { label: string; href: string; permission?: Permission }
 
@@ -49,7 +48,6 @@ export const adminNav: AdminNavItem[] = [
       { label: "Custom Pages", href: "/admin/content/custom" },
     ],
   },
-  { label: "Content Migration", icon: "migration", href: "/admin/migration", permission: "pages.edit" },
   {
     label: "Media Library",
     icon: "media",

@@ -28,7 +28,6 @@ export type ActivityAction =
   | "user.updated"
   | "user.deleted"
   | "settings.updated"
-  | "system.import"
   | "system.cache_cleared"
 
 export async function getClientIp(): Promise<string | null> {

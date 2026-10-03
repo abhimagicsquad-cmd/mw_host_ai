@@ -47,7 +47,7 @@ export const sslPages: SslPageData[] = [
     title: "Domain Validated SSL with SNI — no dedicated IP required",
     description: "The same Domain Validated certificate, delivered via SNI (Server Name Indication) instead of a dedicated IP — every modern browser supports it, so there's no reason to pay for an IP you don't need.",
     bullets: ["Same DV certificate and encryption strength", "No dedicated-IP add-on required", "Supported by all current browsers and devices", "Lower total cost than DV + dedicated IP"],
-    planSlug: "domain-validated",
+    planSlug: "domain-validated-sni",
     faqs: [
       { question: "What is SNI and why does it matter?", answer: "SNI lets a single IP address serve SSL for multiple domains — it removes the need to pay for a dedicated IP just to run HTTPS." },
       { question: "Is SNI less secure than a dedicated IP?", answer: "No — the certificate and encryption are identical. SNI only changes how the certificate is delivered at the network level." },

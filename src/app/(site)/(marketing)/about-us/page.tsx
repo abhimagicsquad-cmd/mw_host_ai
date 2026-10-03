@@ -8,14 +8,14 @@ import { PageHero } from "@/components/sections/page-hero"
 import { StatsSection } from "@/components/sections/stats-section"
 import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
-import { PageBuilder } from "@/components/sanity/page-builder"
-import { buildPageMetadata } from "@/lib/seo"
-import { getAboutPage } from "@/sanity/lib/queries"
+import { PageBuilder } from "@/components/page-builder/page-builder"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
+import { getAboutPage } from "@/lib/cms/queries"
 
 export async function generateMetadata() {
   const cms = await getAboutPage()
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? "About Us",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/about-us") ?? "About Us",
     description:
       cms?.seo?.metaDescription ??
       "MagicWorks Host is a division of MagicWorks IT Solutions, hosting businesses across India since 2012 with NVMe-powered infrastructure and 24/7 support.",

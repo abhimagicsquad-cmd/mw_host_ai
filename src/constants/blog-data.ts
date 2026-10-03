@@ -1,3 +1,5 @@
+import legacyPosts from "./legacy-blog-posts.json"
+
 export type BlogCategory = {
   slug: string
   name: string
@@ -18,6 +20,13 @@ export type BlogPost = {
   featured?: boolean
   author: { name: string; role: string }
   sections: BlogPostSection[]
+  /** ISO dates — set for the articles imported from the WordPress blog. */
+  publishedAt?: string | null
+  modifiedAt?: string | null
+  /** The article's WordPress URL — the same /<slug>/ it is served at now. */
+  legacyPath?: string
+  /** The article's categories on the WordPress blog (see `wordpressCategories`). */
+  wpCategories?: string[]
 }
 
 /** Seed content — real CMS-backed content population is a future phase; this establishes the working index + detail template structure. */
@@ -26,9 +35,12 @@ export const blogCategories: BlogCategory[] = [
   { slug: "security", name: "Security" },
   { slug: "wordpress", name: "WordPress" },
   { slug: "business", name: "Running a Business" },
+  { slug: "web-hosting", name: "Web Hosting" },
+  { slug: "domains-email", name: "Domains & Email" },
+  { slug: "web-development", name: "Web Development" },
 ]
 
-export const blogPosts: BlogPost[] = [
+const originalPosts: BlogPost[] = [
   {
     slug: "why-page-speed-affects-conversions",
     title: "Why page speed affects conversions more than you think",
@@ -277,14 +289,43 @@ export const blogPosts: BlogPost[] = [
   },
 ]
 
+/** Current articles first, then the 42 articles carried over from the WordPress blog (newest first). */
+export const blogPosts: BlogPost[] = [...originalPosts, ...(legacyPosts as BlogPost[])]
+
+/**
+ * The WordPress blog's 15 categories. Their archive pages stay at /category/<slug>/ (as on
+ * WordPress), listing the articles WordPress filed under them; the 7 topics above are the
+ * blog's own filters. "web-hosting" and "web-development" are both, and show the topic.
+ */
+export const wordpressCategories: BlogCategory[] = [
+  { slug: "affiliate-marketing", name: "Affiliate Marketing" },
+  { slug: "blogging", name: "Blogging" },
+  { slug: "dedicated-hosting", name: "Dedicated Hosting" },
+  { slug: "digital-marketing", name: "Digital Marketing" },
+  { slug: "domain-name", name: "Domain Name" },
+  { slug: "email-hosting", name: "Email Hosting" },
+  { slug: "online-business", name: "Online Business" },
+  { slug: "secure-socket-layer-ssl", name: "Secure Socket Layer (SSL)" },
+  { slug: "secure-web-hosting", name: "Secure Web Hosting" },
+  { slug: "shared-web-hosting-service", name: "Shared Web Hosting Service" },
+  { slug: "ssl-certificate", name: "SSL Certificate" },
+  { slug: "web-designs", name: "Web Designs" },
+  { slug: "web-development", name: "Web Development" },
+  { slug: "web-hosting", name: "Web Hosting" },
+  { slug: "web-security", name: "Web Security" },
+]
+
+const wordpressCategoriesBySlug = new Map((legacyPosts as BlogPost[]).map((post) => [post.slug, post.wpCategories ?? []]))
+
+/** Whether WordPress filed this article under `category` (also works for CMS copies of the articles). */
+export function inWordpressCategory(post: Pick<BlogPost, "slug">, category: string) {
+  return wordpressCategoriesBySlug.get(post.slug)?.includes(category) ?? false
+}
+
 export function getBlogCategoryName(slug: string) {
   return blogCategories.find((category) => category.slug === slug)?.name ?? slug
 }
 
 export function getBlogPost(slug: string) {
   return blogPosts.find((post) => post.slug === slug)
-}
-
-export function getRelatedPosts(post: BlogPost, limit = 3) {
-  return blogPosts.filter((candidate) => candidate.slug !== post.slug && candidate.categorySlug === post.categorySlug).slice(0, limit)
 }

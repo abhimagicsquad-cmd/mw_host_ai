@@ -18,8 +18,21 @@ export type SessionPayload = {
   sub: string
   username: string
   role: AdminRole
+  /**
+   * Credential version: a fingerprint of the user's password hash at sign-in. A password
+   * change alters it, which revokes every session issued before the change. Absent on
+   * bootstrap sessions (and on sessions issued before this field existed — they expire on
+   * their own within SESSION_MAX_AGE_SECONDS).
+   */
+  cv?: string
   /** Expiry, epoch seconds. */
   exp: number
+}
+
+/** Short, non-reversible fingerprint of a stored password hash, for `SessionPayload.cv`. */
+export async function credentialVersion(passwordHash: string): Promise<string> {
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", encoder.encode(`mwh-cv:${passwordHash}`)))
+  return toBase64Url(digest).slice(0, 22)
 }
 
 const encoder = new TextEncoder()

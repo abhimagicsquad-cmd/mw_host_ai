@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 import { siteConfig } from "@/constants/site-config"
 import { cn } from "@/lib/utils"
@@ -25,7 +25,7 @@ export function Logo({ variant = "dark", className }: LogoProps) {
           width={300}
           height={60}
           className="h-8 w-auto"
-          priority
+          loading="eager"
         />
       </Link>
     )
@@ -36,10 +36,11 @@ export function Logo({ variant = "dark", className }: LogoProps) {
       href="/"
       className={cn("flex items-center gap-2 text-xl font-bold tracking-tight text-white", className)}
     >
-      <span className="flex size-8 items-center justify-center rounded-lg bg-brand-orange text-sm text-white">
+      {/* The visual wordmark is hidden from assistive tech; the sr-only name is read once. */}
+      <span aria-hidden="true" className="flex size-8 items-center justify-center rounded-lg bg-brand-orange text-sm text-white">
         MW
       </span>
-      <span>
+      <span aria-hidden="true">
         Magic<span className="text-brand-orange">Works</span> Host
       </span>
       <span className="sr-only">{siteConfig.name}</span>

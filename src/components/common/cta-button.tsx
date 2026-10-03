@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { cva, type VariantProps } from "class-variance-authority"
 import type { LucideIcon } from "lucide-react"
 

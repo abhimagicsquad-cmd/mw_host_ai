@@ -7,7 +7,7 @@ import type { PageType } from "./types"
  * supplies their content. A template page is stored as a normal `pages` row (so it gets
  * drafts, publishing, SEO and the activity log for free) with exactly one `page_sections`
  * row of type `template:<key>` holding the content as JSON in the same shape the route
- * already consumed from Sanity.
+ * already consumed.
  */
 
 export type TemplateKey =
@@ -374,7 +374,7 @@ export function templateForPath(path: string): TemplateKey | null {
   return singletons[path] ?? null
 }
 
-/** Sanity `servicePage` (category, slug) ↔ website URL. */
+/** Service page (category, slug) ↔ website URL. */
 export function servicePagePath(category: string, slug: string): string {
   if (category === "ssl" && slug === "ssl-certificates") return "/ssl"
   if (category === "vps") return "/vps-hosting"

@@ -1,5 +1,9 @@
 import { z } from "zod"
 
+// Skip zod's JIT (it probes `new Function("")`), which the site's CSP blocks without
+// 'unsafe-eval' and reports as a violation. Every form schema imports this module.
+z.config({ jitless: true })
+
 export const nameField = z
   .string()
   .trim()
@@ -17,13 +21,3 @@ export const phoneField = z
   .string()
   .trim()
   .regex(/^\d{10}$/, "Enter a valid 10-digit phone number.")
-
-export const messageField = z
-  .string()
-  .trim()
-  .min(10, "Please add a few more details (at least 10 characters).")
-  .max(2000, "Message is too long.")
-
-export const consentField = z
-  .boolean()
-  .refine((value) => value === true, "Please accept the terms to continue.")
