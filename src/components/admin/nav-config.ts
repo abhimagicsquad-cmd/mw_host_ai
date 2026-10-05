@@ -12,6 +12,7 @@ export type AdminNavIcon =
   | "settings"
   | "activity"
   | "assistant"
+  | "code"
 
 export type AdminNavLink = { label: string; href: string; permission?: Permission }
 
@@ -117,6 +118,20 @@ export const adminNav: AdminNavItem[] = [
       { label: "FAQs", href: "/admin/assistant/faqs" },
       { label: "Conversations", href: "/admin/assistant/conversations" },
       { label: "Analytics", href: "/admin/assistant/analytics" },
+    ],
+  },
+  {
+    label: "Custom Code Manager",
+    icon: "code",
+    permission: "code.manage",
+    children: [
+      { label: "Head Code", href: "/admin/code/head" },
+      { label: "Body Start Code", href: "/admin/code/body-start" },
+      { label: "Footer Code", href: "/admin/code/footer" },
+      { label: "Custom CSS", href: "/admin/code/css" },
+      { label: "Custom JavaScript", href: "/admin/code/js" },
+      { label: "Tracking Scripts", href: "/admin/code/tracking" },
+      { label: "Verification Codes", href: "/admin/code/verification" },
     ],
   },
   { label: "Activity Logs", icon: "activity", href: "/admin/activity", permission: "activity.view" },

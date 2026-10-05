@@ -66,27 +66,29 @@ const wordpressPatternRedirects = [
 const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : "https://*.supabase.co";
 
 /**
- * Public-site third parties (see src/lib/analytics.ts): Google Ads gtag and Microsoft Clarity —
- * the same tracking the WordPress site ran. (Chat is the first-party Hosting Assistant.)
+ * Public website: Google Ads gtag plus whatever admins add in Admin → Custom Code Manager
+ * (tracking scripts, head/footer snippets, live-chat widgets, fonts…). Like a WordPress header/
+ * footer code plugin, those may load from any HTTPS host without a redeploy, so scripts, styles,
+ * frames, fonts, images and connections allow any https: source. Plain http:, eval, plugins
+ * (object-src) and other sites framing this one stay blocked. Inline scripts were already
+ * allowed (Next.js bootstrap). The admin dashboard keeps its strict policy (headers() below).
  */
 const tracking = {
-  script: " https://www.googletagmanager.com https://*.googleadservices.com https://googleads.g.doubleclick.net https://*.clarity.ms",
-  // Ads conversions post to the visitor's country Google host (google.co.in, google.de, …) and
-  // doubleclick, which can't be listed exhaustively — so any https endpoint and image. Scripts,
-  // frames and fonts stay allowlisted.
+  script: " https:",
+  style: " https:",
   connect: " https:",
   img: " https:",
-  // + the Google Maps embed of the office on /contact-us.
-  frame: " https://*.doubleclick.net https://www.googletagmanager.com https://www.google.com",
+  frame: " https:",
+  font: " https:",
 };
 
-function csp(extra: { script?: string; connect?: string; img?: string; frame?: string; font?: string } = {}) {
+function csp(extra: { script?: string; style?: string; connect?: string; img?: string; frame?: string; font?: string } = {}) {
   return [
     "default-src 'self'",
     // Next.js injects inline bootstrap scripts into statically rendered pages, which rules out
     // nonces without making every page dynamic; everything else is locked to this origin.
     `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${extra.script ?? ""}`,
-    "style-src 'self' 'unsafe-inline'",
+    `style-src 'self' 'unsafe-inline'${extra.style ?? ""}`,
     `img-src 'self' data: blob: ${supabaseOrigin}${extra.img ?? ""}`,
     `font-src 'self' data:${extra.font ?? ""}`,
     `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com${extra.connect ?? ""}`,

@@ -7,6 +7,7 @@ import {
   Activity,
   Bot,
   ChevronDown,
+  Code2,
   FileText,
   FormInput,
   Image as ImageIcon,
@@ -37,6 +38,7 @@ const ICONS: Record<AdminNavIcon, LucideIcon> = {
   settings: Settings,
   activity: Activity,
   assistant: Bot,
+  code: Code2,
 }
 
 /** Longest-prefix match so /admin/pages/new highlights "Add New Page", not "All Pages". */

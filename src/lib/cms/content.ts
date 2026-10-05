@@ -136,7 +136,8 @@ export const getSeoOverride = cache(async (path: string): Promise<SeoRow | null>
 
 const getSettingsRows = cache(async () => {
   if (!cmsPublicDb) return {} as Record<string, Record<string, unknown>>
-  const { data, error } = await cmsPublicDb.from("settings").select("key, value")
+  // Custom Code version history and preview drafts are dashboard-only (and can be large).
+  const { data, error } = await cmsPublicDb.from("settings").select("key, value").not("key", "like", "custom_code_%")
   if (error || !data) return {}
   return Object.fromEntries(data.map((row) => [row.key as string, (row.value ?? {}) as Record<string, unknown>]))
 })
@@ -147,6 +148,11 @@ export async function getCmsGeneralSettings(): Promise<GeneralSettings> {
 
 export async function getCmsWebsiteSettings(): Promise<WebsiteSettings> {
   return ((await getSettingsRows()).website ?? {}) as WebsiteSettings
+}
+
+/** Live Custom Code Manager sections (`settings.custom_code`), from the same cached settings read. */
+export async function getCmsCustomCodeValue(): Promise<unknown> {
+  return (await getSettingsRows()).custom_code ?? null
 }
 
 /** Raw Hosting Assistant settings (`settings.chatbot`), from the same cached settings read. */

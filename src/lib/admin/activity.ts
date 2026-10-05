@@ -44,6 +44,12 @@ export type ActivityAction =
   | "assistant.faq_deleted"
   | "assistant.faqs_imported"
   | "assistant.lead_captured"
+  | "custom_code.updated"
+  | "custom_code.enabled"
+  | "custom_code.disabled"
+  | "custom_code.reset"
+  | "custom_code.restored"
+  | "custom_code.previewed"
   | "settings.updated"
   | "system.cache_cleared"
 

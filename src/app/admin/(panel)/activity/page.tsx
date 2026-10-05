@@ -21,6 +21,7 @@ const CATEGORIES = [
   { value: "user", label: "User changes" },
   { value: "lead", label: "Leads" },
   { value: "assistant", label: "Hosting Assistant" },
+  { value: "custom_code", label: "Custom Code" },
   { value: "settings", label: "Settings" },
   { value: "system", label: "System" },
 ]
@@ -35,6 +36,10 @@ const TONES: Record<string, string> = {
   "assistant.disabled": "bg-destructive/10 text-destructive",
   "assistant.enabled": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "assistant.lead_captured": "bg-primary/10 text-primary",
+  "custom_code.disabled": "bg-destructive/10 text-destructive",
+  "custom_code.reset": "bg-destructive/10 text-destructive",
+  "custom_code.enabled": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  "custom_code.restored": "bg-primary/10 text-primary",
   "user.activated": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "page.published": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "auth.login": "bg-primary/10 text-primary",

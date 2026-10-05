@@ -60,6 +60,7 @@ const ACTION_LABELS: Record<string, string> = {
   user: "User",
   lead: "Lead",
   assistant: "Assistant",
+  custom_code: "Custom code",
   settings: "Settings",
   system: "System",
 }

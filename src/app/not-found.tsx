@@ -5,7 +5,8 @@ import { Search as SearchIcon } from "lucide-react"
 import { SectionContainer } from "@/components/layout/section-container"
 import { Input } from "@/components/ui/input"
 
-import SiteLayout from "./(site)/layout"
+import { AnalyticsScripts } from "@/components/common/analytics-scripts"
+import { SiteChrome } from "@/components/layout/site-chrome"
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -23,10 +24,15 @@ const POPULAR_LINKS = [
   { label: "Contact us", href: "/contact-us" },
 ]
 
-/** Branded 404 for unmatched URLs and notFound() calls — keeps the site header/footer and offers search and the main sections. */
+/**
+ * Branded 404 for unmatched URLs and notFound() calls — keeps the site header/footer and offers
+ * search and the main sections. It deliberately leaves out the Custom Code Manager output: Next.js
+ * embeds this tree in every page (admin pages included), and admin-entered third-party code must
+ * never run on an /admin URL, where the dashboard session cookie is sent. Google Ads stays.
+ */
 export default function NotFound() {
   return (
-    <SiteLayout>
+    <SiteChrome>
       <SectionContainer width="narrow" className="py-16 text-center sm:py-24">
         <p className="text-sm font-semibold tracking-wide text-brand-orange uppercase">Error 404</p>
         <h1 className="mt-3 text-3xl font-bold text-brand-navy sm:text-4xl">We couldn&apos;t find that page</h1>
@@ -52,6 +58,7 @@ export default function NotFound() {
           ))}
         </ul>
       </SectionContainer>
-    </SiteLayout>
+      <AnalyticsScripts ga4Id="" clarityId="" scripts={[]} />
+    </SiteChrome>
   )
 }
