@@ -58,6 +58,7 @@ const ACTION_LABELS: Record<string, string> = {
   seo: "SEO",
   menu: "Menu",
   user: "User",
+  lead: "Lead",
   settings: "Settings",
   system: "System",
 }

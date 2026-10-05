@@ -128,6 +128,13 @@ export async function listLeads(limit = 500): Promise<Result<LeadRow[]>> {
   return { data: (data as LeadRow[]) ?? [], problem: problemOf(error) }
 }
 
+/** True once supabase/migrations/0005_add_lead_status.sql has added `leads.status`. */
+export async function hasLeadStatusColumn(): Promise<boolean> {
+  if (!cmsAdminDb) return false
+  const { error } = await cmsAdminDb.from("leads").select("status").limit(1)
+  return !error
+}
+
 export type NewsletterRow = { id: string; created_at: string; email: string; source: string | null; page_url: string | null }
 export type OrderRow = {
   id: string

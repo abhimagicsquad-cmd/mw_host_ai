@@ -3,14 +3,14 @@
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
-import { logActivity } from "@/lib/admin/activity"
+import { logActivities, logActivity } from "@/lib/admin/activity"
 import { authorizeAction } from "@/lib/admin/auth"
 import { hashPassword, validatePasswordStrength } from "@/lib/admin/password"
 import { setSessionCookie } from "@/lib/admin/session-cookie"
 import { cmsAdminDb } from "@/lib/cms/db"
 import type { ActionState, AdminRole } from "@/lib/cms/types"
 
-import { toActionError } from "./utils"
+import { BULK_SELECTION_ERROR, parseBulkIds, plural, toActionError } from "./utils"
 
 const baseSchema = z.object({
   username: z
@@ -131,6 +131,61 @@ export async function deleteUserAction(userId: string): Promise<ActionState> {
     if (error) throw error
     await logActivity({ admin, action: "user.deleted", entityType: "user", entityId: userId, description: `Deleted user “${existing.username}”` })
     return { ok: true, message: "User deleted." }
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+/**
+ * Activates or deactivates several admin users. A deactivated user is signed out on their next
+ * request (every request re-checks `is_active`). Your own account is never changed here, and at
+ * least one active Super Admin must remain.
+ */
+export async function bulkSetUsersActiveAction(userIds: string[], active: boolean): Promise<ActionState> {
+  try {
+    const admin = await authorizeAction("users.manage")
+    const ids = parseBulkIds(userIds)
+    if (!ids) return BULK_SELECTION_ERROR
+    if (typeof active !== "boolean") return { error: "Unknown user status." }
+    if (ids.includes(admin.id)) return { error: "You can't change your own account in a bulk action. Deselect yourself and try again." }
+
+    const { data: current, error: readError } = await db().from("users").select("id, username, role, is_active").in("id", ids)
+    if (readError) throw readError
+    const changing = (current ?? []).filter((user) => user.is_active !== active)
+    if (!changing.length) return { ok: true, message: `All selected users are already ${active ? "active" : "deactivated"}.` }
+
+    if (!active && changing.some((user) => user.role === "super_admin")) {
+      const { count, error: countError } = await db()
+        .from("users")
+        .select("id", { count: "exact", head: true })
+        .eq("role", "super_admin")
+        .eq("is_active", true)
+        .not("id", "in", `(${changing.map((user) => user.id).join(",")})`)
+      if (countError) throw countError
+      if (!count) return { error: "At least one active Super Admin is required." }
+    }
+
+    const { error } = await db()
+      .from("users")
+      .update({ is_active: active, updated_at: new Date().toISOString() })
+      .in("id", changing.map((user) => user.id))
+    if (error) throw error
+
+    await logActivities(
+      changing.map((user) => ({
+        admin,
+        action: active ? ("user.activated" as const) : ("user.deactivated" as const),
+        entityType: "user",
+        entityId: user.id,
+        description: `${active ? "Activated" : "Deactivated"} user “${user.username}” — bulk action`,
+        metadata: { bulk: true, batchSize: changing.length, role: user.role },
+      }))
+    )
+    const skipped = ids.length - changing.length
+    return {
+      ok: true,
+      message: `${active ? "Activated" : "Deactivated"} ${plural(changing.length, "user")}.${skipped ? ` ${plural(skipped, "user")} already ${active ? "active" : "deactivated"}.` : ""}`,
+    }
   } catch (error) {
     return toActionError(error)
   }
