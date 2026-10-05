@@ -102,6 +102,7 @@ export type AssistantAnalytics = {
   topQuickActions: { label: string; count: number }[]
   topPlans: { label: string; count: number }[]
   topUnanswered: { label: string; count: number }[]
+  topFlows: { label: string; count: number }[]
 }
 
 const top = (counts: Map<string, number>, limit = 10) =>
@@ -112,7 +113,7 @@ const bump = (counts: Map<string, number>, key: string | undefined) => {
 
 /** Totals and top lists for the last `days` days (all time when null). Computed from stored messages. */
 export async function getAssistantAnalytics(days: number | null): Promise<Result<AssistantAnalytics>> {
-  const empty: AssistantAnalytics = { conversations: 0, leads: 0, messages: 0, unanswered: 0, topQuestions: [], topQuickActions: [], topPlans: [], topUnanswered: [] }
+  const empty: AssistantAnalytics = { conversations: 0, leads: 0, messages: 0, unanswered: 0, topQuestions: [], topQuickActions: [], topPlans: [], topUnanswered: [], topFlows: [] }
   if (!cmsAdminDb) return { data: empty, problem: "unconfigured" }
   // "All time" is simply everything since the epoch.
   const since = days ? new Date(Date.now() - days * 86_400_000).toISOString() : new Date(0).toISOString()
@@ -124,7 +125,7 @@ export async function getAssistantAnalytics(days: number | null): Promise<Result
     cmsAdminDb
       .from("chatbot_messages")
       .select("kind, body, metadata")
-      .in("kind", ["faq_answer", "quick_action", "recommendation", "fallback"])
+      .in("kind", ["faq_answer", "quick_action", "recommendation", "fallback", "flow_step"])
       .gte("created_at", since)
       .order("id", { ascending: false })
       .limit(20000),
@@ -136,13 +137,17 @@ export async function getAssistantAnalytics(days: number | null): Promise<Result
   const actions = new Map<string, number>()
   const plans = new Map<string, number>()
   const unanswered = new Map<string, number>()
+  const flows = new Map<string, number>()
   let fallbackCount = 0
   for (const row of (events.data ?? []) as { kind: string; body: string; metadata: Record<string, unknown> | null }[]) {
     const meta = row.metadata ?? {}
     if (row.kind === "faq_answer") bump(questions, typeof meta.question === "string" ? meta.question : undefined)
     else if (row.kind === "quick_action") bump(actions, typeof meta.label === "string" ? meta.label : row.body)
     else if (row.kind === "recommendation") bump(plans, typeof meta.recommendedPlan === "string" ? meta.recommendedPlan : typeof meta.category === "string" ? `${meta.category} (no plan configured)` : undefined)
-    else if (row.kind === "fallback") {
+    else if (row.kind === "flow_step") {
+      // Count each time a flow starts (its first step), not every step inside it.
+      if (meta.entry === true) bump(flows, typeof meta.flowName === "string" ? meta.flowName : undefined)
+    } else if (row.kind === "fallback") {
       fallbackCount++
       bump(unanswered, typeof meta.question === "string" ? meta.question.toLowerCase() : undefined)
     }
@@ -157,6 +162,7 @@ export async function getAssistantAnalytics(days: number | null): Promise<Result
       topQuickActions: top(actions),
       topPlans: top(plans),
       topUnanswered: top(unanswered),
+      topFlows: top(flows),
     },
     problem: null,
   }

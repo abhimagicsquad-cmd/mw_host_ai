@@ -21,7 +21,13 @@ const KIND_LABELS: Record<string, string> = {
   plans: "Plans shown",
   lead_prompt: "Lead form offered",
   lead_captured: "Lead captured",
-  flow_question: "Flow question",
+  flow_question: "Recommendation question",
+  flow_step: "Conversation flow",
+  flow_option: "Button",
+  lead_start: "Asked for the team",
+  lead_cancelled: "Stopped sharing details",
+  lead_sent: "Lead sent",
+  link: "Link",
 }
 
 function Message({ message }: { message: MessageRow }) {

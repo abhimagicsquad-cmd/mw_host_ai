@@ -97,6 +97,7 @@ export default async function AssistantAnalyticsPage({ searchParams }: { searchP
             <TopList title="Most asked questions" rows={data.topQuestions} empty="No FAQ answers yet." />
             <TopList title="Most clicked quick actions" rows={data.topQuickActions} empty="No quick actions clicked yet." />
             <TopList title="Most recommended plans" rows={data.topPlans} empty="No recommendations yet." />
+            <TopList title="Most used conversation flows" rows={data.topFlows} empty="No conversation flows started yet." />
             <TopList title="Questions without an answer" rows={data.topUnanswered} empty="Nothing unanswered — or no questions yet. Add FAQs for anything that shows up here." />
           </div>
         </>

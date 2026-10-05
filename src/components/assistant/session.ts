@@ -1,4 +1,4 @@
-import type { ReplyBlock } from "@/lib/assistant/types"
+import type { ConversationState, ReplyBlock } from "@/lib/assistant/types"
 
 export type ChatMessage =
   | { id: string; role: "visitor"; text: string; at: number }
@@ -6,17 +6,15 @@ export type ChatMessage =
 
 export type ChatSession = {
   conversationId: string | null
-  /** Recommendation answers so far; null when no flow is in progress. */
-  flowAnswers: Record<string, string> | null
+  /** The state the server returned last time (lead capture progress, etc.), echoed with the next request. */
+  state: ConversationState | null
   messages: ChatMessage[]
-  /** Lead-form blocks (by message id) that were submitted, so they render as "sent". */
-  leadsSent: string[]
 }
 
 const VISITOR_KEY = "mwh:assistant-visitor"
 const MAX_STORED_MESSAGES = 80
 
-export const emptySession = (): ChatSession => ({ conversationId: null, flowAnswers: null, messages: [], leadsSent: [] })
+export const emptySession = (): ChatSession => ({ conversationId: null, state: null, messages: [] })
 
 export const newId = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID().replace(/-/g, "") : `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`
@@ -42,9 +40,8 @@ export function loadSession(storageKey: string): ChatSession {
     const parsed = JSON.parse(raw) as Partial<ChatSession>
     return {
       conversationId: typeof parsed.conversationId === "string" ? parsed.conversationId : null,
-      flowAnswers: parsed.flowAnswers && typeof parsed.flowAnswers === "object" ? parsed.flowAnswers : null,
+      state: parsed.state && typeof parsed.state === "object" ? parsed.state : null,
       messages: Array.isArray(parsed.messages) ? parsed.messages.slice(-MAX_STORED_MESSAGES) : [],
-      leadsSent: Array.isArray(parsed.leadsSent) ? parsed.leadsSent.filter((id) => typeof id === "string") : [],
     }
   } catch {
     return emptySession()

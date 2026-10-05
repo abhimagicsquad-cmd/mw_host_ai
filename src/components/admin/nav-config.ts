@@ -112,6 +112,7 @@ export const adminNav: AdminNavItem[] = [
     permission: "assistant.manage",
     children: [
       { label: "Settings", href: "/admin/assistant" },
+      { label: "Conversation Flows", href: "/admin/assistant/flows" },
       { label: "Hosting Plans", href: "/admin/assistant/plans" },
       { label: "FAQs", href: "/admin/assistant/faqs" },
       { label: "Conversations", href: "/admin/assistant/conversations" },

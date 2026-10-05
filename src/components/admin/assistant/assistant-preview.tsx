@@ -7,22 +7,18 @@ import { assistantStyle } from "@/components/assistant/style"
 import { AssistantPanel, type AssistantTransport } from "@/components/assistant/assistant-panel"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { previewAssistantAction, previewLeadAction } from "@/lib/admin/actions/assistant"
+import { previewAssistantAction } from "@/lib/admin/actions/assistant"
 import type { PublicAssistantConfig } from "@/lib/assistant/types"
 
 /**
  * "Preview Chatbot": the real widget inside the dashboard, using the saved settings, FAQs and
- * plans. Replies come from the same engine through a server action; nothing is stored and
- * enquiries are validated but not sent.
+ * plans. Replies come from the same engine through a server action; nothing is stored, and
+ * details collected in the conversation are checked but never sent.
  */
 export function AssistantPreviewButton({ config }: { config: PublicAssistantConfig }) {
   const [open, setOpen] = useState(false)
   const transport = useMemo<AssistantTransport>(
-    () => ({
-      captcha: false,
-      send: ({ event }) => previewAssistantAction(event),
-      submitLead: () => (lead) => previewLeadAction(lead),
-    }),
+    () => ({ send: ({ event, state }) => previewAssistantAction(event, state ?? {}) }),
     []
   )
 

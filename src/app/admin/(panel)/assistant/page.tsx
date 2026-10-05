@@ -28,8 +28,8 @@ export default async function AssistantSettingsPage() {
       <AssistantGeneralForm
         initial={{ brandName, welcomeMessage, introMessage, avatarUrl, position, primaryColor, secondaryColor, typingDelayMs, autoOpenSeconds, visibility, pages }}
       />
-      <QuickActionsEditor initial={settings.quickActions} />
-      <StartersEditor initial={settings.starters} actions={settings.quickActions} />
+      <QuickActionsEditor initial={settings.quickActions} flows={settings.flows} />
+      <StartersEditor initial={settings.starters} actions={settings.quickActions} flows={settings.flows} />
       <FlowEditor initial={settings.flow.steps} fallbackCategory={settings.flow.fallbackCategory} />
     </div>
   )

@@ -3,8 +3,7 @@ import { NextResponse } from "next/server"
 import { siteConfig } from "@/constants/site-config"
 import { logActivity } from "@/lib/admin/activity"
 import { linkLeadToConversation } from "@/lib/assistant/server"
-import { sendLeadNotificationEmail } from "@/lib/email"
-import { storeLead } from "@/lib/leads-store"
+import { deliverLead } from "@/lib/lead-delivery"
 import { verifyTurnstile } from "@/lib/turnstile"
 import { leadApiPayloadSchema } from "@/schemas/lead-form.schema"
 
@@ -12,13 +11,11 @@ export const runtime = "nodejs"
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
 const RATE_LIMIT_MAX_REQUESTS = 5
-const DUPLICATE_WINDOW_MS = 60 * 1000
 const MIN_FILL_TIME_MS = 1500
 
 // Best-effort, in-memory only — resets on cold start/redeploy. Sufficient to blunt casual
 // abuse on a lead form; swap for Vercel KV/Upstash if traffic grows enough to need it.
 const requestLog = new Map<string, number[]>()
-const recentSubmissions = new Map<string, number>()
 
 function getClientIp(request: Request) {
   const forwarded = request.headers.get("x-forwarded-for")
@@ -26,14 +23,11 @@ function getClientIp(request: Request) {
   return request.headers.get("x-real-ip") ?? "unknown"
 }
 
-/** Drops stale entries so the in-memory maps can't grow without bound. */
+/** Drops stale entries so the in-memory map can't grow without bound. */
 function pruneStale(now: number) {
   if (requestLog.size < 1000) return
   for (const [key, timestamps] of requestLog) {
     if (timestamps.every((timestamp) => now - timestamp >= RATE_LIMIT_WINDOW_MS)) requestLog.delete(key)
-  }
-  for (const [key, seenAt] of recentSubmissions) {
-    if (now - seenAt >= DUPLICATE_WINDOW_MS) recentSubmissions.delete(key)
   }
 }
 
@@ -44,13 +38,6 @@ function isRateLimited(ip: string) {
   timestamps.push(now)
   requestLog.set(ip, timestamps)
   return timestamps.length > RATE_LIMIT_MAX_REQUESTS
-}
-
-function markAndCheckDuplicate(key: string) {
-  const now = Date.now()
-  const lastSeen = recentSubmissions.get(key)
-  recentSubmissions.set(key, now)
-  return typeof lastSeen === "number" && now - lastSeen < DUPLICATE_WINDOW_MS
 }
 
 export async function POST(request: Request) {
@@ -87,32 +74,12 @@ export async function POST(request: Request) {
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
-
-  const duplicateKey = `${email.toLowerCase()}:${phone}`
-  const isDuplicate = markAndCheckDuplicate(duplicateKey)
-
-  if (isLikelyBot || isDuplicate) {
-    return NextResponse.json({
-      success: true,
-      message: "Thanks — we've received your details and will be in touch shortly.",
-    })
+  if (isLikelyBot) {
+    return NextResponse.json({ success: true, message: "Thanks — we've received your details and will be in touch shortly." })
   }
 
-  const [storeResult, emailResult] = await Promise.all([
-    storeLead({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
-    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
-  ])
-
-  if (!storeResult.stored && !storeResult.skipped) {
-    // Forget this submission so the visitor's retry is saved, not swallowed as a duplicate.
-    recentSubmissions.delete(duplicateKey)
-    // Case C/D: the durable record failed to save — that's the one outcome we can't let
-    // silently succeed, even if the notification email went out (emailResult.sent).
-    console.error("[api/leads] Supabase insert failed; lead was not persisted.", {
-      email,
-      source,
-      emailSent: emailResult.sent,
-    })
+  const delivery = await deliverLead({ name, phone, email, message, source, service, company, hostingType, pageUrl })
+  if (!delivery.ok) {
     return NextResponse.json(
       {
         success: false,
@@ -121,16 +88,13 @@ export async function POST(request: Request) {
       { status: 502 }
     )
   }
-
-  if (!emailResult.sent && !emailResult.skipped) {
-    // Case B: lead is safely stored (or Supabase isn't configured yet); only the
-    // notification email failed — log it, but don't fail the user's submission.
-    console.error("[api/leads] Notification email failed after the lead was stored.", { email, source })
+  if (delivery.duplicate) {
+    return NextResponse.json({ success: true, message: "Thanks — we've received your details and will be in touch shortly." })
   }
 
   // Hosting Assistant enquiries: link the lead to its conversation and note it in the activity log.
   if (assistantConversationId && assistantVisitorId) {
-    const leadId = storeResult.stored ? storeResult.id : null
+    const leadId = delivery.leadId
     const linked = await linkLeadToConversation(assistantConversationId, assistantVisitorId, leadId, `Enquiry sent: ${name} <${email}>`)
     await logActivity({
       username: "Hosting Assistant",

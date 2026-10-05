@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { serviceOptions } from "@/constants/service-options"
 import { saveAssistantSectionAction } from "@/lib/admin/actions/assistant"
-import { PLAN_CATEGORIES, QUICK_ACTION_KINDS, type AssistantSettings, type ConversationStarter, type FlowStep, type PlanCategory, type QuickAction, type QuickActionKind } from "@/lib/assistant/types"
+import { PLAN_CATEGORIES, QUICK_ACTION_KINDS, type AssistantSettings, type ConversationFlow, type ConversationStarter, type FlowStep, type PlanCategory, type QuickAction, type QuickActionKind } from "@/lib/assistant/types"
 import type { ActionState } from "@/lib/cms/types"
 import { cn } from "@/lib/utils"
 
@@ -152,8 +152,20 @@ export function AssistantGeneralForm({ initial }: { initial: General }) {
 
 // --- Quick actions -------------------------------------------------------------------------
 
-function ActionValueInput({ action, onChange }: { action: QuickAction; onChange: (value: string) => void }) {
+function ActionValueInput({ action, flows, onChange }: { action: QuickAction; flows: ConversationFlow[]; onChange: (value: string) => void }) {
   if (action.kind === "recommend") return <p className="text-xs text-muted-foreground">Runs the recommendation flow below.</p>
+  if (action.kind === "flow") {
+    return (
+      <select aria-label="Conversation flow" className={selectClassName} value={action.value ?? ""} onChange={(e) => onChange(e.target.value)}>
+        <option value="">Choose a flow…</option>
+        {flows.map((f) => (
+          <option key={f.id} value={f.id}>
+            {f.name}
+          </option>
+        ))}
+      </select>
+    )
+  }
   if (action.kind === "plans") {
     return (
       <select aria-label="Plan category" className={selectClassName} value={action.value ?? ""} onChange={(e) => onChange(e.target.value)}>
@@ -189,13 +201,13 @@ function ActionValueInput({ action, onChange }: { action: QuickAction; onChange:
   )
 }
 
-export function QuickActionsEditor({ initial }: { initial: QuickAction[] }) {
+export function QuickActionsEditor({ initial, flows }: { initial: QuickAction[]; flows: ConversationFlow[] }) {
   const [items, setItems] = useState(initial)
   const { pending, state, save } = useSectionSave("quickActions")
   const update = (index: number, patch: Partial<QuickAction>) => setItems((list) => list.map((item, i) => (i === index ? { ...item, ...patch } : item)))
 
   return (
-    <Panel title="Quick actions" description="Buttons along the bottom of the chat. Up to 20.">
+    <Panel title="Quick actions" description="Buttons along the bottom of the chat. Each should start a conversation — usually a conversation flow. Up to 20.">
       <div className="flex flex-col gap-2">
         {items.map((action, index) => (
           <div key={action.id} className="grid gap-2 rounded-lg border bg-background p-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1.3fr)_auto] sm:items-center">
@@ -212,7 +224,7 @@ export function QuickActionsEditor({ initial }: { initial: QuickAction[] }) {
                 </option>
               ))}
             </select>
-            <ActionValueInput action={action} onChange={(value) => update(index, { value })} />
+            <ActionValueInput action={action} flows={flows} onChange={(value) => update(index, { value })} />
             <RowControls
               index={index}
               length={items.length}
@@ -243,13 +255,13 @@ export function QuickActionsEditor({ initial }: { initial: QuickAction[] }) {
 
 // --- Conversation starters -----------------------------------------------------------------
 
-export function StartersEditor({ initial, actions }: { initial: ConversationStarter[]; actions: QuickAction[] }) {
+export function StartersEditor({ initial, actions, flows }: { initial: ConversationStarter[]; actions: QuickAction[]; flows: ConversationFlow[] }) {
   const [items, setItems] = useState(initial)
   const { pending, state, save } = useSectionSave("starters")
   const update = (index: number, patch: Partial<ConversationStarter>) => setItems((list) => list.map((item, i) => (i === index ? { ...item, ...patch } : item)))
 
   return (
-    <Panel title="Conversation starters" description="Suggested opening lines under the welcome message. Each can run a quick action, or be answered like a typed question.">
+    <Panel title="Conversation starters" description="Suggested opening lines under the welcome message. Each can start a conversation flow, run a quick action, or be answered like a typed question.">
       <div className="flex flex-col gap-2">
         {items.map((starter, index) => (
           <div key={starter.id} className="grid gap-2 rounded-lg border bg-background p-2.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] sm:items-center">
@@ -257,15 +269,27 @@ export function StartersEditor({ initial, actions }: { initial: ConversationStar
             <select
               aria-label="When clicked"
               className={selectClassName}
-              value={starter.actionId ?? ""}
-              onChange={(e) => update(index, { actionId: e.target.value || undefined })}
+              value={starter.flowId ? `flow:${starter.flowId}` : starter.actionId ? `action:${starter.actionId}` : ""}
+              onChange={(e) => {
+                const [kind, id] = e.target.value.split(":")
+                update(index, { flowId: kind === "flow" ? id : undefined, actionId: kind === "action" ? id : undefined })
+              }}
             >
               <option value="">Answer as a question</option>
-              {actions.map((action) => (
-                <option key={action.id} value={action.id}>
-                  Run: {action.label}
-                </option>
-              ))}
+              <optgroup label="Start a conversation flow">
+                {flows.map((f) => (
+                  <option key={f.id} value={`flow:${f.id}`}>
+                    Flow: {f.name}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Run a quick action">
+                {actions.map((action) => (
+                  <option key={action.id} value={`action:${action.id}`}>
+                    Run: {action.label}
+                  </option>
+                ))}
+              </optgroup>
             </select>
             <RowControls
               index={index}
@@ -301,7 +325,7 @@ export function FlowEditor({ initial, fallbackCategory }: { initial: FlowStep[];
 
   return (
     <Panel
-      title="Smart hosting recommendation flow"
+      title="Hosting plan recommendation"
       description="Questions asked one by one when a visitor wants a recommendation. Each answer can point at a plan category and a size; the largest category and size win, and the plan is picked from Hosting Plans (by display order) in that category."
     >
       <div className="flex flex-col gap-4">

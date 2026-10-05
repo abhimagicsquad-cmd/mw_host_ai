@@ -12,10 +12,10 @@ import { serviceLandings } from "@/constants/service-landing-data"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { logActivity } from "@/lib/admin/activity"
 import { actorId, authorizeAction } from "@/lib/admin/auth"
-import { respond, tokens } from "@/lib/assistant/engine"
+import { leadSentReplies, respond, tokens } from "@/lib/assistant/engine"
 import { loadKnowledgeBase } from "@/lib/assistant/server"
 import { ASSISTANT_SETTINGS_KEY, parseAssistantSettings } from "@/lib/assistant/settings"
-import { isPlanCategory, PLAN_CATEGORIES, type AssistantEvent, type AssistantResponse, type AssistantSettings } from "@/lib/assistant/types"
+import { isPlanCategory, PLAN_CATEGORIES, type AssistantEvent, type AssistantResponse, type AssistantSettings, type ConversationState } from "@/lib/assistant/types"
 import { getCmsPricingPlans } from "@/lib/cms/content"
 import { cmsAdminDb, isMissingTableError } from "@/lib/cms/db"
 import type { ActionState } from "@/lib/cms/types"
@@ -72,13 +72,14 @@ export async function setAssistantEnabledAction(enabled: boolean): Promise<Actio
 
 // --- Settings sections ---------------------------------------------------------------------
 
-type Section = "general" | "quickActions" | "starters" | "flow"
+type Section = "general" | "quickActions" | "starters" | "flow" | "flows"
 
 const SECTION_LABELS: Record<Section, string> = {
   general: "settings",
   quickActions: "quick actions",
   starters: "conversation starters",
   flow: "recommendation flow",
+  flows: "conversation flows",
 }
 
 /**
@@ -100,11 +101,32 @@ export async function saveAssistantSectionAction(section: Section, payload: stri
 
     let next: AssistantSettings
     if (section === "general") {
-      const { quickActions, starters, flow, enabled } = current
-      next = { ...parseAssistantSettings({ ...submitted, quickActions, starters, flow }), enabled }
+      const { quickActions, starters, flow, flows, enabled } = current
+      next = { ...parseAssistantSettings({ ...submitted, quickActions, starters, flow, flows }), enabled }
       const pages = Array.isArray(submitted.pages) ? submitted.pages : []
       if (pages.length !== next.pages.length) return { error: "Each page must be a path starting with “/” (use * at the end for a section, e.g. /hosting/*)." }
       if (submitted.visibility === "selected" && !next.pages.length) return { error: "Add at least one page, or choose “Show on all pages”." }
+    } else if (section === "flows") {
+      const items = submitted.flows
+      if (!Array.isArray(items)) return { error: "Invalid data." }
+      next = { ...parseAssistantSettings({ ...current, flows: items }), enabled: current.enabled }
+      // Every submitted flow, step and option must survive validation (nothing is dropped silently).
+      type Raw = { name?: unknown; steps?: { options?: unknown[] }[] }
+      for (const [index, raw] of (items as Raw[]).entries()) {
+        const kept = next.flows[index]
+        const label = typeof raw?.name === "string" && raw.name.trim() ? `“${raw.name.trim()}”` : `Flow ${index + 1}`
+        if (!kept || kept.steps.length !== (raw.steps?.length ?? 0)) return { error: `${label}: every flow needs a name and at least one step, and every step needs a message.` }
+        const rawOptions = raw.steps?.reduce((n, step) => n + (step?.options?.length ?? 0), 0) ?? 0
+        const keptOptions = kept.steps.reduce((n, step) => n + step.options.length, 0)
+        if (rawOptions !== keptOptions) return { error: `${label}: every option needs a label and a valid target (a step or flow that exists, a category, a service, or a link starting with /, https://, tel: or mailto:).` }
+      }
+      if (next.flows.length !== items.length) return { error: "Every flow needs a name and at least one step." }
+      const flowIds = next.flows.map((f) => f.id)
+      if (new Set(flowIds).size !== flowIds.length) return { error: "Two flows share the same id. Remove one and try again." }
+      const orphanAction = current.quickActions.find((a) => a.kind === "flow" && !flowIds.includes(a.value ?? ""))
+      if (orphanAction) return { error: `The quick action “${orphanAction.label}” starts a flow you removed. Change that quick action first.` }
+      const orphanStarter = current.starters.find((st) => st.flowId && !flowIds.includes(st.flowId))
+      if (orphanStarter) return { error: `The conversation starter “${orphanStarter.text}” starts a flow you removed. Change that starter first.` }
     } else {
       const items = submitted[section === "flow" ? "steps" : section]
       const merged = section === "flow" ? { ...current, flow: submitted } : { ...current, [section]: items }
@@ -126,6 +148,10 @@ export async function saveAssistantSectionAction(section: Section, payload: stri
       if (section === "starters") {
         const unknown = next.starters.find((starter) => starter.actionId && !next.quickActions.some((action) => action.id === starter.actionId))
         if (unknown) return { error: `“${unknown.text}” runs a quick action that no longer exists. Pick another or “Answer as a question”.` }
+      }
+      if (section === "quickActions") {
+        const orphan = current.starters.find((st) => st.actionId && !next.quickActions.some((action) => action.id === st.actionId))
+        if (orphan) return { error: `The conversation starter “${orphan.text}” runs a quick action you removed. Change that starter first.` }
       }
     }
 
@@ -401,21 +427,21 @@ export async function importWebsiteFaqsAction(publish: boolean): Promise<ActionS
  * The dashboard preview's transport: same engine and data as the website (read fresh, ignoring
  * the on/off switch), but nothing is stored, so previews never appear in Conversations/Analytics.
  */
-export async function previewAssistantAction(event: AssistantEvent): Promise<AssistantResponse> {
+export async function previewAssistantAction(event: AssistantEvent, state: ConversationState = {}): Promise<AssistantResponse> {
   try {
     await authorizeAction("assistant.manage")
     const kb = await loadKnowledgeBase("admin")
-    const result = await respond(event, kb)
-    return { conversationId: null, replies: result.replies, ...(result.flowAnswers ? { flowAnswers: result.flowAnswers } : {}) }
+    const result = await respond(event, kb, state)
+    if (result.submitLead) {
+      // Captured details are checked like a real lead, but never saved or emailed from the preview.
+      const valid = leadApiPayloadSchema.safeParse({ ...result.submitLead, message: result.submitLead.requirement, source: "hosting-assistant" })
+      return {
+        conversationId: null,
+        replies: valid.success ? leadSentReplies(kb, result.submitLead, true) : [{ type: "text", text: `Preview: these details wouldn't pass validation (${valid.error.issues[0]?.message ?? "invalid"}).` }],
+      }
+    }
+    return { conversationId: null, replies: result.replies, ...(result.state ? { state: result.state } : {}) }
   } catch (error) {
     return { conversationId: null, replies: [], error: toActionError(error).error ?? "Preview failed." }
   }
-}
-
-/** Validates a preview enquiry exactly like /api/leads would, without saving or emailing it. */
-export async function previewLeadAction(lead: { name: string; email: string; phone: string; requirement: string; service: string }): Promise<{ ok: boolean; message: string }> {
-  await authorizeAction("assistant.manage")
-  const parsed = leadApiPayloadSchema.safeParse({ ...lead, message: lead.requirement, source: "hosting-assistant" })
-  if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Please check the form." }
-  return { ok: true, message: "Preview only — on the website this enquiry is saved to Leads and emailed to your team." }
 }

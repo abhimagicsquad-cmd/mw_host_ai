@@ -8,7 +8,7 @@ import { Loader2, MessageCircle, X } from "lucide-react"
 import { pathMatches } from "@/lib/assistant/settings"
 import type { AssistantResponse, PublicAssistantConfig } from "@/lib/assistant/types"
 import { trackConversion } from "@/lib/analytics"
-import { LEAD_CONTACT_FALLBACK, markLeadAutoPopupShown } from "@/lib/lead-form-utils"
+import { markLeadAutoPopupShown } from "@/lib/lead-form-utils"
 import { cn } from "@/lib/utils"
 
 import type { AssistantTransport } from "./assistant-panel"
@@ -48,44 +48,20 @@ const writeFlag = (key: string, on: boolean) => {
 function liveTransport(): AssistantTransport {
   const visitorId = getVisitorId()
   return {
-    captcha: true,
-    async send({ event, conversationId }) {
+    async send({ event, conversationId, state }) {
       const response = await fetch("/api/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visitorId, conversationId, event, pageUrl: window.location.href }),
+        body: JSON.stringify({ visitorId, conversationId, event, state: state ?? undefined, pageUrl: window.location.href }),
       })
       const data = (await response.json().catch(() => null)) as AssistantResponse | null
       if (!data) throw new Error("Bad response")
       return data
     },
-    submitLead: (conversationId) => async (lead, extras) => {
-      // Same pipeline as every other lead form: stored in Leads, emailed to the team.
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: lead.name,
-          email: lead.email,
-          phone: lead.phone,
-          service: lead.service,
-          message: lead.requirement,
-          website: extras.website,
-          source: "hosting-assistant",
-          formRenderedAt: extras.formRenderedAt,
-          pageUrl: window.location.href,
-          turnstileToken: extras.turnstileToken,
-          assistantConversationId: conversationId,
-          assistantVisitorId: visitorId,
-        }),
-      })
-      const data = (await response.json().catch(() => ({}))) as { success?: boolean; message?: string }
-      if (data.success) {
-        markLeadAutoPopupShown()
-        trackConversion("lead")
-        return { ok: true, message: data.message ?? "Thanks — we'll be in touch shortly." }
-      }
-      return { ok: false, message: data.message ?? `Something went wrong. ${LEAD_CONTACT_FALLBACK}` }
+    // The enquiry went through the normal lead pipeline: count the conversion like the other lead forms do.
+    onLeadSent() {
+      markLeadAutoPopupShown()
+      trackConversion("lead")
     },
   }
 }
