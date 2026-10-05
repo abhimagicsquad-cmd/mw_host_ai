@@ -96,8 +96,8 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
                 { label: isTransfer ? ".com transfer" : ".com from", value: prices[0].price },
-                { label: "Propagation", value: "< 24 hrs" },
-                { label: "WHOIS privacy", value: "Free" },
+                { label: "Propagation", value: "24–48 hrs" },
+                { label: "WHOIS privacy, supported TLDs", value: "Free" },
               ]
         }
         media={<HeroVisual variant="domain" />}
@@ -122,7 +122,7 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
       <TldPricingStrip items={prices} />
 
       {isTransfer ? (
-        <FeaturesSection eyebrow="Before you transfer" title="Transfer of domain notes" columns={3} features={domainTransferNotes} />
+        <FeaturesSection eyebrow="Before you transfer" title="Domain transfer notes" columns={3} features={domainTransferNotes} />
       ) : null}
 
       <FeaturesSection
@@ -136,7 +136,7 @@ export default async function DomainSlugPage({ params }: DomainSlugPageProps) {
         <div id="pricing">
           <PricingSection
             eyebrow="Hosting for your domain"
-            title="Select from Magic Host packages"
+            title="Select from MagicWorks Host packages"
             description="Powerful, lightning-fast NVMe web hosting — pick a plan and billing period."
             plans={plans}
             background="alt"

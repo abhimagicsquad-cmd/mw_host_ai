@@ -30,15 +30,17 @@ type VisualConfig = {
 const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
   dashboard: {
     statusLabel: "All systems live",
-    metricLabel: "Uptime, last 90 days",
-    metricValue: "99.98%",
+    // Each figure is published elsewhere (the SLA, contact hours, plans, About page). Unmeasured
+    // figures (90-day uptime, average load time, customer count) are not shown.
+    metricLabel: "Uptime SLA",
+    metricValue: "99.9%",
     barValues: [38, 52, 44, 70, 58, 82, 96],
     stats: [
-      { icon: Zap, value: "0.7s", label: "Avg. load time" },
-      { icon: Gauge, value: "NVMe", label: "Storage, every plan" },
+      { icon: Zap, value: "24/7", label: "Phone & ticket support" },
+      { icon: Globe2, value: "India & USA", label: "Data centres" },
     ],
-    badgeTop: { icon: ShieldCheck, label: "Free SSL", sublabel: "On every plan", tone: "orange" },
-    badgeBottom: { icon: ArrowUpRight, label: "12,000+", sublabel: "Businesses hosted", tone: "emerald" },
+    badgeTop: { icon: ShieldCheck, label: "Free SSL", sublabel: "With shared hosting", tone: "orange" },
+    badgeBottom: { icon: ArrowUpRight, label: "Since 2012", sublabel: "In business", tone: "emerald" },
   },
   security: {
     statusLabel: "Certificate active",
@@ -46,8 +48,8 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
     metricValue: "256-bit",
     barValues: [50, 62, 58, 74, 80, 88, 96],
     stats: [
-      { icon: Lock, value: "A+", label: "SSL Labs grade" },
-      { icon: ShieldCheck, value: "< 5 min", label: "Typical issuance" },
+      { icon: Lock, value: "DV · OV · EV", label: "Validation levels" },
+      { icon: ShieldCheck, value: "Minutes", label: "Typical DV issuance" },
     ],
     badgeTop: { icon: ShieldCheck, label: "Browser trusted", sublabel: "All major browsers", tone: "orange" },
     badgeBottom: { icon: Lock, label: "Zero", sublabel: "Setup fees", tone: "emerald" },
@@ -58,32 +60,32 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
     metricValue: "99.9%",
     barValues: [45, 58, 66, 62, 78, 84, 90],
     stats: [
-      { icon: Gauge, value: "NVMe", label: "Storage, every tier" },
+      { icon: Globe2, value: "India & USA", label: "Server locations" },
       { icon: Zap, value: "< 24 hrs", label: "Provisioning" },
     ],
-    badgeTop: { icon: ShieldCheck, label: "Dedicated IPs", sublabel: "5 included", tone: "orange" },
+    badgeTop: { icon: ShieldCheck, label: "Dedicated IPs", sublabel: "4 included", tone: "orange" },
     badgeBottom: { icon: ArrowUpRight, label: "Full root", sublabel: "Access, always", tone: "emerald" },
   },
   mail: {
     statusLabel: "Inbox syncing",
-    metricLabel: "Spam & malware caught",
-    metricValue: "99.7%",
+    metricLabel: "Spam & malware",
+    metricValue: "Filtered",
     barValues: [40, 55, 48, 66, 60, 75, 88],
     stats: [
       { icon: Inbox, value: "25GB", label: "Mailbox storage" },
       { icon: Mail, value: "IMAP/POP", label: "Any client, any device" },
     ],
     badgeTop: { icon: ShieldCheck, label: "Your domain", sublabel: "you@yourbusiness.com", tone: "orange" },
-    badgeBottom: { icon: ArrowUpRight, label: "Priority", sublabel: "Support included", tone: "emerald" },
+    badgeBottom: { icon: ArrowUpRight, label: "24/7", sublabel: "Phone & ticket support", tone: "emerald" },
   },
   domain: {
     statusLabel: "Domain active",
-    metricLabel: "Propagation time",
-    metricValue: "< 24 hrs",
+    metricLabel: "Typical propagation",
+    metricValue: "24–48 hrs",
     barValues: [42, 50, 46, 64, 58, 72, 85],
     stats: [
       { icon: Globe2, value: ".com/.in", label: "Most popular TLDs" },
-      { icon: Lock, value: "Free", label: "WHOIS privacy" },
+      { icon: Lock, value: "Free", label: "WHOIS privacy, supported TLDs" },
     ],
     badgeTop: { icon: ShieldCheck, label: "Auto-renewal", sublabel: "Never lose your domain", tone: "orange" },
     badgeBottom: { icon: ArrowUpRight, label: "Free", sublabel: "Domain forwarding", tone: "emerald" },
@@ -96,10 +98,10 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
     metricValue: "2012",
     barValues: [36, 44, 52, 60, 70, 82, 94],
     stats: [
-      { icon: Gauge, value: "NVMe", label: "Storage, every plan" },
-      { icon: Lock, value: "Free SSL", label: "On every plan" },
+      { icon: Gauge, value: "NVMe", label: "Shared hosting storage" },
+      { icon: Lock, value: "Free SSL", label: "With shared hosting" },
     ],
-    badgeTop: { icon: ShieldCheck, label: "Daily scans", sublabel: "Malware scanning", tone: "orange" },
+    badgeTop: { icon: ShieldCheck, label: "India & USA", sublabel: "Data centres", tone: "orange" },
     badgeBottom: { icon: ArrowUpRight, label: "Free migration", sublabel: "On annual plans", tone: "emerald" },
   },
   affiliate: {
@@ -108,11 +110,11 @@ const VARIANTS: Record<HeroVisualVariant, VisualConfig> = {
     metricValue: "20%",
     barValues: [30, 45, 40, 60, 55, 78, 92],
     stats: [
-      { icon: TrendingUp, value: "90 days", label: "Cookie window" },
+      { icon: TrendingUp, value: "60 days", label: "Cookie window" },
       { icon: HeartHandshake, value: "₹2,000", label: "Min. withdrawal" },
     ],
     badgeTop: { icon: ShieldCheck, label: "< 7%", sublabel: "Customer churn", tone: "orange" },
-    badgeBottom: { icon: ArrowUpRight, label: "Monthly", sublabel: "Payouts", tone: "emerald" },
+    badgeBottom: { icon: ArrowUpRight, label: "Weekly", sublabel: "Payouts", tone: "emerald" },
   },
 }
 

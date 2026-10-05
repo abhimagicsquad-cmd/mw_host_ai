@@ -43,11 +43,11 @@ function getTypeContent(type: ThankYouType, ref?: string) {
     case "affiliate":
       return {
         heading: "Thanks for applying to our affiliate program",
-        description: "We review every application by hand — expect to hear from us within a few business hours with your referral link and dashboard access.",
+        description: "We review every application by hand — expect to hear from us within two business days with your referral link and dashboard access.",
         steps: [
-          { title: "1. We review your application", description: "A real person checks your details — usually within a few business hours." },
+          { title: "1. We review your application", description: "A real person checks your details — within two business days." },
           { title: "2. You get your referral link", description: "Once approved, we send your unique tracking link and dashboard login." },
-          { title: "3. Start earning", description: "20% recurring commission on every referral, with a 90-day cookie window." },
+          { title: "3. Start earning", description: "20% recurring commission on every referral, with a 60-day cookie window." },
         ],
       }
     case "order":

@@ -35,7 +35,7 @@ export const testimonials: Testimonial[] = [
     title: "Director",
     company: "SpectroLabs System",
     quote:
-      "I really appreciate all the efforts by Magic host team for my website. My website has been deteriorated over past 6 to 8 months. However, Magic Host Definately helped us carrying out our business functions uninterrupted.",
+      "I really appreciate all the efforts by Magic host team for my website. My website has been deteriorated over past 6 to 8 months. However, Magic Host Definitely helped us carrying out our business functions uninterrupted.",
     avatarUrl: "/images/testimonials/asish-mukharji.jpg",
   },
 ]

@@ -35,7 +35,7 @@ function buildSearchIndex(): (SearchResult & { keywords: string })[] {
     ...emailPages.map((page) => ({ title: page.title, description: page.description, href: `/email-hosting/${page.slug}`, group: "Email Hosting" })),
     {
       title: "SSL Certificates",
-      description: "Domain Validated, Business Validated, Wildcard, and Extended Validated SSL certificates.",
+      description: "Domain Validated, Business Validated, Wildcard, and Extended Validation SSL certificates.",
       href: "/ssl",
       group: "SSL",
     },

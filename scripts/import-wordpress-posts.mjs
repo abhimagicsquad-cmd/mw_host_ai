@@ -70,6 +70,9 @@ function parseBody(html) {
     const text = decode(m[2])
     if (!text || /^(share|tweet)\b/i.test(text)) continue
     if (m[1].startsWith("h")) {
+      // Some posts have no share/author/comments marker, so the sidebar and footer widgets
+      // ("Categories", "Recent Posts", the 24/7 call box…) would be read in as article sections.
+      if (/^(categories|recent posts)$/i.test(text)) break
       if (current.body.length || sections.length) sections.push(current)
       current = { heading: text, body: [] }
     } else {

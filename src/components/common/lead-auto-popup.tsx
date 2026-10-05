@@ -3,35 +3,28 @@
 import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 
+import { hasLeadAutoPopupBeenShown, markLeadAutoPopupShown } from "@/lib/lead-form-utils"
+
 const LeadDialog = dynamic(() => import("@/components/common/lead-dialog").then((mod) => mod.LeadDialog), {
   ssr: false,
 })
 
-const SESSION_KEY = "mwh:lead-auto-popup-shown"
 /** Share of the page scrolled before the dialog opens — the visitor has read past the fold. */
 const SCROLL_DEPTH = 0.5
 
-function hasBeenShown() {
-  try {
-    return window.sessionStorage.getItem(SESSION_KEY) === "1"
-  } catch {
-    // Storage blocked (e.g. strict privacy mode) — treat as shown rather than risk repeat popups.
-    return true
-  }
-}
+/**
+ * Pages that already carry a lead form, or confirm one was sent: the popup would interrupt or
+ * repeat the conversion. Matched against the public URL (the layout persists across navigations).
+ */
+const NO_POPUP_PATHS = [/^\/contact-us\/?$/, /^\/become-our-affiliate\/?$/, /^\/thank-you/]
 
-function markShown() {
-  try {
-    window.sessionStorage.setItem(SESSION_KEY, "1")
-  } catch {
-    // Ignore — see hasBeenShown().
-  }
-}
-
-/** True while the visitor is typing in a field — never interrupt that with a dialog. */
+/** True while the visitor is typing in, or working through, a form — never interrupt that. */
 function isTyping() {
   const active = document.activeElement
-  return active instanceof HTMLElement && (active.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName))
+  return (
+    active instanceof HTMLElement &&
+    (active.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName) || active.closest("form") !== null)
+  )
 }
 
 /**
@@ -48,7 +41,7 @@ export function LeadAutoPopup() {
   const [hasOpened, setHasOpened] = useState(false)
 
   useEffect(() => {
-    if (hasBeenShown()) return
+    if (hasLeadAutoPopupBeenShown()) return
 
     let frame = 0
     const cleanup = () => {
@@ -60,8 +53,9 @@ export function LeadAutoPopup() {
       // Don't stack on a dialog the visitor already opened (lead CTA, mobile nav, etc.) or
       // interrupt typing — wait for the next trigger instead.
       if (document.querySelector('[role="dialog"]') || isTyping()) return
+      if (NO_POPUP_PATHS.some((pattern) => pattern.test(window.location.pathname))) return
       cleanup()
-      markShown()
+      markLeadAutoPopupShown()
       setHasOpened(true)
       setOpen(true)
     }

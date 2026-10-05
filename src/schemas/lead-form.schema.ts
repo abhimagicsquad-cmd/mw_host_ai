@@ -51,6 +51,8 @@ export const leadFormDefaultValues: LeadFormValues = {
  * forms can share one submission pipeline.
  */
 export const leadApiPayloadSchema = leadFormSchema.extend({
+  // <GetQuoteForm /> sends its requirements (up to 2000 characters) as the message.
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
   source: z.string().max(60).optional(),
   formRenderedAt: z.number().optional(),
   company: z.string().trim().max(120).optional().or(z.literal("")),

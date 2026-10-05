@@ -9,14 +9,15 @@ import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-
 import { withAddedFooterLinks } from "@/lib/nav-augment"
 import { toNavColumns } from "@/lib/nav-mapper"
 import { getNavigation, getSiteSettings } from "@/lib/cms/queries"
+import type { NavColumn } from "@/types/nav"
 
 import { FooterColumn } from "./footer-column"
 import { FooterCTABlock } from "./footer-cta-block"
 
 const trustBadges = [
-  { label: "Free SSL on every plan", icon: ShieldCheck },
+  { label: "Free SSL with shared hosting", icon: ShieldCheck },
   { label: "99.9% uptime SLA", icon: Zap },
-  { label: "30-day money-back guarantee", icon: RotateCcw },
+  { label: "30-day money-back on shared hosting", icon: RotateCcw },
   { label: "Secure payments", icon: CreditCard },
 ]
 
@@ -47,7 +48,8 @@ export async function Footer({ showCta = true }: FooterProps) {
   const phoneHref = settings?.contactPhoneHref ?? siteConfig.contact.phoneHref
   const email = settings?.contactEmail ?? siteConfig.contact.email
   const address = settings?.contactAddress ?? siteConfig.contact.address
-  const columns = withAddedFooterLinks(navigation?.footerColumns?.length ? toNavColumns(navigation.footerColumns) : fallbackFooterColumns)
+  // Explicit type argument: inferring it from the two branches is order-dependent and could fail the type check.
+  const columns = withAddedFooterLinks<NavColumn>(navigation?.footerColumns?.length ? toNavColumns(navigation.footerColumns) : fallbackFooterColumns)
   const socials =
     settings?.socialLinks?.map((social) => ({
       label: social.platform,
@@ -69,7 +71,8 @@ export async function Footer({ showCta = true }: FooterProps) {
           ))}
         </div>
 
-        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-5">
+        {/* lg only: a wider contact column, so the email domain fits on one line at 1024px. */}
+        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_minmax(0,1.25fr)] xl:grid-cols-5">
           <div className="flex flex-col gap-4 lg:col-span-1">
             <Logo variant="light" />
             <p className="text-sm text-white/70">{description}</p>
@@ -100,9 +103,10 @@ export async function Footer({ showCta = true }: FooterProps) {
                 <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
                 {phone}
               </a>
-              <a href={`mailto:${email}`} className="flex items-start gap-2.5 text-sm text-white/70 hover:text-white">
+              {/* The address may wrap (after the @ by preference) so the 5-column grid fits at 1024px. */}
+              <a href={`mailto:${email}`} className="flex items-start gap-2.5 text-sm text-white/70 wrap-anywhere hover:text-white">
                 <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-                {email}
+                <span>{email.includes("@") ? <>{email.slice(0, email.indexOf("@") + 1)}<wbr />{email.slice(email.indexOf("@") + 1)}</> : email}</span>
               </a>
               <p className="flex items-start gap-2.5 text-sm text-white/70">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />

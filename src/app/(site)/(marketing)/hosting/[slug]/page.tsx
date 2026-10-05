@@ -80,7 +80,7 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
           copy?.heroStats?.length
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
-                { label: "Avg. load time", value: "0.7s" },
+                { label: "In business since", value: "2012" },
                 { label: "Uptime SLA", value: "99.9%" },
                 { label: "Support", value: "24/7" },
               ]

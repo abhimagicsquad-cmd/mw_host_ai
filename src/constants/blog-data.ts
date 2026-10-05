@@ -117,7 +117,7 @@ const originalPosts: BlogPost[] = [
       {
         heading: "They all encrypt the same way",
         body: [
-          "This is the most common misconception: every certificate tier — Domain Validated, Business Validated, Extended Validated — provides the same strength of encryption. The difference between tiers is entirely about identity verification, not security strength.",
+          "This is the most common misconception: every certificate tier — Domain Validated, Business Validated, Extended Validation — provides the same strength of encryption. The difference between tiers is entirely about identity verification, not security strength.",
         ],
       },
       {
@@ -127,9 +127,9 @@ const originalPosts: BlogPost[] = [
         ],
       },
       {
-        heading: "Business and Extended Validated",
+        heading: "Business and Extended Validation",
         body: [
-          "Business Validated (OV) confirms your organization is a real, registered legal entity. Extended Validated (EV) goes further with rigorous manual verification of your business details, historically shown with a green address bar (modern browsers show it more subtly now, but the underlying verification is still the strongest available).",
+          "Business Validated (OV) confirms your organization is a real, registered legal entity. Extended Validation (EV) goes further with rigorous manual verification of your business details, historically shown with a green address bar (modern browsers show it more subtly now, but the underlying verification is still the strongest available).",
           "These matter most for e-commerce, financial services, and anywhere a visitor is about to hand over payment details — the verification is doing trust-building work, not additional encryption work.",
         ],
       },

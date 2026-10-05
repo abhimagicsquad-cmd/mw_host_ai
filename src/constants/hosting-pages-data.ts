@@ -42,7 +42,7 @@ export const hostingPages: HostingPageData[] = [
     faqs: [
       { question: "How long does setup take?", answer: "Most accounts are live within 5 minutes of payment confirmation." },
       { question: "Can I install WordPress automatically?", answer: "Yes — Softaculous one-click install is available in cPanel on every plan." },
-      { question: "Is there a money-back guarantee?", answer: "Yes, every plan includes a 30-day money-back guarantee." },
+      { question: "Is there a money-back guarantee?", answer: "Yes. New shared hosting customers can request a full refund within 30 days of purchase; domain and SSL fees are non-refundable." },
     ],
   },
   {
@@ -104,7 +104,7 @@ export const hostingPages: HostingPageData[] = [
       "Free SSL on every domain",
     ],
     features: [
-      { title: "Full root-level cPanel", description: "File manager, cron jobs, and database tools, no waiting on support.", icon: Terminal },
+      { title: "Full cPanel access", description: "File manager, cron jobs, and database tools, no waiting on support.", icon: Terminal },
       { title: "Security hardened", description: "Server-level protections applied by default, not opt-in.", icon: Lock },
       { title: "Unlimited databases", description: "Run as many MySQL databases as your apps need.", icon: Server },
     ],

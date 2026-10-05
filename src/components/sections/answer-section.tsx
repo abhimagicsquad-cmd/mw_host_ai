@@ -96,7 +96,7 @@ export function AnswerSection({ path, kind, label }: AnswerSectionProps) {
       {articles.length > 0 ? (
         <div className="mt-12">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h2 className="text-lg font-semibold text-brand-navy">Learn more about {getBlogCategoryName(entry.topic).toLowerCase()}</h2>
+            <h2 className="text-lg font-semibold text-brand-navy">Learn more about {getBlogCategoryName(entry.topic)}</h2>
             <Link href={`/blog/category/${entry.topic}`} className="flex items-center gap-1 text-sm font-medium text-brand-orange hover:underline">
               All {getBlogCategoryName(entry.topic)} articles
               <ArrowRight className="size-4" aria-hidden="true" />

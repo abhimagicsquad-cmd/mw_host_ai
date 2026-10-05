@@ -43,15 +43,15 @@ export default async function AboutUsPage() {
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "About Us" }]}
       />
 
-      <ContentSection eyebrow="Our story" title="From a small Pune office to 12,000+ hosted businesses">
+      <ContentSection eyebrow="Our story" title="From a small Pune office to a full hosting stack">
         <p>
           MagicWorks Host started inside MagicWorks IT Solutions with a simple observation: most hosting providers
           made customers choose between speed, support, and price. We didn&apos;t think that trade-off should exist.
         </p>
         <p>
           Since 2012, we&apos;ve grown from a handful of shared-hosting customers in Bavdhan, Pune, to a full hosting
-          stack — shared, VPS, dedicated servers, domains, SSL, and business email — all built on NVMe storage and
-          backed by a support team that answers the phone.
+          stack — shared, VPS, dedicated servers, domains, SSL, and business email — with NVMe storage on shared hosting and
+          a support team that answers the phone.
         </p>
         <p>
           We&apos;re still a focused, independent team. That means decisions about infrastructure and support don&apos;t
@@ -89,7 +89,7 @@ export default async function AboutUsPage() {
         reasons={[
           {
             title: "Performance-first",
-            description: "NVMe storage is standard on every plan, not an add-on you pay extra to unlock.",
+            description: "NVMe storage is standard on every shared hosting plan, not an add-on you pay extra to unlock.",
             icon: Zap,
           },
           {
@@ -99,22 +99,22 @@ export default async function AboutUsPage() {
           },
           {
             title: "Customer-focused support",
-            description: "24/7 phone and ticket support, with a 30-day money-back guarantee on every plan.",
+            description: "24/7 phone and ticket support, and a 30-day money-back guarantee on new shared hosting.",
             icon: HeartHandshake,
           },
           {
             title: "Security by default",
-            description: "Free SSL, daily JetBackup snapshots, and hardened server configurations out of the box.",
+            description: "Free SSL and JetBackup backups with shared hosting, out of the box.",
             icon: ShieldCheck,
           },
           {
             title: "Straightforward pricing",
-            description: "The price you see is the price you pay — no surprise renewal hikes buried in fine print.",
+            description: "Renewal prices are shown next to the introductory price, not buried in fine print.",
             icon: Users,
           },
           {
             title: "Always reachable",
-            description: "Sales and support run seven days a week, because websites don't only break on weekdays.",
+            description: "Support runs 24/7 and sales are open Monday to Saturday, because websites don't only break on weekdays.",
             icon: HeadphonesIcon,
           },
         ]}
@@ -125,7 +125,7 @@ export default async function AboutUsPage() {
         title="A decade of infrastructure, not a pitch deck"
         stats={[
           { label: "Years in operation", value: "13+" },
-          { label: "Businesses hosted", value: "12,000+" },
+          { label: "Data centres", value: "India & USA" },
           { label: "Uptime commitment", value: "99.9%" },
           { label: "Support availability", value: "24/7" },
         ]}

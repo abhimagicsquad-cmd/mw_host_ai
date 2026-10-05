@@ -235,7 +235,7 @@ export const hostingGuides: KBGuide[] = [
       {
         heading: "How to get started with VPS hosting at MagicWorks Host",
         body: [
-          "MagicWorks Host offers cloud VPS hosting, deployed through the MagicWorksHost cloud management platform, with full root access and NVMe-backed storage on servers in India and the USA. You can upgrade to a bigger tier as you grow without a migration project.",
+          "MagicWorks Host offers cloud VPS hosting, deployed through the MagicWorks Host cloud management platform, with full root access and NVMe-backed storage on servers in India and the USA. You can upgrade to a bigger tier as you grow without a migration project.",
           "If you need a whole machine instead, the company also offers dedicated servers and managed dedicated servers, where the team handles setup, OS updates, security patching, monitoring and backups. Visit the VPS hosting page to see the available tiers, or contact the team if you are unsure which fits.",
         ],
       },
@@ -365,7 +365,7 @@ export const hostingGuides: KBGuide[] = [
       {
         heading: "How to get started with cloud hosting at MagicWorks Host",
         body: [
-          "At MagicWorks Host, cloud hosting is offered as cloud VPS, deployed through the MagicWorksHost cloud management platform. Each server has full root access and NVMe-backed storage, with locations in India and the USA, and you can upgrade to a bigger tier without a migration project.",
+          "At MagicWorks Host, cloud hosting is offered as cloud VPS, deployed through the MagicWorks Host cloud management platform. Each server has full root access and NVMe-backed storage, with locations in India and the USA, and you can upgrade to a bigger tier without a migration project.",
           "See the cloud hosting and VPS hosting pages for the available tiers, or contact the team to talk through what your site needs.",
         ],
       },

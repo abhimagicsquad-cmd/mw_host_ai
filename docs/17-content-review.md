@@ -36,17 +36,9 @@ statements were checked against the published facts. Points worth a second look:
   approved changes that may shorten it. Re-check before ICANN's new Transfer Policy takes effect.
 - **Dates:** every guide shows "Updated 3 October 2026". Change `updated` when you revise one.
 
-## Elsewhere: existing unverified figures (not changed)
+## Elsewhere: hero figures (resolved in Phase 3)
 
-The hero illustrations in `src/components/sections/hero-visual.tsx` hardcode figures that were
-already on the site before this work. Confirm or remove them:
-
-- "99.98% uptime, last 90 days"
-- "0.7s avg. load time"
-- "12,000+ businesses hosted"
-- "256-bit" encryption and "A+ SSL Labs grade"
-- "Dedicated IPs, 5 included"
-- "99.7% spam caught", "25GB mailbox storage" and "Free WHOIS privacy"
-- the affiliate figures
-
-The new pages use a separate `service` variant that shows only verified facts.
+The unverified hero figures listed here before (99.98% uptime, 0.7s load time, 12,000+ businesses,
+A+ SSL Labs grade, 5 dedicated IPs, 99.7% spam caught, unqualified free WHOIS privacy, and the
+affiliate cookie and payout terms) were removed or corrected in Phase 3. The full claim register,
+and the claims still waiting for the owner to confirm, are in `docs/18-phase-3-launch-review.md`.

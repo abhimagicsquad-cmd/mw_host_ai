@@ -9,15 +9,12 @@ import { TextField } from "@/components/forms/fields/text-field"
 import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
 import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
+import { LEAD_CONTACT_FALLBACK, filterPhoneInput, markLeadAutoPopupShown } from "@/lib/lead-form-utils"
 import { AFFILIATE_SERVICE_VALUE } from "@/schemas/lead-form.schema"
 import { affiliateSignupDefaultValues, affiliateSignupSchema, type AffiliateSignupValues } from "@/schemas/affiliate-signup.schema"
 
 function lettersOnly(event: React.ChangeEvent<HTMLInputElement>) {
   event.target.value = event.target.value.replace(/[^A-Za-z\s]/g, "")
-}
-
-function digitsOnly(event: React.ChangeEvent<HTMLInputElement>) {
-  event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10)
 }
 
 /**
@@ -66,12 +63,13 @@ export function AffiliateSignupForm() {
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       if (data.success) {
         reset()
+        markLeadAutoPopupShown()
         router.push("/thank-you-for-interest-in-affiliate-program/")
         return
       }
-      setError(data.message ?? "Something went wrong. Please try again.")
+      setError(data.message ?? `Something went wrong. Please try again. ${LEAD_CONTACT_FALLBACK}`)
     } catch {
-      setError("Network error — please check your connection and try again.")
+      setError(`Network error — please check your connection and try again. ${LEAD_CONTACT_FALLBACK}`)
     }
   }
 
@@ -90,8 +88,8 @@ export function AffiliateSignupForm() {
           placeholder="Mobile Number *"
           inputMode="numeric"
           autoComplete="tel"
-          maxLength={10}
-          registration={register("phone", { onChange: digitsOnly })}
+          maxLength={16}
+          registration={register("phone", { onChange: filterPhoneInput })}
           error={errors.phone?.message}
         />
       </div>

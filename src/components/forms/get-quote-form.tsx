@@ -12,6 +12,7 @@ import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
 import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
 import { hostingRelatedServiceValues, hostingTypeOptions, serviceOptions } from "@/constants/service-options"
+import { LEAD_CONTACT_FALLBACK, filterPhoneInput, markLeadAutoPopupShown } from "@/lib/lead-form-utils"
 import {
   getQuoteFormDefaultValues,
   getQuoteFormSchema,
@@ -28,10 +29,6 @@ type GetQuoteFormProps = {
 
 function filterNameInput(event: React.ChangeEvent<HTMLInputElement>) {
   event.target.value = event.target.value.replace(/[^A-Za-z\s]/g, "")
-}
-
-function filterPhoneInput(event: React.ChangeEvent<HTMLInputElement>) {
-  event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10)
 }
 
 export function GetQuoteForm({ source = "get-quote-form", defaultService, onSuccess }: GetQuoteFormProps) {
@@ -90,17 +87,18 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
 
       if (success) {
         reset()
+        markLeadAutoPopupShown()
         onSuccess?.()
-        router.push("/thank-you")
+        router.push("/thank-you/")
         return
       }
 
       setResult({
         success,
-        message: data.message ?? "Something went wrong. Please try again.",
+        message: data.message ?? `Something went wrong. Please try again. ${LEAD_CONTACT_FALLBACK}`,
       })
     } catch {
-      setResult({ success: false, message: "Network error — please check your connection and try again." })
+      setResult({ success: false, message: `Network error — please check your connection and try again. ${LEAD_CONTACT_FALLBACK}` })
     }
   }
 
@@ -132,7 +130,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           required
           placeholder="Phone Number *"
           inputMode="numeric"
-          maxLength={10}
+          maxLength={16}
           autoComplete="tel"
           registration={register("phone", { onChange: filterPhoneInput })}
           error={errors.phone?.message}

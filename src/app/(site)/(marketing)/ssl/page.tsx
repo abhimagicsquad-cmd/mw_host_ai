@@ -32,8 +32,8 @@ const defaultReasons: Feature[] = [
 ]
 
 const defaultFaqs: FAQItem[] = [
-  { question: "What's the difference between the certificate tiers?", answer: "Domain Validated confirms you control the domain; Business and Extended Validated additionally verify your organization's legal identity, showing more trust signals to visitors." },
-  { question: "How long does issuance take?", answer: "Domain Validated certificates issue within minutes; Business and Extended Validated can take 1-3 business days due to identity verification." },
+  { question: "What's the difference between the certificate tiers?", answer: "Domain Validated confirms you control the domain; Business and Extended Validation additionally verify your organization's legal identity, showing more trust signals to visitors." },
+  { question: "How long does issuance take?", answer: "Domain Validated certificates issue within minutes; Business and Extended Validation can take 1-3 business days due to identity verification." },
   { question: "Does a Wildcard certificate cover subdomains?", answer: "Yes — one Wildcard certificate secures unlimited subdomains on a single root domain." },
   { question: "Will you install the certificate for me?", answer: "Yes, installation support is included free on any MagicWorks Host hosting plan." },
   { question: "Do I need SSL if I'm not selling anything online?", answer: "Yes — HTTPS is now expected by browsers and visitors regardless of whether you process payments, and it affects SEO." },
@@ -47,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       cms?.seo?.metaDescription ??
       cms?.heroDescription ??
-      "Domain Validated, Business Validated, Wildcard, and Extended Validated SSL certificates to secure your site and build customer trust.",
+      "Domain Validated, Business Validated, Wildcard, and Extended Validation SSL certificates to secure your site and build customer trust.",
     path: "/ssl",
   })
 }
@@ -89,8 +89,8 @@ export default async function SslPage() {
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
                 { label: "Encryption", value: "256-bit" },
-                { label: "Issuance", value: "< 5 min" },
-                { label: "SSL Labs grade", value: "A+" },
+                { label: "DV issuance", value: "Minutes" },
+                { label: "Validation levels", value: "DV · OV · EV" },
               ]
         }
         media={<HeroVisual variant="security" />}

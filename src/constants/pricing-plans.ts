@@ -276,7 +276,7 @@ export const sslPlans: PricingPlan[] = withOrderCta([
   },
   {
     slug: "extended-validated",
-    name: "Extended Validated",
+    name: "Extended Validation",
     price: "₹25,000",
     priceSuffix: "/yr",
     features: ["Highest identity assurance", "Full legal entity verification", "Strict validation, highest phishing protection", "$250,000 warranty", "256-bit encryption", SSL_DEDICATED_IP],

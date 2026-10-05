@@ -83,7 +83,7 @@ export default async function EmailSlugPage({ params }: EmailSlugPageProps) {
           copy?.heroStats?.length
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
-                { label: "Spam caught", value: "99.7%" },
+                { label: "Spam & malware filter", value: "Included" },
                 { label: "Pricing", value: `${plan.price}${plan.priceSuffix ?? ""}` },
                 { label: "Support", value: "24/7" },
               ]

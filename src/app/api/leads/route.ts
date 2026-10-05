@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 
   if (isRateLimited(ip)) {
     return NextResponse.json(
-      { success: false, message: "Too many requests. Please try again in a few minutes." },
+      { success: false, message: `Too many requests. Please try again in a few minutes, or call us on ${siteConfig.contact.phone}.` },
       { status: 429 }
     )
   }
@@ -80,13 +80,14 @@ export async function POST(request: Request) {
     parsed.data
 
   if (!(await verifyTurnstile(turnstileToken, ip))) {
-    return NextResponse.json({ success: false, message: "The security check failed. Please try again." }, { status: 403 })
+    return NextResponse.json({ success: false, message: `The security check failed. Please try again, or call us on ${siteConfig.contact.phone}.` }, { status: 403 })
   }
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
 
-  const isDuplicate = markAndCheckDuplicate(`${email.toLowerCase()}:${phone}`)
+  const duplicateKey = `${email.toLowerCase()}:${phone}`
+  const isDuplicate = markAndCheckDuplicate(duplicateKey)
 
   if (isLikelyBot || isDuplicate) {
     return NextResponse.json({
@@ -101,6 +102,8 @@ export async function POST(request: Request) {
   ])
 
   if (!storeResult.stored && !storeResult.skipped) {
+    // Forget this submission so the visitor's retry is saved, not swallowed as a duplicate.
+    recentSubmissions.delete(duplicateKey)
     // Case C/D: the durable record failed to save — that's the one outcome we can't let
     // silently succeed, even if the notification email went out (emailResult.sent).
     console.error("[api/leads] Supabase insert failed; lead was not persisted.", {

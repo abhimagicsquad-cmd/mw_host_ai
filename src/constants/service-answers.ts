@@ -61,7 +61,7 @@ export const serviceAnswers: Record<string, ServiceAnswer> = {
     question: "What is VPS hosting?",
     answer:
       "VPS (Virtual Private Server) hosting splits one physical server into isolated virtual servers, each with its own guaranteed CPU, RAM, storage and operating system. You get root access and dedicated resources like a dedicated server, at a fraction of the cost — the usual next step when a site outgrows shared hosting.",
-    facts: ["Guaranteed vCPU and RAM, not shared", "Full root access and choice of OS", "Available in India and USA data centres"],
+    facts: ["Guaranteed vCPU and RAM allocation", "Full root access and choice of OS", "Available in India and USA data centres"],
     topic: "web-hosting",
   },
   "/dedicated-hosting/dedicated-server": {
@@ -116,8 +116,8 @@ export const serviceAnswers: Record<string, ServiceAnswer> = {
   "/domain/transfer-your-domain-name": {
     question: "How does a domain transfer work?",
     answer:
-      "To transfer a domain, unlock it at your current registrar, get its authorisation (EPP) code and start the transfer with the new registrar using that code. After you approve the request by email the transfer usually completes within 5–7 days, and a year is typically added to the registration.",
-    facts: ["Unlock the domain and get the EPP code", "Approve the transfer by email", "Usually completes within 5–7 days"],
+      "To transfer a domain, unlock it at your current registrar, get its authorisation (EPP) code and start the transfer with the new registrar using that code. After you approve the request by email the transfer usually completes within 1–7 days, and a year is typically added to the registration.",
+    facts: ["Unlock the domain and get the EPP code", "Approve the transfer by email", "Usually completes within 1–7 days"],
     topic: "domains-email",
   },
   "/domain/renew": {
@@ -179,7 +179,7 @@ export const serviceAnswers: Record<string, ServiceAnswer> = {
   "/ssl/wildcard": {
     question: "What is a wildcard SSL certificate?",
     answer:
-      "A wildcard SSL certificate secures a domain and all of its first-level subdomains with a single certificate — for example *.yourbusiness.com covers shop., blog. and mail.yourbusiness.com. It is simpler and usually cheaper than buying a separate certificate for each subdomain.",
+      "A wildcard SSL certificate secures a domain and all of its first-level subdomains with a single certificate — for example *.yourbusiness.com covers shop.yourbusiness.com, blog.yourbusiness.com and mail.yourbusiness.com. It is simpler and usually cheaper than buying a separate certificate for each subdomain.",
     facts: ["Covers unlimited first-level subdomains", "One certificate to manage and renew", "Domain-validated issuance"],
     topic: "security",
   },

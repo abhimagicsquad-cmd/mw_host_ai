@@ -75,11 +75,11 @@ export const serviceLandings: ServiceLanding[] = [
     name: "Cloud Hosting",
     title: "Cloud hosting on NVMe cloud VPS, in India or the USA",
     description:
-      "Run your website or application on a cloud VPS with its own CPU and RAM, NVMe storage and full root access — deployed on the MagicWorksHost cloud platform in India or the USA.",
+      "Run your website or application on a cloud VPS with its own CPU and RAM, NVMe storage and full root access — deployed on the MagicWorks Host cloud platform in India or the USA.",
     metaTitle: "Cloud Hosting – NVMe Cloud VPS in India & USA",
     metaDescription:
       "Cloud hosting from MagicWorks Host: NVMe cloud VPS with guaranteed CPU and RAM, full root access and a choice of India or USA servers. Compare cloud VPS plans.",
-    bullets: ["Guaranteed CPU and RAM, never shared", "Full root access", "NVMe storage on every tier", "Upgrade without a migration project"],
+    bullets: ["Guaranteed CPU and RAM allocation", "Full root access", "NVMe storage on every tier", "Upgrade without a migration project"],
     quoteService: "cloud-hosting",
     heroVisual: "service",
     answer: {
@@ -111,7 +111,7 @@ export const serviceLandings: ServiceLanding[] = [
       {
         question: "Is your cloud hosting the same as your VPS hosting?",
         answer:
-          "Yes. Our cloud hosting is delivered as cloud VPS: each server is a virtual machine with its own CPU, RAM and NVMe storage, deployed on the MagicWorksHost cloud platform. The tiers and prices are the VPS plans shown on this page.",
+          "Yes. Our cloud hosting is delivered as cloud VPS: each server is a virtual machine with its own CPU, RAM and NVMe storage, deployed on the MagicWorks Host cloud platform. The tiers and prices are the VPS plans shown on this page.",
       },
       {
         question: "Do I get root access?",
@@ -241,7 +241,7 @@ export const serviceLandings: ServiceLanding[] = [
         { title: "WordPress websites", description: "Sites you can update yourself, built on the CMS our hosting is tuned for.", icon: Code },
         { title: "Online stores", description: "WooCommerce stores for selling products or services online.", icon: ShoppingCart },
         { title: "Domain and email setup", description: "Register your domain and set up business email on it alongside the build.", icon: Mail },
-        { title: "SSL and HTTPS", description: "Every MagicWorks hosting plan includes a free SSL certificate.", icon: Lock },
+        { title: "SSL and HTTPS", description: "Every MagicWorks Host hosting plan includes a free SSL certificate.", icon: Lock },
         { title: "Launch on fast hosting", description: "Go live on NVMe hosting with daily JetBackup snapshots and 24/7 support.", icon: Server },
       ],
     },
@@ -418,7 +418,7 @@ export const serviceLandings: ServiceLanding[] = [
     name: "Website Security",
     title: "Website security that starts on the server, not after an attack",
     description:
-      "Every MagicWorks hosting account gets free SSL, daily malware scanning, server-level hardening and daily backups. For anything beyond that — a hacked site, an audit, a paid certificate — our team can help.",
+      "Every MagicWorks Host hosting account gets free SSL, daily malware scanning, server-level hardening and daily backups. For anything beyond that — a hacked site, an audit, a paid certificate — our team can help.",
     metaTitle: "Website Security – SSL, Malware Scanning & Backups",
     metaDescription:
       "Website security from MagicWorks Host: free SSL, daily malware scanning, server hardening and daily JetBackup snapshots, plus help for hacked or at-risk sites.",

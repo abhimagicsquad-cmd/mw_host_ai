@@ -84,9 +84,9 @@ export default async function DedicatedSlugPage({ params }: DedicatedSlugPagePro
           copy?.heroStats?.length
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
-                { label: "Provisioning", value: managed ? "< 48 hrs" : "< 24 hrs" },
+                { label: "Provisioning", value: "< 24 hrs" },
                 { label: "Support", value: "24/7" },
-                { label: "Dedicated IPs", value: "5" },
+                { label: "Dedicated IPs", value: "4" },
               ]
         }
         media={<HeroVisual variant="server" />}
