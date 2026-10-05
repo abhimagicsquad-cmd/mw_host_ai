@@ -7,8 +7,8 @@ Status of the external service connections for this repo, and what's still neede
 | Service | Account | Project | Notes |
 |---|---|---|---|
 | GitHub | `abhimagicsquad-cmd` | [`mw_host_ai`](https://github.com/abhimagicsquad-cmd/mw_host_ai) | Public repo, was empty — pushed the initial commit (UI foundation) to `main`. |
-| Sanity | `abhimagicsquad@gmail.com` (GitHub OAuth) | `mw_host_ai` — project ID **`uf33qaon`** | Dataset: `production`. CORS allowlist: `http://localhost:3333`, `http://localhost:3000`, `https://mw-host-ai.vercel.app`. |
-| Vercel | `abhimagicsquad-cmd` (team `mw-host`) | `mw-host-ai` | Framework preset: Next.js. Git-connected to the GitHub repo above — pushing to `main` auto-deploys to Production. First deploy live at https://mw-host-ai.vercel.app (verified 200, header/footer render). |
+| Sanity | `abhimagicsquad@gmail.com` (GitHub OAuth) | `mw_host_ai` — project ID **`uf33qaon`** | Dataset: `production`. CORS allowlist: `http://localhost:3333`, `http://localhost:3000` and the original Vercel domain. Sanity was removed from the code in c341c3b. |
+| Vercel | `abhimagicsquad-cmd` (team `mw-host`) | `mw-host-ai` | Framework preset: Next.js. Git-connected to the GitHub repo above — pushing to `main` auto-deploys to Production. Production domain: https://magicworkshost.vercel.app (the original project domain 301-redirects to it). |
 
 **Note:** the CLIs on this machine were originally logged in as a different account (`magicabhi1234`) with two unrelated projects (`OMC Test`/`OMC CMS` on Sanity, `omc-2-0`/`omc-test-studio` on Vercel) — those were left untouched. All three CLIs were logged out and re-authenticated as `abhimagicsquad-cmd`/`abhimagicsquad@gmail.com` before anything below was connected.
 
@@ -28,7 +28,7 @@ Per "do not invent values," these were left blank rather than guessed:
 - **`SANITY_REVALIDATE_SECRET`** — any random string, shared between the webhook config and the revalidate route handler; can be generated when that route is built.
 - **Email provider** (`lib/email.ts`) — not chosen yet; architecture doc suggests Resend but no account/key exists for this project.
 - **Captcha** (`NEXT_PUBLIC_CAPTCHA_SITE_KEY` / `CAPTCHA_SECRET_KEY`) — provider not chosen (reCAPTCHA v3 vs. Cloudflare Turnstile per `06-ai-native-upgrade-recommendations.md`).
-- **Custom domain** — Vercel project currently only has its default `mw-host-ai.vercel.app` domain; no custom domain (e.g. magicworkshost.com) is attached.
+- **Domain** — production is served at `magicworkshost.vercel.app`; the original project domain 301-redirects to it. No custom domain (e.g. magicworkshost.com) is attached yet. The canonical origin comes from `NEXT_PUBLIC_SITE_URL` (default `https://magicworkshost.vercel.app`, `src/constants/site-config.ts`).
 
 **Sanity Studio — now implemented.** Schema code lives at `src/sanity/schemaTypes/`, the Studio is served from `/studio`, and `src/sanity/lib/queries.ts` fetches content for pages. Pages fall back to their hardcoded defaults until an editor populates the corresponding document in Studio, so no visual change ships until content is entered.
 

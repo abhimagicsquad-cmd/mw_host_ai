@@ -21,7 +21,7 @@ This repository contains the forensic audit and migration blueprint for rebuildi
 ## Live links
 
 - Repo: https://github.com/abhimagicsquad-cmd/mw_host_ai
-- Production: https://mw-host-ai.vercel.app
+- Production: https://magicworkshost.vercel.app (the original project domain 301-redirects here)
 - Sanity project: https://www.sanity.io/manage/project/uf33qaon
 
 ## Critical items before development starts

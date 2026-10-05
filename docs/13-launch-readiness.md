@@ -74,7 +74,7 @@ The mock `/order` checkout, its API and its store are **removed**. Billing stays
 - **Metadata.**
   - `buildMetadata` normalises descriptions to 70–160 characters.
   - Titles that would run past 60 characters with the brand suffix are used as they are (absolute).
-  - Every page has a canonical URL on the apex host.
+  - Every page has a canonical URL on the site origin (`siteConfig.url`: `NEXT_PUBLIC_SITE_URL`, default `https://magicworkshost.vercel.app`; set it to `https://magicworkshost.com` at the DNS cutover).
 - **Social images.** Every page has an OG/Twitter image. The default is `/opengraph-image`: a 1200×630 card with the MagicWorks Host logo.
 - **Sitemap and robots.**
   - `sitemap.xml` covers every indexable page, including blog categories, SSL pages and domain search. Post `lastmod` comes from real dates.

@@ -3,6 +3,7 @@ import "server-only"
 import { Resend } from "resend"
 
 import { hostingTypeOptions, serviceOptions } from "@/constants/service-options"
+import { siteConfig } from "@/constants/site-config"
 import { AFFILIATE_SERVICE_VALUE } from "@/schemas/lead-form.schema"
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
@@ -83,7 +84,7 @@ function renderEmail(heading: string, rows: Row[], message?: string) {
       <h2 style="margin:0 0 16px;color:#2a363f">${escapeHtml(heading)}</h2>
       ${rows.map((row) => `<p style="margin:0 0 4px"><strong>${escapeHtml(row.label)}:</strong> ${escapeHtml(row.value)}</p>`).join("")}
       ${message ? `<p style="margin:16px 0 4px"><strong>Message:</strong></p><p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>` : ""}
-      <p style="margin:24px 0 0;font-size:12px;color:#666">Sent by the magicworkshost.com website. Reply to this email to answer the customer directly.</p>
+      <p style="margin:24px 0 0;font-size:12px;color:#666">Sent by the ${escapeHtml(new URL(siteConfig.url).host)} website. Reply to this email to answer the customer directly.</p>
     </div>
   `
   const text = [heading, "", ...rows.map((row) => `${row.label}: ${row.value}`), message ? `\nMessage:\n${message}` : ""].filter((line) => line !== undefined).join("\n")

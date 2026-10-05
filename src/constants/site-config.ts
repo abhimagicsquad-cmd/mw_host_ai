@@ -1,6 +1,19 @@
 import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon } from "@/components/common/social-icons"
 import type { SocialLink } from "@/types/nav"
 
+const DEFAULT_SITE_URL = "https://magicworkshost.vercel.app"
+
+/** An absolute http(s) origin with no trailing slash; anything else falls back to the default. */
+function resolveSiteUrl(value: string | undefined) {
+  if (!value) return DEFAULT_SITE_URL
+  try {
+    const url = new URL(value.trim())
+    return /^https?:$/.test(url.protocol) ? url.origin : DEFAULT_SITE_URL
+  } catch {
+    return DEFAULT_SITE_URL
+  }
+}
+
 export const siteConfig = {
   name: "MagicWorks Host",
   shortName: "MWHost",
@@ -9,8 +22,12 @@ export const siteConfig = {
     "Fast, reliable web hosting, domains, SSL, and email hosting backed by 24/7 support.",
   legalName: "Magicworks IT Solutions Private Limited",
   foundingYear: 2012,
-  /** Canonical origin — the apex domain, exactly as the WordPress site (www 301s to it). */
-  url: "https://magicworkshost.com",
+  /**
+   * Canonical origin for metadataBase, canonicals, Open Graph, sitemap, robots, JSON-LD and
+   * llms.txt. The production domain is magicworkshost.vercel.app (the original project
+   * domain 301s to it). To move to magicworkshost.com, set NEXT_PUBLIC_SITE_URL — no code change needed.
+   */
+  url: resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL),
   contact: {
     phone: "+91 9764746633",
     phoneHref: "tel:+919764746633",

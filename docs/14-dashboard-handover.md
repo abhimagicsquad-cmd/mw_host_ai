@@ -10,7 +10,7 @@ The custom dashboard is the website's content management system. Content comes f
 
 | | |
 |---|---|
-| Login page (today) | https://mw-host-ai.vercel.app/mwh-admin-login |
+| Login page (today) | https://magicworkshost.vercel.app/mwh-admin-login |
 | Login page (after the domain moves) | https://magicworkshost.com/mwh-admin-login |
 | Username | `abhiadmin` (Super Admin) |
 | Password | the existing password (shared separately, never stored in this repository) |
@@ -90,6 +90,7 @@ The custom dashboard is the website's content management system. Content comes f
 
      Don't set an `@magicworkshost.com` sender before verification: the domain's DMARC policy is `p=reject`, so unsigned mail would be rejected.
 6. **After the switch:**
+   - Set `NEXT_PUBLIC_SITE_URL=https://magicworkshost.com` in Vercel (Production) and redeploy, so canonicals, the sitemap, robots, Open Graph and schema use the real domain. Until then they use `https://magicworkshost.vercel.app`.
    - Submit `https://magicworkshost.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
    - Spot-check a few old WordPress URLs. All 109 load at the same URL; the map is in `src/lib/public-paths.ts` and the table is in `docs/15-url-parity.md`.
    - Submit a test enquiry and confirm it arrives at abhimagicsquad@gmail.com.
