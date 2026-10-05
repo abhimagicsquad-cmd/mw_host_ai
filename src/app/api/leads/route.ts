@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 
 import { siteConfig } from "@/constants/site-config"
+import { logActivity } from "@/lib/admin/activity"
+import { linkLeadToConversation } from "@/lib/assistant/server"
 import { sendLeadNotificationEmail } from "@/lib/email"
 import { storeLead } from "@/lib/leads-store"
 import { verifyTurnstile } from "@/lib/turnstile"
@@ -76,7 +78,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl, turnstileToken } =
+  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl, turnstileToken, assistantConversationId, assistantVisitorId } =
     parsed.data
 
   if (!(await verifyTurnstile(turnstileToken, ip))) {
@@ -124,6 +126,20 @@ export async function POST(request: Request) {
     // Case B: lead is safely stored (or Supabase isn't configured yet); only the
     // notification email failed — log it, but don't fail the user's submission.
     console.error("[api/leads] Notification email failed after the lead was stored.", { email, source })
+  }
+
+  // Hosting Assistant enquiries: link the lead to its conversation and note it in the activity log.
+  if (assistantConversationId && assistantVisitorId) {
+    const leadId = storeResult.stored ? storeResult.id : null
+    const linked = await linkLeadToConversation(assistantConversationId, assistantVisitorId, leadId, `Enquiry sent: ${name} <${email}>`)
+    await logActivity({
+      username: "Hosting Assistant",
+      action: "assistant.lead_captured",
+      entityType: "lead",
+      entityId: leadId,
+      description: `Hosting Assistant captured a lead: ${name} <${email}>${service ? ` (${service})` : ""}`,
+      metadata: { conversationId: linked ? assistantConversationId : null, source },
+    })
   }
 
   return NextResponse.json({

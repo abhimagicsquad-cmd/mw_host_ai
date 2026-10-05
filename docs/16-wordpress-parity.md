@@ -6,7 +6,7 @@ This doc tracks the page-by-page and feature-by-feature comparison against magic
 
 | Area | What the new site does now | Commit |
 |---|---|---|
-| Tracking | Google Ads (AW-828608021), Microsoft Clarity and Tidio chat use the WordPress IDs and load on the live domain only (`NEXT_PUBLIC_ANALYTICS=on\|off` overrides this). Ads conversions fire on the thank-you, newsletter and affiliate pages. | 68619d5 |
+| Tracking | Google Ads (AW-828608021) and Microsoft Clarity use the WordPress IDs (Tidio chat was replaced by the dashboard-managed Hosting Assistant; see docs/19) and load on the live domain only (`NEXT_PUBLIC_ANALYTICS=on\|off` overrides this). Ads conversions fire on the thank-you, newsletter and affiliate pages. | 68619d5 |
 | Conversion | Floating WhatsApp and call buttons, the "Enquire Now" side tab (opens the lead form), the once-per-session auto popup, and all 7 legal links in the footer. | a08c5e9, 68619d5 |
 | Plans and pricing | Plan cards have a billing-period picker: 1/2/3 years for shared hosting and 1/3/6/12 months for VPS, each with its WordPress promo code and WHMCS cart link. Plan data (specs, regular prices, 50-off plans, SSL and email features) matches WordPress. The compare table buys from the cart and lines up by slug. The Unlimited page sells only Unlimited NVMe. | eab0620 |
 | CMS | Sanity is removed and the dashboard is the only content source. Pricing, compare rows, menus and settings were migrated and published. | c341c3b, c44ca4a |

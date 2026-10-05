@@ -24,6 +24,7 @@ export type Permission =
   | "settings.manage"
   | "activity.view"
   | "system.cache"
+  | "assistant.manage"
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
   "pages.edit": "Create & edit pages and content",
@@ -37,6 +38,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "settings.manage": "Change general & website settings",
   "activity.view": "View activity logs",
   "system.cache": "Clear the website cache",
+  "assistant.manage": "Manage the Hosting Assistant (on/off, settings, FAQs, plans, conversations)",
 }
 
 const MATRIX: Record<AdminRole, Permission[]> = {
@@ -52,6 +54,7 @@ const MATRIX: Record<AdminRole, Permission[]> = {
     "settings.manage",
     "activity.view",
     "system.cache",
+    "assistant.manage",
   ],
   editor: ["pages.edit", "pages.publish", "media.manage", "seo.manage", "menus.manage"],
 }

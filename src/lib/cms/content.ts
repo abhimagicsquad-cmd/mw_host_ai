@@ -149,6 +149,11 @@ export async function getCmsWebsiteSettings(): Promise<WebsiteSettings> {
   return ((await getSettingsRows()).website ?? {}) as WebsiteSettings
 }
 
+/** Raw Hosting Assistant settings (`settings.chatbot`), from the same cached settings read. */
+export async function getCmsAssistantSettingsValue(): Promise<unknown> {
+  return (await getSettingsRows()).chatbot ?? null
+}
+
 export type PricingCollection = { published?: boolean; plans?: PricingPlanData[] }
 
 /** Shared pricing plans from Content → Pricing Plans, once published (or in preview). */

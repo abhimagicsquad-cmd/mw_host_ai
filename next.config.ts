@@ -66,19 +66,18 @@ const wordpressPatternRedirects = [
 const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : "https://*.supabase.co";
 
 /**
- * Public-site third parties (see src/lib/analytics.ts): Google Ads gtag, Microsoft Clarity and
- * Tidio live chat — the same tracking and chat the WordPress site ran.
+ * Public-site third parties (see src/lib/analytics.ts): Google Ads gtag and Microsoft Clarity —
+ * the same tracking the WordPress site ran. (Chat is the first-party Hosting Assistant.)
  */
 const tracking = {
-  script: " https://www.googletagmanager.com https://*.googleadservices.com https://googleads.g.doubleclick.net https://*.clarity.ms https://code.tidio.co https://*.tidio.co https://*.tidiochat.com",
+  script: " https://www.googletagmanager.com https://*.googleadservices.com https://googleads.g.doubleclick.net https://*.clarity.ms",
   // Ads conversions post to the visitor's country Google host (google.co.in, google.de, …) and
   // doubleclick, which can't be listed exhaustively — so any https endpoint and image. Scripts,
   // frames and fonts stay allowlisted.
-  connect: " https: wss://*.tidio.co",
+  connect: " https:",
   img: " https:",
   // + the Google Maps embed of the office on /contact-us.
-  frame: " https://*.doubleclick.net https://www.googletagmanager.com https://*.tidio.co https://*.tidiochat.com https://www.google.com",
-  font: " https://*.tidio.co https://*.tidiochat.com",
+  frame: " https://*.doubleclick.net https://www.googletagmanager.com https://www.google.com",
 };
 
 function csp(extra: { script?: string; connect?: string; img?: string; frame?: string; font?: string } = {}) {

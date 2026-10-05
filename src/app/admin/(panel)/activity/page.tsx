@@ -20,6 +20,7 @@ const CATEGORIES = [
   { value: "menu", label: "Menus" },
   { value: "user", label: "User changes" },
   { value: "lead", label: "Leads" },
+  { value: "assistant", label: "Hosting Assistant" },
   { value: "settings", label: "Settings" },
   { value: "system", label: "System" },
 ]
@@ -31,6 +32,9 @@ const TONES: Record<string, string> = {
   "user.deleted": "bg-destructive/10 text-destructive",
   "user.deactivated": "bg-destructive/10 text-destructive",
   "lead.deleted": "bg-destructive/10 text-destructive",
+  "assistant.disabled": "bg-destructive/10 text-destructive",
+  "assistant.enabled": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  "assistant.lead_captured": "bg-primary/10 text-primary",
   "user.activated": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "page.published": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "auth.login": "bg-primary/10 text-primary",

@@ -11,6 +11,7 @@ export type AdminNavIcon =
   | "users"
   | "settings"
   | "activity"
+  | "assistant"
 
 export type AdminNavLink = { label: string; href: string; permission?: Permission }
 
@@ -103,6 +104,18 @@ export const adminNav: AdminNavItem[] = [
     children: [
       { label: "General Settings", href: "/admin/settings/general" },
       { label: "Website Settings", href: "/admin/settings/website" },
+    ],
+  },
+  {
+    label: "Hosting Assistant",
+    icon: "assistant",
+    permission: "assistant.manage",
+    children: [
+      { label: "Settings", href: "/admin/assistant" },
+      { label: "Hosting Plans", href: "/admin/assistant/plans" },
+      { label: "FAQs", href: "/admin/assistant/faqs" },
+      { label: "Conversations", href: "/admin/assistant/conversations" },
+      { label: "Analytics", href: "/admin/assistant/analytics" },
     ],
   },
   { label: "Activity Logs", icon: "activity", href: "/admin/activity", permission: "activity.view" },

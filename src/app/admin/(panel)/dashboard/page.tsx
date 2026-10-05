@@ -59,6 +59,7 @@ const ACTION_LABELS: Record<string, string> = {
   menu: "Menu",
   user: "User",
   lead: "Lead",
+  assistant: "Assistant",
   settings: "Settings",
   system: "System",
 }

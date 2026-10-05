@@ -15,7 +15,7 @@ export type LeadRecord = {
 }
 
 export type StoreLeadResult =
-  | { stored: true; skipped: false }
+  | { stored: true; skipped: false; id: string | null }
   | { stored: false; skipped: true }
   | { stored: false; skipped: false; error: unknown }
 
@@ -34,7 +34,7 @@ export async function storeLead(lead: LeadRecord): Promise<StoreLeadResult> {
     return { stored: false, skipped: true }
   }
 
-  const { error } = await supabaseAdmin.from("leads").insert({
+  const { data, error } = await supabaseAdmin.from("leads").insert({
     name: lead.name,
     phone: lead.phone,
     email: lead.email,
@@ -44,12 +44,12 @@ export async function storeLead(lead: LeadRecord): Promise<StoreLeadResult> {
     company: lead.company || null,
     hosting_type: lead.hostingType || null,
     page_url: lead.pageUrl || null,
-  })
+  }).select("id").single()
 
   if (error) {
     console.error("[leads-store] Supabase insert failed", { error, email: lead.email, source: lead.source })
     return { stored: false, skipped: false, error }
   }
 
-  return { stored: true, skipped: false }
+  return { stored: true, skipped: false, id: (data?.id as string | undefined) ?? null }
 }

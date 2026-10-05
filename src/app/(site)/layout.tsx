@@ -1,3 +1,4 @@
+import { AssistantMount } from "@/components/assistant/assistant-mount"
 import { AnalyticsScripts } from "@/components/common/analytics-scripts"
 import { FloatingContact } from "@/components/common/floating-contact"
 import { LeadAutoPopup } from "@/components/common/lead-auto-popup"
@@ -31,6 +32,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <PreviewBanner />
       <FloatingContact />
       <LeadAutoPopup />
+      <AssistantMount />
       <AnalyticsScripts />
     </>
   )

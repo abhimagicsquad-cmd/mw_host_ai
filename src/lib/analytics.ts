@@ -10,7 +10,6 @@ export const analyticsConfig = {
   /** GA4 measurement id — WordPress still used Universal Analytics (retired by Google), so none by default. */
   ga4Id: process.env.NEXT_PUBLIC_GA4_ID || "",
   clarityId: process.env.NEXT_PUBLIC_CLARITY_ID || "r8jorr5igt",
-  tidioKey: process.env.NEXT_PUBLIC_TIDIO_KEY || "o2obplaekvmzdvqn1m9yeirzgnt5nhxs",
   mode: process.env.NEXT_PUBLIC_ANALYTICS,
 } as const
 

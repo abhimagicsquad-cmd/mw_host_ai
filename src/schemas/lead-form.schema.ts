@@ -59,6 +59,9 @@ export const leadApiPayloadSchema = leadFormSchema.extend({
   hostingType: z.string().max(60).optional().or(z.literal("")),
   pageUrl: z.string().max(500).optional().or(z.literal("")),
   turnstileToken: z.string().max(2048).nullish(),
+  // Set by the Hosting Assistant widget so the lead is linked to its conversation.
+  assistantConversationId: z.string().uuid().nullish(),
+  assistantVisitorId: z.string().regex(/^[A-Za-z0-9_-]{8,64}$/).nullish(),
 })
 
 export type LeadApiPayload = z.infer<typeof leadApiPayloadSchema>
