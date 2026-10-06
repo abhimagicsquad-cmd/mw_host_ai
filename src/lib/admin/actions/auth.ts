@@ -7,12 +7,15 @@ import { redirect } from "next/navigation"
 import { z } from "zod"
 
 import { logActivity, getClientIp } from "@/lib/admin/activity"
-import { authorizeAction, getCurrentAdmin, isBootstrapLoginAllowed } from "@/lib/admin/auth"
+import { authorizeAction, getCurrentAdmin, isBootstrapLoginAllowed, loadUserForAuth } from "@/lib/admin/auth"
 import { hashPassword, validatePasswordStrength, verifyPassword } from "@/lib/admin/password"
 import { clearLoginFailures, isLoginThrottled, recordLoginFailure } from "@/lib/admin/rate-limit"
 import { safeAdminPath } from "@/lib/admin/safe-redirect"
 import { isSessionSigningConfigured, SESSION_COOKIE } from "@/lib/admin/session"
-import { setSessionCookie } from "@/lib/admin/session-cookie"
+import { clearPendingTwoFactorCookie, getTrustedDeviceCookie, setPendingTwoFactorCookie, setSessionCookie } from "@/lib/admin/session-cookie"
+import { completeSignIn } from "@/lib/admin/sign-in"
+import { twoFactorFingerprint } from "@/lib/admin/two-factor"
+import { isTrustedDevice } from "@/lib/admin/two-factor-store"
 import { cmsAdminDb, isMissingTableError } from "@/lib/cms/db"
 import type { ActionState, AdminRole } from "@/lib/cms/types"
 
@@ -89,19 +92,29 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   if (!user.is_active) return fail("inactive")
 
   clearLoginFailures(ip, username)
-  await setSessionCookie({ sub: user.id, username: user.username, role: user.role as AdminRole, passwordHash: user.password_hash })
-  await cmsAdminDb.from("users").update({ last_login_at: new Date().toISOString() }).eq("id", user.id)
-  await logActivity({
-    admin: { id: user.id, username: user.username, role: user.role as AdminRole, email: null, full_name: null, must_change_password: false, isBootstrap: false },
-    action: "auth.login",
-    entityType: "auth",
-    description: `${user.username} signed in`,
-  })
+  const account = { id: user.id as string, username: user.username as string, role: user.role as AdminRole, password_hash: user.password_hash as string }
 
+  // Step 2: with 2FA on, the password alone only earns a short-lived "enter your code" token —
+  // unless this browser is a device the user chose to trust (30 days).
+  const { user: withTwoFactor } = await loadUserForAuth(account.id)
+  if (withTwoFactor?.totp_enabled_at && withTwoFactor.totp_secret_encrypted) {
+    const mfa = twoFactorFingerprint(withTwoFactor.totp_enabled_at, withTwoFactor.totp_secret_encrypted)
+    if (await isTrustedDevice(account.id, await getTrustedDeviceCookie())) {
+      await completeSignIn(account, { method: "password+trusted_device", mfa })
+      redirect(safeAdminPath(next))
+    }
+    await setPendingTwoFactorCookie({ sub: account.id, username: account.username, role: account.role, passwordHash: account.password_hash, next })
+    redirect("/mwh-admin-login")
+  }
+
+  // No 2FA yet: super admins and admins are signed in but held on My Account → Security
+  // until they set it up (enforced by requireAdmin / authorizeAction on every page and action).
+  await completeSignIn(account, { method: "password" })
   redirect(safeAdminPath(next))
 }
 
 export async function logoutAction() {
+  await clearPendingTwoFactorCookie()
   const admin = await getCurrentAdmin()
   if (admin) await logActivity({ admin, action: "auth.logout", entityType: "auth", description: `${admin.username} signed out` })
   const store = await cookies()
@@ -138,8 +151,11 @@ export async function changeOwnPasswordAction(_prev: ActionState, formData: Form
       .update({ password_hash: passwordHash, must_change_password: false, updated_at: new Date().toISOString() })
       .eq("id", admin.id)
     if (error) throw error
-    // The new hash revokes every other session; re-issue this browser's so it stays signed in.
-    await setSessionCookie({ sub: admin.id, username: admin.username, role: admin.role, passwordHash })
+    // The new hash revokes every other session; re-issue this browser's so it stays signed in
+    // (keeping its two-factor binding).
+    const { user: current } = await loadUserForAuth(admin.id)
+    const mfa = current?.totp_enabled_at && current.totp_secret_encrypted ? twoFactorFingerprint(current.totp_enabled_at, current.totp_secret_encrypted) : undefined
+    await setSessionCookie({ sub: admin.id, username: admin.username, role: admin.role, passwordHash, mfa })
 
     await logActivity({ admin, action: "auth.password_changed", entityType: "user", entityId: admin.id, description: `${admin.username} changed their password` })
     return { ok: true, message: "Password updated." }

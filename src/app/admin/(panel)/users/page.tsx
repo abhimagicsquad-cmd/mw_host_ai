@@ -9,14 +9,15 @@ import { formatDate, PageHeader, Panel, Pill, ProblemNotice, Table, Td, Th } fro
 import { buttonVariants } from "@/components/ui/button"
 import { requireAdmin } from "@/lib/admin/auth"
 import { ROLE_LABELS } from "@/lib/admin/permissions"
-import { listUsers } from "@/lib/admin/queries"
+import { listTwoFactorStatus, listUsers } from "@/lib/admin/queries"
+import { isTwoFactorRequired } from "@/lib/admin/two-factor"
 
 export const metadata: Metadata = { title: "Admin users" }
 
 export default async function UsersPage({ searchParams }: { searchParams: Promise<{ created?: string }> }) {
   const admin = await requireAdmin("users.manage")
   const { created } = await searchParams
-  const { data, problem } = await listUsers()
+  const [{ data, problem }, twoFactor] = await Promise.all([listUsers(), listTwoFactorStatus()])
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,6 +51,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                 <Th>User</Th>
                 <Th>Role</Th>
                 <Th>Status</Th>
+                <Th>2FA</Th>
                 <Th>Last sign-in</Th>
                 <Th className="text-right">Actions</Th>
               </tr>
@@ -83,6 +85,17 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
                       <span className="text-sm text-emerald-700 dark:text-emerald-400">Active</span>
                     ) : (
                       <span className="text-sm text-muted-foreground">Deactivated</span>
+                    )}
+                  </Td>
+                  <Td>
+                    {!twoFactor ? (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    ) : twoFactor[user.id] ? (
+                      <Pill className="bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">On</Pill>
+                    ) : isTwoFactorRequired(user.role) ? (
+                      <Pill className="bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200">Setup pending</Pill>
+                    ) : (
+                      <Pill>Off</Pill>
                     )}
                   </Td>
                   <Td className="text-muted-foreground">{formatDate(user.last_login_at)}</Td>

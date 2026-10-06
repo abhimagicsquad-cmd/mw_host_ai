@@ -25,7 +25,30 @@ export type SessionPayload = {
    * their own within SESSION_MAX_AGE_SECONDS).
    */
   cv?: string
+  /**
+   * Two-factor binding (see twoFactorFingerprint): set when the session was opened with a
+   * verified 2FA code (or a trusted device). For users with 2FA on, a session without the
+   * current fingerprint is rejected — so a reset or a new secret signs out older sessions.
+   */
+  mfa?: string
   /** Expiry, epoch seconds. */
+  exp: number
+}
+
+/**
+ * The half-signed-in state between the password and the authentication code: proves the
+ * password was right, for a few minutes, and is never accepted as a session.
+ */
+export const TWO_FACTOR_PENDING_COOKIE = "mwh_admin_2fa"
+export const TWO_FACTOR_PENDING_MAX_AGE_SECONDS = 5 * 60
+
+export type PendingTwoFactorPayload = {
+  purpose: "2fa-login"
+  sub: string
+  username: string
+  role: AdminRole
+  cv: string
+  next?: string
   exp: number
 }
 
@@ -72,18 +95,16 @@ function fromBase64Url(value: string): Uint8Array<ArrayBuffer> {
   return bytes
 }
 
-export async function signSession(payload: Omit<SessionPayload, "exp">): Promise<string> {
+async function signToken(payload: object, maxAgeSeconds: number): Promise<string> {
   const key = await getKey()
   if (!key) throw new Error("Admin session signing key is not configured")
 
-  const body = toBase64Url(
-    encoder.encode(JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SECONDS }))
-  )
+  const body = toBase64Url(encoder.encode(JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + maxAgeSeconds })))
   const signature = new Uint8Array(await crypto.subtle.sign("HMAC", key, encoder.encode(body)))
   return `${body}.${toBase64Url(signature)}`
 }
 
-export async function verifySession(token: string | undefined | null): Promise<SessionPayload | null> {
+async function verifyToken(token: string | undefined | null): Promise<(Record<string, unknown> & { exp: number }) | null> {
   if (!token) return null
   const [body, signature] = token.split(".")
   if (!body || !signature) return null
@@ -94,10 +115,31 @@ export async function verifySession(token: string | undefined | null): Promise<S
   try {
     const valid = await crypto.subtle.verify("HMAC", key, fromBase64Url(signature), encoder.encode(body))
     if (!valid) return null
-    const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(body))) as SessionPayload
+    const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(body))) as Record<string, unknown> & { exp: number }
     if (typeof payload.exp !== "number" || payload.exp < Math.floor(Date.now() / 1000)) return null
     return payload
   } catch {
     return null
   }
+}
+
+export async function signSession(payload: Omit<SessionPayload, "exp">): Promise<string> {
+  return signToken(payload, SESSION_MAX_AGE_SECONDS)
+}
+
+export async function verifySession(token: string | undefined | null): Promise<SessionPayload | null> {
+  const payload = await verifyToken(token)
+  // A pending-2FA token (or any other purpose-bound token) is never a session.
+  if (!payload || "purpose" in payload) return null
+  return payload as unknown as SessionPayload
+}
+
+export async function signPendingTwoFactor(payload: Omit<PendingTwoFactorPayload, "exp" | "purpose">): Promise<string> {
+  return signToken({ ...payload, purpose: "2fa-login" }, TWO_FACTOR_PENDING_MAX_AGE_SECONDS)
+}
+
+export async function verifyPendingTwoFactor(token: string | undefined | null): Promise<PendingTwoFactorPayload | null> {
+  const payload = await verifyToken(token)
+  if (!payload || payload.purpose !== "2fa-login") return null
+  return payload as unknown as PendingTwoFactorPayload
 }

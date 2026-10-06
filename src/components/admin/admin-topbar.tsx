@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { ExternalLink, KeyRound, LogOut, Menu } from "lucide-react"
+import { ExternalLink, KeyRound, LogOut, Menu, ShieldCheck } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -23,7 +23,7 @@ import { AdminBrand, AdminSidebarNav } from "./admin-sidebar"
 import { ThemeToggle } from "./admin-theme"
 
 type TopbarProps = {
-  user: { username: string; fullName: string | null; role: AdminRole }
+  user: { username: string; fullName: string | null; role: AdminRole; setupOnly?: boolean }
   dark: boolean
 }
 
@@ -49,7 +49,7 @@ export function AdminTopbar({ user, dark }: TopbarProps) {
         <SheetContent side="left" className="w-72 gap-0 overflow-y-auto border-none bg-admin-sidebar p-0 text-admin-sidebar-foreground">
           <SheetTitle className="sr-only">Admin navigation</SheetTitle>
           <AdminBrand />
-          <AdminSidebarNav role={user.role} onNavigate={() => setMobileOpen(false)} />
+          <AdminSidebarNav role={user.role} setupOnly={user.setupOnly} onNavigate={() => setMobileOpen(false)} />
         </SheetContent>
       </Sheet>
 
@@ -87,6 +87,10 @@ export function AdminTopbar({ user, dark }: TopbarProps) {
           <DropdownMenuItem render={<Link href="/admin/profile" />}>
             <KeyRound />
             Profile & password
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href="/admin/account/security" />}>
+            <ShieldCheck />
+            Security
           </DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onClick={() => logoutAction()}>
             <LogOut />

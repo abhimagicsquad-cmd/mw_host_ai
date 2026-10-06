@@ -3,7 +3,9 @@ import { redirect } from "next/navigation"
 import { FileText, Image as ImageIcon, Search, ShieldCheck } from "lucide-react"
 
 import { LoginForm } from "@/components/admin/login-form"
+import { TwoFactorLoginForm } from "@/components/admin/two-factor-login-form"
 import { getCurrentAdmin } from "@/lib/admin/auth"
+import { getPendingTwoFactor } from "@/lib/admin/session-cookie"
 
 export const metadata: Metadata = { title: "Sign in" }
 
@@ -17,6 +19,8 @@ const highlights = [
 export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   if (await getCurrentAdmin()) redirect("/admin/dashboard")
   const { next } = await searchParams
+  // Password accepted, code still to come (a signed, 5-minute token — see loginAction).
+  const pending = await getPendingTwoFactor()
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
@@ -56,9 +60,19 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
             <span className="flex size-10 items-center justify-center rounded-lg bg-admin-secondary text-sm font-bold text-white">MW</span>
             <span className="text-lg font-semibold">MagicWorks Host</span>
           </div>
-          <h2 className="text-2xl font-semibold tracking-tight">Sign in to the admin</h2>
-          <p className="mt-1.5 text-sm text-muted-foreground">Use your CMS administrator account.</p>
-          <LoginForm next={next} />
+          {pending ? (
+            <>
+              <h2 className="text-2xl font-semibold tracking-tight">Two-factor authentication</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">One more step to keep the admin secure.</p>
+              <TwoFactorLoginForm username={pending.username} />
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-semibold tracking-tight">Sign in to the admin</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">Use your CMS administrator account.</p>
+              <LoginForm next={next} />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ import {
   PenSquare,
   Search,
   Settings,
+  UserCog,
   Users,
 } from "lucide-react"
 
@@ -39,6 +40,7 @@ const ICONS: Record<AdminNavIcon, LucideIcon> = {
   activity: Activity,
   assistant: Bot,
   code: Code2,
+  account: UserCog,
 }
 
 /** Longest-prefix match so /admin/pages/new highlights "Add New Page", not "All Pages". */
@@ -50,8 +52,12 @@ function useActiveHref(items: AdminNavItem[]) {
     .sort((a, b) => b.length - a.length)[0]
 }
 
-export function AdminSidebarNav({ role, onNavigate }: { role: AdminRole; onNavigate?: () => void }) {
-  const items = adminNav
+/** `setupOnly`: required two-factor setup is pending — only My Account → Security is reachable. */
+export function AdminSidebarNav({ role, onNavigate, setupOnly }: { role: AdminRole; onNavigate?: () => void; setupOnly?: boolean }) {
+  const nav = setupOnly
+    ? adminNav.filter((item) => item.icon === "account").map((item) => ({ ...item, children: item.children?.filter((child) => child.href === "/admin/account/security") }))
+    : adminNav
+  const items = nav
     .filter((item) => !item.permission || can(role, item.permission))
     .map((item) => ({ ...item, children: item.children?.filter((child) => !child.permission || can(role, child.permission)) }))
   const activeHref = useActiveHref(items)

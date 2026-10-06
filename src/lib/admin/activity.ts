@@ -11,6 +11,18 @@ export type ActivityAction =
   | "auth.login_failed"
   | "auth.logout"
   | "auth.password_changed"
+  | "security.2fa_enabled"
+  | "security.2fa_disabled"
+  | "security.2fa_verified"
+  | "security.2fa_failed"
+  | "security.2fa_secret_regenerated"
+  | "security.recovery_code_used"
+  | "security.recovery_codes_regenerated"
+  | "security.trusted_device_added"
+  | "security.trusted_device_removed"
+  | "security.2fa_reset_admin"
+  | "security.2fa_reset_super_admin"
+  | "security.2fa_reset_editor"
   | "page.created"
   | "page.updated"
   | "page.deleted"
@@ -60,6 +72,8 @@ export async function getClientIp(): Promise<string | null> {
 
 type ActivityEntry = {
   admin?: CurrentAdmin | null
+  /** The user an event is about when there's no signed-in admin yet (sign-in steps). */
+  userId?: string | null
   username?: string
   action: ActivityAction
   entityType?: string
@@ -80,7 +94,7 @@ export async function logActivities(entries: ActivityEntry[]) {
     const ip = await getClientIp()
     const { error } = await cmsAdminDb.from("activity_logs").insert(
       entries.map((entry) => ({
-        user_id: entry.admin ? actorId(entry.admin) : null,
+        user_id: entry.admin ? actorId(entry.admin) : (entry.userId ?? null),
         username: entry.admin?.username ?? entry.username ?? null,
         action: entry.action,
         entity_type: entry.entityType ?? null,

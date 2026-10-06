@@ -92,6 +92,17 @@ export async function listUsers(): Promise<Result<SafeUser[]>> {
   return { data: (data as SafeUser[]) ?? [], problem: problemOf(error) }
 }
 
+/**
+ * When each user turned on two-factor authentication (null = off), by user id. Null before
+ * supabase/migrations/0007_admin_two_factor.sql has run.
+ */
+export async function listTwoFactorStatus(): Promise<Record<string, string | null> | null> {
+  if (!cmsAdminDb) return null
+  const { data, error } = await cmsAdminDb.from("users").select("id, totp_enabled_at")
+  if (error || !data) return null
+  return Object.fromEntries(data.map((row) => [row.id as string, (row.totp_enabled_at as string | null) ?? null]))
+}
+
 export async function getUser(id: string): Promise<Result<SafeUser | null>> {
   if (!cmsAdminDb) return unconfigured(null)
   if (!/^[0-9a-f-]{36}$/i.test(id)) return { data: null, problem: null }

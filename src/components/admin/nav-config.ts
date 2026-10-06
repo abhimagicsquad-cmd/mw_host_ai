@@ -13,6 +13,7 @@ export type AdminNavIcon =
   | "activity"
   | "assistant"
   | "code"
+  | "account"
 
 export type AdminNavLink = { label: string; href: string; permission?: Permission }
 
@@ -135,4 +136,12 @@ export const adminNav: AdminNavItem[] = [
     ],
   },
   { label: "Activity Logs", icon: "activity", href: "/admin/activity", permission: "activity.view" },
+  {
+    label: "My Account",
+    icon: "account",
+    children: [
+      { label: "Profile & password", href: "/admin/profile" },
+      { label: "Security", href: "/admin/account/security" },
+    ],
+  },
 ]

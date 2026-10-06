@@ -13,6 +13,7 @@ export const metadata: Metadata = { title: "Activity logs" }
 const CATEGORIES = [
   { value: "", label: "All activity" },
   { value: "auth", label: "Logins" },
+  { value: "security", label: "Two-factor & security" },
   { value: "page", label: "Page updates" },
   { value: "content", label: "Content updates" },
   { value: "media", label: "Media" },
@@ -43,6 +44,14 @@ const TONES: Record<string, string> = {
   "user.activated": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "page.published": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
   "auth.login": "bg-primary/10 text-primary",
+  "security.2fa_failed": "bg-destructive/10 text-destructive",
+  "security.2fa_disabled": "bg-destructive/10 text-destructive",
+  "security.2fa_reset_admin": "bg-destructive/10 text-destructive",
+  "security.2fa_reset_super_admin": "bg-destructive/10 text-destructive",
+  "security.2fa_reset_editor": "bg-destructive/10 text-destructive",
+  "security.recovery_code_used": "bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200",
+  "security.2fa_enabled": "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  "security.2fa_verified": "bg-primary/10 text-primary",
 }
 
 export default async function ActivityPage({ searchParams }: { searchParams: Promise<{ category?: string; page?: string }> }) {

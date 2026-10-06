@@ -52,6 +52,7 @@ function StatTile({ label, value, detail, icon: Icon, href }: { label: string; v
 
 const ACTION_LABELS: Record<string, string> = {
   auth: "Login",
+  security: "Security",
   page: "Page",
   content: "Content",
   media: "Media",
