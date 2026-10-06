@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 import { publicPath } from "@/lib/public-paths"
 
-import { blogCategories, blogPosts, inWordpressCategory, wordpressCategories } from "@/constants/blog-data"
+import type { BlogPost } from "@/constants/blog-data"
 import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
@@ -13,10 +13,11 @@ import { serviceLandingPath, serviceLandings } from "@/constants/service-landing
 import { siteConfig } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { parseImageParagraph } from "@/lib/blog-content"
+import { getBlog } from "@/lib/cms/blog"
 import { getNoIndexSeoPaths, getPublishedCmsPaths } from "@/lib/cms/content"
 
 /** A post's featured image, then its article images. */
-function postImages(post: (typeof blogPosts)[number]) {
+function postImages(post: BlogPost) {
   const article = post.sections.flatMap((section) => section.body.flatMap((paragraph) => parseImageParagraph(paragraph)?.src ?? []))
   return [...new Set([...(post.featuredImage ? [post.featuredImage.src] : []), ...article])]
 }
@@ -80,7 +81,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.3,
   }))
 
-  const blogRoutes = blogPosts.map((post) => ({
+  const blog = await getBlog()
+  const blogRoutes = blog.posts.map((post) => ({
     url: url(`/blog/${post.slug}`),
     changeFrequency: "yearly" as const,
     priority: 0.5,
@@ -90,11 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Blog topics plus the WordPress category archives (same /category/<slug>/ URLs as before).
-  const categorySlugs = new Set([
-    ...blogCategories.filter((category) => blogPosts.some((post) => post.categorySlug === category.slug)).map((category) => category.slug),
-    ...wordpressCategories.filter((category) => blogPosts.some((post) => inWordpressCategory(post, category.slug))).map((category) => category.slug),
-  ])
-  const blogCategoryRoutes = [...categorySlugs].map((slug) => ({ url: url(`/blog/category/${slug}`), changeFrequency: "weekly" as const, priority: 0.4 }))
+  const blogCategoryRoutes = blog.topicsWithPosts.map(({ slug }) => ({ url: url(`/blog/category/${slug}`), changeFrequency: "weekly" as const, priority: 0.4 }))
 
   const sslRoutes = sslPages.map((page) => ({ url: url(`/ssl/${page.slug}`), changeFrequency: "monthly" as const, priority: 0.6 }))
 

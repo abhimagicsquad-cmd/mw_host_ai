@@ -1,4 +1,3 @@
-import { blogPosts } from "@/constants/blog-data"
 import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages, tldPricing, tldTransferPricing } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
@@ -10,6 +9,7 @@ import { serviceLandingPath, serviceLandings } from "@/constants/service-landing
 import { siteConfig, socialLinks } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
 import { billingUrls } from "@/lib/billing"
+import { getBlog } from "@/lib/cms/blog"
 import { getPricingPlansByService } from "@/lib/cms/queries"
 import { publicPath } from "@/lib/public-paths"
 
@@ -113,7 +113,7 @@ ${list([
 ])}
 
 ## Articles
-${list(blogPosts.slice(0, 60).map((post) => ({ href: u(`/blog/${post.slug}`), label: post.title })))}
+${list((await getBlog()).posts.slice(0, 60).map((post) => ({ href: u(`/blog/${post.slug}`), label: post.title })))}
 
 ## Policies
 ${list(Object.values(legalDocuments).map((doc) => ({ href: u(`/legal/${doc.slug}`), label: doc.title })))}

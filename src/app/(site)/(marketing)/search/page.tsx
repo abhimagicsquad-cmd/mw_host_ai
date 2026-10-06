@@ -5,6 +5,7 @@ import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { Input } from "@/components/ui/input"
 import { buildPageMetadata } from "@/lib/seo"
+import { getBlog } from "@/lib/cms/blog"
 import { searchSite } from "@/lib/search-index"
 
 type SearchPageProps = {
@@ -20,7 +21,7 @@ export const generateMetadata = () => buildPageMetadata({
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = "" } = await searchParams
-  const results = searchSite(q)
+  const results = searchSite(q, (await getBlog()).posts)
 
   return (
     <>

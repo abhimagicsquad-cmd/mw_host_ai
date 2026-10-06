@@ -205,14 +205,31 @@ export const getNoIndexSeoPaths = cache(async (): Promise<string[]> => {
   return data.map((row) => row.path as string)
 })
 
-type BlogPostTemplate = Omit<BlogPost, "slug">
+type BlogPostTemplate = Omit<BlogPost, "slug" | "featuredImage" | "wpCategories"> & {
+  archiveCategories?: string[]
+  featuredImage?: string
+  featuredImageAlt?: string
+  /** The featured image's pixel size, written by the import; ignored once the image is changed. */
+  featuredImageMeta?: { src: string; width: number; height: number }
+}
+
+/** ISO date or nothing — the date fields are free text in the dashboard. */
+function isoDate(value: unknown) {
+  return typeof value === "string" && value.trim() && !Number.isNaN(Date.parse(value)) ? value.trim() : null
+}
 
 /** CMS blog posts in the same shape as the built-in posts, so they render with the same template. */
 export async function getCmsBlogPosts(): Promise<BlogPost[]> {
   const pages = await getCmsTemplatePages("blogPost")
   return pages.map(({ path, data }) => {
     const post = data as Partial<BlogPostTemplate>
+    const image = post.featuredImage?.trim()
+    const meta = post.featuredImageMeta?.src === image ? post.featuredImageMeta : undefined
     return {
+      publishedAt: isoDate(post.publishedAt),
+      modifiedAt: isoDate(post.modifiedAt),
+      wpCategories: (post.archiveCategories ?? []).map((slug) => slug.trim()).filter(Boolean),
+      ...(image ? { featuredImage: { src: image, alt: post.featuredImageAlt?.trim() || post.title || "", ...(meta ? { width: meta.width, height: meta.height } : {}) } } : {}),
       slug: path.replace(/^\/blog\//, ""),
       title: post.title ?? "",
       excerpt: post.excerpt ?? "",

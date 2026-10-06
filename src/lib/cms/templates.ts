@@ -301,9 +301,19 @@ export const templates: Record<TemplateKey, TemplateDef> = {
       { kind: "text", name: "title", label: "Title", required: true },
       { kind: "textarea", name: "excerpt", label: "Excerpt", required: true, help: "Shown on the blog listing and under the title." },
       { kind: "text", name: "categorySlug", label: "Category slug", required: true, help: "One of the category slugs from Blog home." },
+      {
+        kind: "stringList",
+        name: "archiveCategories",
+        label: "Archive categories",
+        help: "Category archives (/category/<slug>/) that list this post, one slug per line — the categories it had on the old WordPress blog.",
+      },
       { kind: "text", name: "publishedLabel", label: "Published (label)", placeholder: "Jan 2026" },
+      { kind: "text", name: "publishedAt", label: "Published on", placeholder: "2021-02-16T09:50:53+00:00", help: "Exact publish date (ISO format) for search engines. Leave empty to use the label." },
+      { kind: "text", name: "modifiedAt", label: "Last updated on", placeholder: "2021-05-15T12:46:44+00:00", help: "ISO format. Leave empty if the post hasn't been updated." },
       { kind: "text", name: "readTime", label: "Read time", placeholder: "5 min read" },
       { kind: "boolean", name: "featured", label: "Featured post" },
+      { kind: "image", name: "featuredImage", label: "Featured image (shown above the article and when shared)" },
+      { kind: "text", name: "featuredImageAlt", label: "Featured image description (alt text)" },
       {
         kind: "object",
         name: "author",
@@ -321,7 +331,12 @@ export const templates: Record<TemplateKey, TemplateDef> = {
         help: "Each section appears in the “On this page” list.",
         fields: [
           { kind: "text", name: "heading", label: "Heading", required: true },
-          { kind: "stringList", name: "body", label: "Paragraphs", help: "One paragraph per line." },
+          {
+            kind: "stringList",
+            name: "body",
+            label: "Paragraphs",
+            help: 'One paragraph per line. Links: [text](/page/). An image on its own line: ![description](/image.jpg "WIDTHxHEIGHT").',
+          },
         ],
       },
     ],

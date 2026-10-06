@@ -121,6 +121,8 @@ const nextConfig: NextConfig = {
   images: {
     // AVIF first (smaller), WebP fallback — picked per request from the Accept header.
     formats: ["image/avif", "image/webp"],
+    // 75 is the default; 90 is for blog article images (see blog-post.tsx).
+    qualities: [75, 90],
     dangerouslyAllowSVG: true,
     // SVGs served by the optimizer can't run script, and download rather than render when
     // opened directly (the hardening the Next.js docs pair with dangerouslyAllowSVG).

@@ -9,7 +9,7 @@ import { BlogPostingJsonLd, BreadcrumbJsonLd } from "@/components/common/json-ld
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
-import { type BlogImage, getBlogPost } from "@/constants/blog-data"
+import type { BlogImage } from "@/constants/blog-data"
 import { paragraphParts, parseImageParagraph, plainText, postShareImage } from "@/lib/blog-content"
 import { getBlog } from "@/lib/cms/blog"
 import { buildPageMetadata } from "@/lib/seo"
@@ -23,10 +23,10 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }))
 }
 
-/** Dashboard post (built-in template) → built-in post. */
+/** The published post at this slug (see getBlog — the dashboard is the source). */
 async function resolvePost(slug: string) {
   const blog = await getBlog()
-  const post = blog.posts.find((candidate) => candidate.slug === slug) ?? getBlogPost(slug)
+  const post = blog.posts.find((candidate) => candidate.slug === slug)
   return { blog, post }
 }
 
@@ -187,9 +187,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   )
 }
 
-const IMAGE_CLASS = "h-auto w-full rounded-2xl border border-border-alt"
+/** Images show at their own width, never wider than the column — small images aren't stretched (and blurred). */
+const IMAGE_CLASS = "mx-auto h-auto max-w-full rounded-2xl border border-border-alt"
+/** The article column: 720px wide from the sm breakpoint, the viewport less the 16px gutters below it. */
+const COLUMN_WIDTH = 720
+/** Above the default 75: the WordPress originals are already compressed JPEGs, and re-encoding them at 75 softens them. */
+const BLOG_IMAGE_QUALITY = 90
 
 function BlogFigure({ image, eager, className }: { image: BlogImage; eager?: boolean; className?: string }) {
+  const shown = Math.min(image.width ?? COLUMN_WIDTH, COLUMN_WIDTH)
   return (
     <figure className={className}>
       {image.width && image.height ? (
@@ -198,7 +204,8 @@ function BlogFigure({ image, eager, className }: { image: BlogImage; eager?: boo
           alt={image.alt}
           width={image.width}
           height={image.height}
-          sizes="(min-width: 768px) 720px, 100vw"
+          sizes={`(min-width: ${shown + 48}px) ${shown}px, calc(100vw - 32px)`}
+          quality={BLOG_IMAGE_QUALITY}
           loading={eager ? "eager" : "lazy"}
           className={IMAGE_CLASS}
         />

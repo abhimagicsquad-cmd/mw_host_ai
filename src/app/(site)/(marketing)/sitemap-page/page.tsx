@@ -2,7 +2,6 @@ import Link from "@/components/common/site-link"
 
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
-import { blogCategories, blogPosts, inWordpressCategory, wordpressCategories } from "@/constants/blog-data"
 import { dedicatedPages } from "@/constants/dedicated-pages-data"
 import { domainPages } from "@/constants/domain-pages-data"
 import { emailPages } from "@/constants/email-pages-data"
@@ -12,6 +11,7 @@ import { kbCategories } from "@/constants/knowledge-base-data"
 import { legalDocuments } from "@/constants/legal-content"
 import { serviceLandingPath, serviceLandings } from "@/constants/service-landing-data"
 import { sslPages } from "@/constants/ssl-pages-data"
+import { getBlog } from "@/lib/cms/blog"
 import { buildPageMetadata } from "@/lib/seo"
 
 export const generateMetadata = () => buildPageMetadata({
@@ -20,7 +20,9 @@ export const generateMetadata = () => buildPageMetadata({
   path: "/sitemap-page",
 })
 
-const sitemapGroups: { heading: string; links: { label: string; href: string }[] }[] = [
+type SitemapGroup = { heading: string; links: { label: string; href: string }[] }
+
+const sitemapGroups = (blogTopics: { slug: string; name: string }[]): SitemapGroup[] => [
   {
     heading: "Company",
     links: [
@@ -90,12 +92,7 @@ const sitemapGroups: { heading: string; links: { label: string; href: string }[]
   {
     // Every blog topic with posts — including the WordPress category archives (/category/<slug>/).
     heading: "Blog Topics",
-    links: [
-      ...blogCategories.filter((category) => blogPosts.some((post) => post.categorySlug === category.slug)),
-      ...wordpressCategories.filter((category) => blogPosts.some((post) => inWordpressCategory(post, category.slug))),
-    ]
-      .filter((category, index, all) => all.findIndex((other) => other.slug === category.slug) === index)
-      .map((category) => ({ label: category.name, href: `/blog/category/${category.slug}` })),
+    links: blogTopics.map((category) => ({ label: category.name, href: `/blog/category/${category.slug}` })),
   },
   {
     heading: "Legal",
@@ -103,7 +100,8 @@ const sitemapGroups: { heading: string; links: { label: string; href: string }[]
   },
 ]
 
-export default function SitemapPage() {
+export default async function SitemapPage() {
+  const { topicsWithPosts } = await getBlog()
   return (
     <>
       <PageHero
@@ -114,7 +112,7 @@ export default function SitemapPage() {
 
       <SectionContainer width="wide">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {sitemapGroups.map((group) => (
+          {sitemapGroups(topicsWithPosts).map((group) => (
             <div key={group.heading}>
               <h2 className="text-sm font-semibold tracking-wide text-brand-navy uppercase">{group.heading}</h2>
               <ul className="mt-4 flex flex-col gap-2.5">

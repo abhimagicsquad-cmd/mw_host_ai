@@ -303,7 +303,12 @@ const originalPosts: BlogPost[] = [
   },
 ]
 
-/** Current articles first, then the 42 articles carried over from the WordPress blog (newest first). */
+/**
+ * The built-in posts: the 8 written for this site and the 42 carried over from the WordPress
+ * blog. The dashboard was filled from these (scripts/import-blog-posts-to-cms.mjs) and is now
+ * where posts are edited — the site only falls back to this list when the dashboard returns no
+ * posts at all (see src/lib/cms/blog.ts).
+ */
 export const blogPosts: BlogPost[] = [...originalPosts, ...(legacyPosts as BlogPost[])]
 
 /**
@@ -329,17 +334,11 @@ export const wordpressCategories: BlogCategory[] = [
   { slug: "web-security", name: "Web Security" },
 ]
 
-const wordpressCategoriesBySlug = new Map((legacyPosts as BlogPost[]).map((post) => [post.slug, post.wpCategories ?? []]))
-
-/** Whether WordPress filed this article under `category` (also works for CMS copies of the articles). */
-export function inWordpressCategory(post: Pick<BlogPost, "slug">, category: string) {
-  return wordpressCategoriesBySlug.get(post.slug)?.includes(category) ?? false
+/** Whether this article is listed in the `category` archive (its WordPress categories — "Archive categories" in the dashboard). */
+export function inWordpressCategory(post: Pick<BlogPost, "wpCategories">, category: string) {
+  return post.wpCategories?.includes(category) ?? false
 }
 
 export function getBlogCategoryName(slug: string) {
   return blogCategories.find((category) => category.slug === slug)?.name ?? slug
-}
-
-export function getBlogPost(slug: string) {
-  return blogPosts.find((post) => post.slug === slug)
 }

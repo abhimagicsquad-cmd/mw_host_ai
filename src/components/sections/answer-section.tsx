@@ -3,9 +3,10 @@ import { ArrowRight, BookOpen, Check } from "lucide-react"
 
 import { HowToJsonLd } from "@/components/common/json-ld"
 import { SectionContainer } from "@/components/layout/section-container"
-import { blogPosts, getBlogCategoryName } from "@/constants/blog-data"
+import { getBlogCategoryName } from "@/constants/blog-data"
 import { guideHref, guidesForService } from "@/constants/kb-guides"
 import { gettingStartedSteps, serviceAnswers } from "@/constants/service-answers"
+import { getBlog } from "@/lib/cms/blog"
 
 type AnswerSectionProps = {
   /** The page path, used to look up its answer block in serviceAnswers. */
@@ -20,12 +21,12 @@ type AnswerSectionProps = {
  * facts, "how to get started" steps and the related articles in the page's topic cluster.
  * Renders nothing for pages without an entry.
  */
-export function AnswerSection({ path, kind, label }: AnswerSectionProps) {
+export async function AnswerSection({ path, kind, label }: AnswerSectionProps) {
   const entry = serviceAnswers[path]
   if (!entry) return null
 
   const steps = gettingStartedSteps(kind)
-  const articles = blogPosts.filter((post) => post.categorySlug === entry.topic).slice(0, 3)
+  const articles = (await getBlog()).posts.filter((post) => post.categorySlug === entry.topic).slice(0, 3)
   const guides = guidesForService(path)
 
   return (
