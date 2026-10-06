@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "@/components/common/site-link"
 import { notFound } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -8,7 +9,8 @@ import { BlogPostingJsonLd, BreadcrumbJsonLd } from "@/components/common/json-ld
 import { Reveal } from "@/components/common/reveal"
 import { SectionContainer } from "@/components/layout/section-container"
 import { CTASection } from "@/components/sections/cta-section"
-import { getBlogPost } from "@/constants/blog-data"
+import { type BlogImage, getBlogPost } from "@/constants/blog-data"
+import { paragraphParts, parseImageParagraph, plainText, postShareImage } from "@/lib/blog-content"
 import { getBlog } from "@/lib/cms/blog"
 import { buildPageMetadata } from "@/lib/seo"
 
@@ -34,6 +36,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   if (!post) return {}
 
+  const image = postShareImage(post)
   return buildPageMetadata({
     title: post.title,
     description: post.excerpt,
@@ -41,6 +44,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     ogType: "article",
     publishedTime: post.publishedAt ?? publishedLabelToISO(post.publishedLabel),
     modifiedTime: post.modifiedAt ?? undefined,
+    ...(image ? { image: { url: image.src, width: image.width, height: image.height, alt: image.alt } } : {}),
   })
 }
 
@@ -73,8 +77,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         authorName={post.author.name}
         datePublished={post.publishedAt ?? publishedLabelToISO(post.publishedLabel)}
         dateModified={post.modifiedAt}
-        wordCount={post.sections.reduce((count, section) => count + section.body.join(" ").split(/\s+/).length, 0)}
+        wordCount={post.sections.reduce((count, section) => count + section.body.map(plainText).join(" ").split(/\s+/).filter(Boolean).length, 0)}
         section={blog.categoryName(post.categorySlug)}
+        image={postShareImage(post)?.src}
       />
 
       <SectionContainer width="narrow" background="alt" className="py-12 sm:py-16">
@@ -109,6 +114,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </SectionContainer>
 
       <SectionContainer width="narrow">
+        {post.featuredImage ? <BlogFigure image={post.featuredImage} eager className="mb-10" /> : null}
+
         <div className="rounded-2xl border border-border-alt bg-surface-alt p-6">
           <p className="text-sm font-semibold tracking-wide text-brand-navy uppercase">On this page</p>
           <ul className="mt-3 flex flex-col gap-2">
@@ -127,9 +134,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div key={section.heading} id={slugifyHeading(section.heading)}>
               <h2 className="text-xl font-semibold text-brand-navy">{section.heading}</h2>
               <div className="mt-3 flex flex-col gap-3 text-base leading-relaxed text-body-text">
-                {section.body.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
+                {section.body.map((paragraph, index) => {
+                  const image = parseImageParagraph(paragraph)
+                  return image ? <BlogFigure key={index} image={image} className="my-2" /> : <Paragraph key={index} text={paragraph} />
+                })}
               </div>
             </div>
           ))}
@@ -176,6 +184,51 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         background="navy"
       />
     </>
+  )
+}
+
+const IMAGE_CLASS = "h-auto w-full rounded-2xl border border-border-alt"
+
+function BlogFigure({ image, eager, className }: { image: BlogImage; eager?: boolean; className?: string }) {
+  return (
+    <figure className={className}>
+      {image.width && image.height ? (
+        <Image
+          src={image.src}
+          alt={image.alt}
+          width={image.width}
+          height={image.height}
+          sizes="(min-width: 768px) 720px, 100vw"
+          loading={eager ? "eager" : "lazy"}
+          className={IMAGE_CLASS}
+        />
+      ) : (
+        // No known size (a dashboard post's image): the optimizer needs one, so load it as is.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={image.src} alt={image.alt} loading={eager ? "eager" : "lazy"} className={IMAGE_CLASS} />
+      )}
+    </figure>
+  )
+}
+
+/** A paragraph with its `[anchor](href)` links; links off the site open in a new tab. */
+function Paragraph({ text }: { text: string }) {
+  return (
+    <p>
+      {paragraphParts(text).map((part, index) =>
+        !part.href ? (
+          part.text
+        ) : part.href.startsWith("/") ? (
+          <Link key={index} href={part.href} className="font-medium text-brand-orange underline-offset-2 hover:underline">
+            {part.text}
+          </Link>
+        ) : (
+          <a key={index} href={part.href} target="_blank" rel="noopener noreferrer" className="font-medium text-brand-orange underline-offset-2 hover:underline">
+            {part.text}
+          </a>
+        )
+      )}
+    </p>
   )
 }
 

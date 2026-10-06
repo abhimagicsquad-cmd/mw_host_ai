@@ -191,10 +191,12 @@ type BlogPostingJsonLdProps = {
   dateModified?: string | null
   wordCount?: number
   section?: string
+  /** The post's own image (site-relative or absolute); defaults to the branded share card. */
+  image?: string
 }
 
 /** BlogPosting structured data for a single blog post page. */
-export function BlogPostingJsonLd({ title, description, slug, authorName, datePublished, dateModified, wordCount, section }: BlogPostingJsonLdProps) {
+export function BlogPostingJsonLd({ title, description, slug, authorName, datePublished, dateModified, wordCount, section, image }: BlogPostingJsonLdProps) {
   const url = `${siteConfig.url}${publicPath(`/blog/${slug}`)}`
   const isTeam = /magicworks host/i.test(authorName)
   return (
@@ -206,7 +208,7 @@ export function BlogPostingJsonLd({ title, description, slug, authorName, datePu
         description,
         url,
         mainEntityOfPage: { "@type": "WebPage", "@id": url },
-        image: [SHARE_IMAGE_URL],
+        image: [image ? new URL(image, siteConfig.url).href : SHARE_IMAGE_URL],
         ...(datePublished ? { datePublished } : {}),
         ...(dateModified || datePublished ? { dateModified: dateModified ?? datePublished } : {}),
         ...(wordCount ? { wordCount } : {}),

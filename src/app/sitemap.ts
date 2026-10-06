@@ -12,7 +12,14 @@ import { legalSlugs } from "@/constants/legal-content"
 import { serviceLandingPath, serviceLandings } from "@/constants/service-landing-data"
 import { siteConfig } from "@/constants/site-config"
 import { sslPages } from "@/constants/ssl-pages-data"
+import { parseImageParagraph } from "@/lib/blog-content"
 import { getNoIndexSeoPaths, getPublishedCmsPaths } from "@/lib/cms/content"
+
+/** A post's featured image, then its article images. */
+function postImages(post: (typeof blogPosts)[number]) {
+  const article = post.sections.flatMap((section) => section.body.flatMap((paragraph) => parseImageParagraph(paragraph)?.src ?? []))
+  return [...new Set([...(post.featuredImage ? [post.featuredImage.src] : []), ...article])]
+}
 
 /** Built-in routes rendered with noindex (search results, form confirmations) — never listed. */
 const NOINDEX_ROUTES = ["/search", "/thank-you"]
@@ -78,6 +85,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "yearly" as const,
     priority: 0.5,
     lastModified: post.modifiedAt ? new Date(post.modifiedAt) : post.publishedAt ? new Date(post.publishedAt) : now,
+    // The post's images, as in the WordPress image sitemap.
+    ...(postImages(post).length ? { images: postImages(post).map((src) => new URL(src, siteConfig.url).href) } : {}),
   }))
 
   // Blog topics plus the WordPress category archives (same /category/<slug>/ URLs as before).

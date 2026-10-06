@@ -7,7 +7,19 @@ export type BlogCategory = {
 
 export type BlogPostSection = {
   heading: string
+  /**
+   * Paragraphs of plain text. Two additions (see src/lib/blog-content.ts): `[anchor](href)`
+   * marks a link, and a paragraph that is only `![alt](src "WIDTHxHEIGHT")` is an image.
+   */
   body: string[]
+}
+
+export type BlogImage = {
+  /** Site-relative (/wp-content/uploads/…) or absolute URL. */
+  src: string
+  alt: string
+  width?: number
+  height?: number
 }
 
 export type BlogPost = {
@@ -27,6 +39,8 @@ export type BlogPost = {
   legacyPath?: string
   /** The article's categories on the WordPress blog (see `wordpressCategories`). */
   wpCategories?: string[]
+  /** The article's featured image — set for the WordPress articles that had one. */
+  featuredImage?: BlogImage
 }
 
 /** Seed content — real CMS-backed content population is a future phase; this establishes the working index + detail template structure. */
