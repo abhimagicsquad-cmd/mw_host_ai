@@ -1,132 +1,153 @@
 import type { NextConfig } from "next";
 
-// The old WordPress site (see docs/03-route-mapping.md) used flat permalinks with no shared
-// prefix, so every legacy path is listed explicitly rather than matched with a wildcard —
-// a wildcard here would also catch (and mis-redirect) unrelated current routes like /about-us.
-const legacyBlogPostSlugs = [
-  "how-to-use-wordpress-to-build-your-online-presence",
-  "how-to-create-a-website",
-  "best-hosting-for-affiliate-marketing",
-  "market-your-business-with-professional-email-address",
-  "do-not-take-malware-lightly-it-can-ruin-your-business",
-  "want-to-know-different-types-of-ssl-certificates-for-webhosting",
-  "moments-of-truth-mot-for-digital-marketer",
-  "cannot-ignore-webpage-loading-time",
-  "why-you-should-care-about-website-uptime",
-  "improve-webpage-speed-and-boost-your-digital-business",
-  "take-website-security-seriously-it-affects-seo",
-  "need-faster-website-because-slow-website-kill-conversions",
-  "when-to-choose-shared-web-hosting-service",
-  "are-you-curious-about-types-of-web-hosting",
-  "secure-web-hosting-ensuring-security-of-your-website",
-  "demystifying-ssl-https-for-business-website",
-  "5-best-payment-processing-app-for-your-website",
-  "how-to-build-e-commerce-website",
-  "what-is-ssl-certificate",
-  "when-dedicated-server-should-be-used-for-web-hosting",
-  "what-is-web-hosting",
-  "blogging-four-steps-guide-for-beginners",
-  "importance-of-taking-website-backup",
-  "taking-business-online-2-key-steps-after-shared-web-hosting",
-  "grow-your-business-even-in-the-days-of-lock-down-and-corona-pandemic-with-best-web-hosting",
-  "with-best-web-hosting-no-excuses-take-business-online",
-  "3-quick-steps-to-be-online-with-best-web-hosting-company",
-  "how-to-choose-best-seo-web-hosting",
-  "compare-web-hosting-plans-practical-guide-for-business-owners",
-  "why-you-need-domain-registration-for-online-business",
-  "what-is-domain-name-and-how-it-works",
-  "5-reasons-for-getting-ssl-certificate-for-your-website",
-  "here-are-the-reasons-for-taking-your-business-online",
-  "comparing-shared-vps-and-dedicated-hosting",
-  "website-speed-favors-your-google-ads",
-  "what-is-vps-web-hosting",
-  "your-customers-have-a-need-for-speedy-website",
-  "why-is-web-hosting-important-for-digital-marketing",
-  "business-is-always-a-race-where-you-need-to-outrun-your-competitors",
-  "what-is-user-experience-and-why-should-you-care",
-  "what-is-user-experience-and-why-should-you-care-2",
-  "why-your-site-needs-to-stay-up",
+import { RETIRED_WORDPRESS_URLS, WORDPRESS_ALIASES, WORDPRESS_ROUTES } from "./src/lib/public-paths";
+
+/**
+ * URL parity with the WordPress site (https://magicworkshost.com): pages are served at the
+ * WordPress URLs themselves, trailing slash included (see src/lib/public-paths.ts).
+ *
+ * - WordPress URLs render directly (rewrites to the internal route).
+ * - Internal route paths (/legal/privacy-policy, /blog/<post>, /blog/category/<topic>)
+ *   and slash-less page URLs 308 to the public URL in one hop.
+ * - WordPress aliases of a page (/resources/ for the blog) render too, canonical to the page.
+ * - WordPress feed URLs 308 to the blog.
+ */
+const permanent = (source: string, destination: string) => ({ source, destination, permanent: true });
+const bothSlashes = (path: string) => [path.replace(/\/$/, ""), path.endsWith("/") ? path : `${path}/`];
+
+const internalPathRedirects = Object.entries(WORDPRESS_ROUTES).flatMap(([publicUrl, internal]) =>
+  bothSlashes(internal).map((source) => permanent(source, publicUrl))
+);
+const retiredRedirects = Object.entries(RETIRED_WORDPRESS_URLS).flatMap(([oldUrl, target]) =>
+  bothSlashes(oldUrl).map((source) => permanent(source, target))
+);
+// Blog posts live at /<slug>/ and categories at /category/<topic>/, as on WordPress.
+const blogStructureRedirects = [
+  permanent("/blog/category/:topic", "/category/:topic/"),
+  permanent("/blog/category/:topic/", "/category/:topic/"),
+  permanent("/blog/:slug((?!category$)[^/]+)", "/:slug/"),
+  permanent("/blog/:slug((?!category$)[^/]+)/", "/:slug/"),
 ];
 
-const legacyBlogCategorySlugs = [
-  "affiliate-marketing",
-  "blogging",
-  "dedicated-hosting",
-  "digital-marketing",
-  "domain-name",
-  "email-hosting",
-  "online-business",
-  "secure-socket-layer-ssl",
-  "secure-web-hosting",
-  "shared-web-hosting-service",
-  "ssl-certificate",
-  "web-designs",
-  "web-development",
-  "web-hosting",
-  "web-security",
+const wordpressRewrites = Object.entries({ ...WORDPRESS_ROUTES, ...WORDPRESS_ALIASES }).map(([publicUrl, internal]) => ({ source: publicUrl, destination: internal }));
+
+// WordPress system URLs that search engines and feed readers still request.
+const wordpressSystemRedirects = [
+  permanent("/index.php", "/"),
+  permanent("/sitemap_index.xml", "/sitemap.xml"),
+  permanent("/post-sitemap.xml", "/sitemap.xml"),
+  permanent("/page-sitemap.xml", "/sitemap.xml"),
+  permanent("/category-sitemap.xml", "/sitemap.xml"),
 ];
 
-// 1:1 legacy WordPress path -> current route. The new blog is a fresh set of posts (not a
-// port of the old 42), so legacy post/category URLs redirect to the blog index rather than
-// a non-existent equivalent. Pages the old site had that were never rebuilt here (the 50-off
-// promo, the 3 calculators, the USA-hosting/domain-search/domain-renew pages, and 3 of the 7
-// legal docs) are intentionally left unmapped — see docs/03-route-mapping.md.
-const legacyRedirects: { source: string; destination: string }[] = [
-  { source: "/about-us-website-hosting-services", destination: "/about-us" },
-  { source: "/resources", destination: "/blog" },
-  { source: "/sitemap", destination: "/sitemap-page" },
-  { source: "/web-hosting-cart", destination: "/hosting/buy-web-hosting" },
+// Slash-less page URLs get their trailing slash in src/proxy.ts: Next matches redirect
+// sources with an optional trailing slash, so a config rule would redirect "/x/" to itself.
 
-  { source: "/buy-web-hosting", destination: "/hosting/buy-web-hosting" },
-  { source: "/unlimited-web-hosting-plans", destination: "/hosting/unlimited-hosting" },
-  { source: "/seo-hosting", destination: "/hosting/seo-hosting" },
-  { source: "/wordpress-hosting", destination: "/hosting/wordpress-hosting" },
-  { source: "/linux-shared-hosting", destination: "/hosting/linux-shared-hosting" },
+/** WHMCS stays on the current server at www.magicworkshost.com/clients (see src/lib/billing.ts). */
+const billingBase = (process.env.NEXT_PUBLIC_BILLING_URL || "https://www.magicworkshost.com/clients").replace(/\/$/, "");
+const billingOrigin = new URL(billingBase).origin;
 
-  { source: "/dedicated-server-hosting", destination: "/dedicated-hosting/dedicated-server" },
-  { source: "/managed-dedicated-hosting-services", destination: "/dedicated-hosting/managed-dedicated-server" },
-  { source: "/linux-dedicated-server-hosting", destination: "/dedicated-hosting/linux-dedicated-server" },
+const wordpressPatternRedirects = [
+  // WordPress site search (/?s=term — its search forms and old links) → the site search page.
+  { source: "/", has: [{ type: "query" as const, key: "s", value: "(?<term>.*)" }], destination: "/search/?q=:term", permanent: true },
+  // Old relative /clients links → the billing system (308 keeps POSTs intact).
+  { source: "/clients", destination: billingBase, permanent: true },
+  { source: "/clients/:path*", destination: `${billingBase}/:path*`, permanent: true },
+  // (No /wp-content redirect: WordPress on www 301s to the apex, which would loop back here.)
+  { source: "/wp-admin/:path*", destination: "/", permanent: false },
+  { source: "/wp-login.php", destination: "/", permanent: false },
+  { source: "/author/:name/:rest*", destination: "/blog/", permanent: true },
+  { source: "/tag/:tag/:rest*", destination: "/blog/", permanent: true },
+  { source: "/page/:n/:rest*", destination: "/blog/", permanent: true },
+  { source: "/category/:slug/page/:n/:rest*", destination: "/category/:slug/", permanent: true },
+  { source: "/:slug/feed/:rest*", destination: "/:slug/", permanent: true },
+];
 
-  { source: "/domain-hosting", destination: "/domain/domain-hosting" },
-  { source: "/domain-registration-india", destination: "/domain/indian-domain" },
-  { source: "/domain-name-registration", destination: "/domain/domain-name-registration" },
-  { source: "/buy-domain-name-at-cheap-price", destination: "/domain/buy-domain-name" },
-  { source: "/transfer-your-domain-name", destination: "/domain/transfer-your-domain-name" },
+const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin : "https://*.supabase.co";
 
-  // The 5 individual certificate pages were consolidated into the single /ssl pillar page,
-  // which already carries the differentiated pricing they used to (inconsistently) show.
-  { source: "/buy-ssl-certificate", destination: "/ssl" },
-  { source: "/business-validated-certificates", destination: "/ssl" },
-  { source: "/domain-validated-certificate-with-sni-feature", destination: "/ssl" },
-  { source: "/domain-validated-certificates", destination: "/ssl" },
-  { source: "/extended-validated-certificates", destination: "/ssl" },
-  { source: "/wild-card-certificates", destination: "/ssl" },
+/**
+ * Public website: Google Ads gtag plus whatever admins add in Admin → Custom Code Manager
+ * (tracking scripts, head/footer snippets, live-chat widgets, fonts…). Like a WordPress header/
+ * footer code plugin, those may load from any HTTPS host without a redeploy, so scripts, styles,
+ * frames, fonts, images and connections allow any https: source. Plain http:, eval, plugins
+ * (object-src) and other sites framing this one stay blocked. Inline scripts were already
+ * allowed (Next.js bootstrap). The admin dashboard keeps its strict policy (headers() below).
+ */
+const tracking = {
+  script: " https:",
+  style: " https:",
+  connect: " https:",
+  img: " https:",
+  frame: " https:",
+  font: " https:",
+};
 
-  { source: "/business-email-hosting", destination: "/email-hosting/business" },
-  { source: "/enterprise-email-hosting", destination: "/email-hosting/enterprise" },
+function csp(extra: { script?: string; style?: string; connect?: string; img?: string; frame?: string; font?: string } = {}) {
+  return [
+    "default-src 'self'",
+    // Next.js injects inline bootstrap scripts into statically rendered pages, which rules out
+    // nonces without making every page dynamic; everything else is locked to this origin.
+    `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${extra.script ?? ""}`,
+    `style-src 'self' 'unsafe-inline'${extra.style ?? ""}`,
+    `img-src 'self' data: blob: ${supabaseOrigin}${extra.img ?? ""}`,
+    `font-src 'self' data:${extra.font ?? ""}`,
+    `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com${extra.connect ?? ""}`,
+    `frame-src https://challenges.cloudflare.com${extra.frame ?? ""}`,
+    "frame-ancestors 'none'",
+    `form-action 'self' ${billingOrigin}`,
+    "base-uri 'self'",
+    "object-src 'none'",
+    "upgrade-insecure-requests",
+  ].join("; ");
+}
 
-  { source: "/thank-you-for-subscribing", destination: "/thank-you" },
-  { source: "/thank-you-for-interest-in-affiliate-program", destination: "/thank-you" },
-
-  { source: "/privacy-policy", destination: "/legal/privacy-policy" },
-  { source: "/terms-of-services", destination: "/legal/terms-of-service" },
-  { source: "/service-level-agreement", destination: "/legal/service-level-agreement" },
-  { source: "/acceptable-use-policy", destination: "/legal/acceptable-use-policy" },
-
-  ...legacyBlogPostSlugs.map((slug) => ({ source: `/${slug}`, destination: "/blog" })),
-  ...legacyBlogCategorySlugs.map((slug) => ({ source: `/category/${slug}`, destination: "/blog" })),
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()" },
+  // No Cross-Origin-Opener-Policy: `same-origin` forces a browsing-context-group switch that
+  // breaks Lighthouse / PageSpeed Insights navigation traces (NO_NAVSTART), and the site has
+  // no cross-window flows for it to protect. Framing is already blocked (XFO + frame-ancestors).
+  // No includeSubDomains: www (WHMCS) and other subdomains stay on the existing server.
+  { key: "Strict-Transport-Security", value: "max-age=63072000" },
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  // Trailing slashes follow WordPress (pages end in "/"); src/proxy.ts adds them to page URLs
+  // only, so the admin and API keep their slash-less URLs.
+  skipTrailingSlashRedirect: true,
   images: {
+    // AVIF first (smaller), WebP fallback — picked per request from the Accept header.
+    formats: ["image/avif", "image/webp"],
+    // 75 is the default; 90 is for blog article images (see blog-post.tsx).
+    qualities: [75, 90],
     dangerouslyAllowSVG: true,
+    // SVGs served by the optimizer can't run script, and download rather than render when
+    // opened directly (the hardening the Next.js docs pair with dangerouslyAllowSVG).
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // The Studio (sanity/@sanity/vision) is client-only and incompatible with Next's
-  // "react-server" bundling condition (e.g. swr's default export) when reached from a
-  // Server Component — load it via Node's require() instead of bundling it.
-  serverExternalPackages: ["sanity", "@sanity/vision"],
   async redirects() {
-    return legacyRedirects.map(({ source, destination }) => ({ source, destination, permanent: true }));
+    return [
+      ...internalPathRedirects,
+      ...blogStructureRedirects,
+      ...retiredRedirects,
+      ...wordpressSystemRedirects,
+      ...wordpressPatternRedirects,
+    ];
+  },
+  async rewrites() {
+    return wordpressRewrites;
+  },
+  async headers() {
+    return [
+      { source: "/:path*", headers: [...securityHeaders, { key: "Content-Security-Policy", value: csp(tracking) }] },
+      // Admin: media previews may be any https image the editor pastes.
+      { source: "/admin/:path*", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
+      { source: "/mwh-admin-login", headers: [{ key: "Content-Security-Policy", value: csp({ img: " https:" }) }] },
+    ];
   },
 };
 

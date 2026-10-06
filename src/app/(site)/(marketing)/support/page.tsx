@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
+import { publicPath } from "@/lib/public-paths"
 
-import { LeadForm } from "@/components/forms/lead-form"
+import { LazyLeadForm as LeadForm } from "@/components/forms/lazy-forms"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { PageHero } from "@/components/sections/page-hero"
@@ -8,9 +9,10 @@ import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { siteConfig } from "@/constants/site-config"
+import { billingUrls, normalizeBillingHref } from "@/lib/billing"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
-import { getSupportPage } from "@/sanity/lib/queries"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
+import { getSupportPage } from "@/lib/cms/queries"
 
 const fallbackChannels = [
   {
@@ -26,7 +28,7 @@ const fallbackChannels = [
     description: "Track and manage support tickets from your client area.",
     icon: "Ticket",
     ctaLabel: "Client area login",
-    ctaHref: "https://clients.magicworkshost.com/clientarea.php",
+    ctaHref: billingUrls.submitTicket,
     external: true,
   },
   {
@@ -45,11 +47,21 @@ const fallbackFaqs = [
   { question: "Where do I check on my invoice or billing?", answer: "Log into your client area to view invoices, update payment methods, or check your renewal date." },
 ]
 
+/**
+ * A ticket channel that points at the client-area home opens the ticket form itself, as the
+ * WordPress support page did (submitticket.php, Support department).
+ */
+function channelHref(channel: { icon?: string; title: string; ctaHref: string }) {
+  const href = normalizeBillingHref(channel.ctaHref)
+  if (href === billingUrls.clientArea && (channel.icon === "Ticket" || /ticket/i.test(channel.title))) return billingUrls.submitTicket
+  return publicPath(href)
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getSupportPage()
   if (!cms?.seo?.metaTitle) {
     return buildPageMetadata({
-      title: "Support",
+      title: defaultSeoTitle("/support") ?? "Support",
       description: "Reach MagicWorks Host support by phone, ticket, or knowledge base — 24/7 support on every plan.",
       path: "/support",
     })
@@ -89,7 +101,7 @@ export default async function SupportPage() {
                 <p className="text-base font-semibold text-brand-navy">{channel.title}</p>
                 <p className="text-sm text-body-text">{channel.description}</p>
                 <a
-                  href={channel.ctaHref}
+                  href={channelHref(channel)}
                   target={channel.external ? "_blank" : undefined}
                   rel={channel.external ? "noopener noreferrer" : undefined}
                   className="mt-auto text-sm font-semibold text-brand-orange hover:underline"
@@ -115,6 +127,7 @@ export default async function SupportPage() {
         title="Still stuck?"
         description="Send us your details and we'll take it from there."
         primaryCta={{ label: "Talk to us", href: LEAD_CTA_HREF }}
+        secondaryCta={{ label: "Open a support ticket", href: billingUrls.submitTicket, external: true }}
         background="navy"
       />
     </>

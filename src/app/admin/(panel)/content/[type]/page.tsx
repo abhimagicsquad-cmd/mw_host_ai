@@ -41,11 +41,11 @@ export default async function ContentGroupPage({ params, searchParams }: { param
           <Panel>
             <EmptyState
               icon={Home}
-              title="The home page isn't in the CMS yet"
-              description="The website is showing the Sanity version. Import all existing content from the Migration page to edit it here."
+              title="The home page isn't set up yet"
+              description="The website is showing its built-in home page. Create a page at the path / to edit it here."
               action={
-                <Link href="/admin/migration" className={buttonVariants()}>
-                  Open migration
+                <Link href="/admin/pages/new" className={buttonVariants()}>
+                  Create page
                 </Link>
               }
             />
@@ -82,7 +82,7 @@ export default async function ContentGroupPage({ params, searchParams }: { param
         admin={admin}
         query={q}
         searchAction={`/admin/content/${type}`}
-        emptyTitle={`No ${group.title.toLowerCase()} in the CMS yet — import existing content from the Migration page`}
+        emptyTitle={`No ${group.title.toLowerCase()} in the CMS yet — create one with Add New Page`}
         newHref={newPage?.href ?? "/admin/pages/new"}
       />
     </div>

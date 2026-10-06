@@ -4,7 +4,7 @@ import type { KBArticle, KBCategory } from "@/types/knowledge-base"
 
 /**
  * Seed content for the Knowledge Base structure — no CMS document type exists for
- * this yet (the Sanity schema plan only covers an external WHMCS KB link). Typed
+ * this yet (the original content plan only covered an external WHMCS KB link). Typed
  * the same way as every other section's content so swapping this array for a real
  * data source later is a data-source change only, not a component rewrite.
  */

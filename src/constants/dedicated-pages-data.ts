@@ -23,7 +23,7 @@ export const dedicatedPages: DedicatedPageData[] = [
     eyebrow: "Dedicated Server",
     title: "Bare-metal performance, fully in your control",
     description: "Full root access to dedicated hardware — no noisy neighbors, no shared resources, no compromise on performance.",
-    bullets: ["Dedicated CPU, RAM, and storage — nothing shared", "Full root access", "Choice of OS and control panel", "5 dedicated IPs included"],
+    bullets: ["Dedicated CPU, RAM, and storage — nothing shared", "Full root access", "Choice of OS and control panel", "4 dedicated IPs included"],
     managed: false,
     faqs: [
       { question: "Do I manage the server myself?", answer: "Yes — you get full root access. Our support team is available for infrastructure-level issues, not application management." },
@@ -49,7 +49,7 @@ export const dedicatedPages: DedicatedPageData[] = [
     eyebrow: "Linux Dedicated Server",
     title: "Linux dedicated servers tuned for real workloads",
     description: "The same dedicated hardware tiers, running a hardened Linux stack — a solid foundation for anything from a database cluster to a build server.",
-    bullets: ["Choice of major Linux distributions", "Hardened default configuration", "Full root access", "5 dedicated IPs included"],
+    bullets: ["Choice of major Linux distributions", "Hardened default configuration", "Full root access", "4 dedicated IPs included"],
     managed: false,
     faqs: [
       { question: "Which Linux distributions are supported?", answer: "Common enterprise distributions are available at provisioning — ask our team if you need a specific version." },

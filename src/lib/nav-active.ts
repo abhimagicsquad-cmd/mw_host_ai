@@ -1,5 +1,6 @@
 import { siteConfig } from "@/constants/site-config"
 import type { NavItem } from "@/types/nav"
+import { publicPath } from "@/lib/public-paths"
 
 const siteHost = new URL(siteConfig.url).hostname
 
@@ -26,7 +27,8 @@ function normalizePath(href: string): string | null {
  * matches `/hosting/seo-hosting` but never `/hosting-plans`. `/` only matches itself.
  */
 function matchScore(href: string, pathname: string): number {
-  const path = normalizePath(href)
+  // Compare the URL the link actually points to (menus may hold internal route paths).
+  const path = normalizePath(publicPath(href))
   if (!path) return -1
   if (path === pathname) return path.length
   if (path !== "/" && pathname.startsWith(`${path}/`)) return path.length

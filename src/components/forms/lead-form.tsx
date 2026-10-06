@@ -10,7 +10,9 @@ import { TextField } from "@/components/forms/fields/text-field"
 import { TextareaField } from "@/components/forms/fields/textarea-field"
 import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
 import { serviceOptions } from "@/constants/service-options"
+import { LEAD_CONTACT_FALLBACK, filterPhoneInput, markLeadAutoPopupShown } from "@/lib/lead-form-utils"
 import { cn } from "@/lib/utils"
 import { leadFormDefaultValues, leadFormSchema, type LeadFormValues } from "@/schemas/lead-form.schema"
 
@@ -32,14 +34,11 @@ function filterNameInput(event: React.ChangeEvent<HTMLInputElement>) {
   event.target.value = event.target.value.replace(/[^A-Za-z\s]/g, "")
 }
 
-function filterPhoneInput(event: React.ChangeEvent<HTMLInputElement>) {
-  event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10)
-}
-
 export function LeadForm({ source, onSuccess, submitLabel = "Send my details", defaultService, className }: LeadFormProps) {
   const router = useRouter()
   const [result, setResult] = useState<LeadFormResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
+  const turnstile = useTurnstile()
   const honeypotId = useId()
 
   const {
@@ -55,30 +54,36 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
 
   const onSubmit = async (values: LeadFormValues) => {
     setResult(null)
+    if (turnstile.missing) {
+      setResult({ success: false, message: TURNSTILE_MISSING_MESSAGE })
+      return
+    }
 
     try {
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, source, formRenderedAt, pageUrl: window.location.href }),
+        body: JSON.stringify({ ...values, source, formRenderedAt, pageUrl: window.location.href, turnstileToken: turnstile.token }),
       })
+      turnstile.consume()
 
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       const success = Boolean(data.success)
 
       if (success) {
         reset()
+        markLeadAutoPopupShown()
         onSuccess?.()
-        router.push("/thank-you")
+        router.push("/thank-you/")
         return
       }
 
       setResult({
         success,
-        message: data.message ?? "Something went wrong. Please try again.",
+        message: data.message ?? `Something went wrong. Please try again. ${LEAD_CONTACT_FALLBACK}`,
       })
     } catch {
-      setResult({ success: false, message: "Network error — please check your connection and try again." })
+      setResult({ success: false, message: `Network error — please check your connection and try again. ${LEAD_CONTACT_FALLBACK}` })
     }
   }
 
@@ -100,7 +105,7 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
           placeholder="Phone Number *"
           inputMode="numeric"
           autoComplete="tel"
-          maxLength={10}
+          maxLength={16}
           registration={register("phone", { onChange: filterPhoneInput })}
           error={errors.phone?.message}
         />
@@ -136,6 +141,8 @@ export function LeadForm({ source, onSuccess, submitLabel = "Send my details", d
         <label htmlFor={honeypotId}>Website</label>
         <input id={honeypotId} type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>
+
+      <TurnstileWidget {...turnstile.widgetProps} />
 
       {result ? <FormStatusMessage status={result.success ? "success" : "error"} message={result.message} /> : null}
 

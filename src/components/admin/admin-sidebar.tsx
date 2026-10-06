@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import {
   Activity,
-  ArrowRightLeft,
+  Bot,
   ChevronDown,
+  Code2,
   FileText,
   FormInput,
   Image as ImageIcon,
@@ -36,7 +37,8 @@ const ICONS: Record<AdminNavIcon, LucideIcon> = {
   users: Users,
   settings: Settings,
   activity: Activity,
-  migration: ArrowRightLeft,
+  assistant: Bot,
+  code: Code2,
 }
 
 /** Longest-prefix match so /admin/pages/new highlights "Add New Page", not "All Pages". */

@@ -15,4 +15,6 @@ export type KBArticle = {
   readTime: string
   featured?: boolean
   popular?: boolean
+  /** Set for articles with their own page (the long-form guides); others are summaries only. */
+  href?: string
 }

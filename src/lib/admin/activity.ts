@@ -27,8 +27,30 @@ export type ActivityAction =
   | "user.created"
   | "user.updated"
   | "user.deleted"
+  | "user.activated"
+  | "user.deactivated"
+  | "lead.status_changed"
+  | "lead.deleted"
+  | "lead.exported"
+  | "assistant.enabled"
+  | "assistant.disabled"
+  | "assistant.settings_updated"
+  | "assistant.plan_created"
+  | "assistant.plan_updated"
+  | "assistant.plan_deleted"
+  | "assistant.plans_imported"
+  | "assistant.faq_created"
+  | "assistant.faq_updated"
+  | "assistant.faq_deleted"
+  | "assistant.faqs_imported"
+  | "assistant.lead_captured"
+  | "custom_code.updated"
+  | "custom_code.enabled"
+  | "custom_code.disabled"
+  | "custom_code.reset"
+  | "custom_code.restored"
+  | "custom_code.previewed"
   | "settings.updated"
-  | "system.import"
   | "system.cache_cleared"
 
 export async function getClientIp(): Promise<string | null> {
@@ -36,8 +58,7 @@ export async function getClientIp(): Promise<string | null> {
   return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || null
 }
 
-/** Best-effort audit log write — never throws, so logging can't break the action being logged. */
-export async function logActivity(entry: {
+type ActivityEntry = {
   admin?: CurrentAdmin | null
   username?: string
   action: ActivityAction
@@ -45,19 +66,30 @@ export async function logActivity(entry: {
   entityId?: string | null
   description: string
   metadata?: Record<string, unknown>
-}) {
-  if (!cmsAdminDb) return
+}
+
+/** Best-effort audit log write — never throws, so logging can't break the action being logged. */
+export async function logActivity(entry: ActivityEntry) {
+  await logActivities([entry])
+}
+
+/** Several entries in one insert (bulk actions log one row per affected item). Never throws. */
+export async function logActivities(entries: ActivityEntry[]) {
+  if (!cmsAdminDb || !entries.length) return
   try {
-    const { error } = await cmsAdminDb.from("activity_logs").insert({
-      user_id: entry.admin ? actorId(entry.admin) : null,
-      username: entry.admin?.username ?? entry.username ?? null,
-      action: entry.action,
-      entity_type: entry.entityType ?? null,
-      entity_id: entry.entityId ?? null,
-      description: entry.description,
-      metadata: entry.metadata ?? null,
-      ip_address: await getClientIp(),
-    })
+    const ip = await getClientIp()
+    const { error } = await cmsAdminDb.from("activity_logs").insert(
+      entries.map((entry) => ({
+        user_id: entry.admin ? actorId(entry.admin) : null,
+        username: entry.admin?.username ?? entry.username ?? null,
+        action: entry.action,
+        entity_type: entry.entityType ?? null,
+        entity_id: entry.entityId ?? null,
+        description: entry.description,
+        metadata: entry.metadata ?? null,
+        ip_address: ip,
+      }))
+    )
     if (error) console.warn("[activity] insert failed", error.message)
   } catch (error) {
     console.warn("[activity] insert failed", error)

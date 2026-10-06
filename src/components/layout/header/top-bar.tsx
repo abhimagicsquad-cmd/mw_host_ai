@@ -1,9 +1,10 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { Phone, LifeBuoy, LogIn } from "lucide-react"
 
 import { resolveSocialIcon } from "@/components/common/social-icons"
 import { siteConfig, socialLinks as defaultSocialLinks } from "@/constants/site-config"
-import { getSiteSettings } from "@/sanity/lib/queries"
+import { billingUrls } from "@/lib/billing"
+import { getSiteSettings } from "@/lib/cms/queries"
 
 export async function TopBar() {
   const settings = await getSiteSettings()
@@ -30,7 +31,7 @@ export async function TopBar() {
             Support
           </Link>
           <a
-            href="https://clients.magicworkshost.com/clientarea.php"
+            href={billingUrls.clientArea}
             className="flex items-center gap-1.5 hover:text-white"
           >
             <LogIn className="size-3.5" />

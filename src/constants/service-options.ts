@@ -15,6 +15,12 @@ export const serviceOptions = [
   { value: "ssl", label: "SSL Certificate" },
   { value: "business-email", label: "Business Email Hosting" },
   { value: "enterprise-email", label: "Enterprise Email Hosting" },
+  { value: "cloud-hosting", label: "Cloud Hosting" },
+  { value: "reseller-hosting", label: "Reseller Hosting" },
+  { value: "website-development", label: "Website Development" },
+  { value: "website-maintenance", label: "Website Maintenance" },
+  { value: "website-migration", label: "Website Migration" },
+  { value: "website-security", label: "Website Security" },
   { value: "not-sure", label: "Not sure yet / Need advice" },
 ] as const
 

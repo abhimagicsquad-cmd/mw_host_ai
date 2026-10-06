@@ -4,17 +4,16 @@ import { draftMode } from "next/headers"
 import { cache } from "react"
 
 import type { BlogPost } from "@/constants/blog-data"
-import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/sanity/types"
+import type { NavColumnData, NavItemData, PageBuilderBlock, PageDocument, PricingPlanData } from "@/types/cms-content"
 
 import { cmsAdminDb, cmsPublicDb } from "./db"
-import { markdownToPortableText } from "./rich-text"
 import { PRICING_COLLECTION_KEY, TEMPLATE_SECTION_PREFIX, templateForPath, templateSectionType, type TemplateKey } from "./templates"
 import type { GeneralSettings, PageRow, PageSectionRow, SeoRow, WebsiteSettings } from "./types"
 
 /**
  * Website-facing CMS reads. Every function returns null/[] when Supabase isn't configured,
  * the migration hasn't been run, or nothing is published — callers then fall back to
- * Sanity and finally to the hardcoded defaults, so the site never breaks because of the CMS.
+ * the built-in defaults (src/constants and the routes), so the site never breaks because of the CMS.
  *
  * Preview: when an admin turns on draft mode (/admin/preview), page reads skip the cache
  * and return the latest version of each page — draft or published — so migrated content
@@ -59,7 +58,7 @@ export function toPageBuilderBlock(section: Pick<PageSectionRow, "id" | "type" |
   for (const field of ARRAY_FIELDS) if (field in data && !Array.isArray(data[field])) data[field] = []
 
   if (section.type === "richTextBlock") {
-    data.content = typeof data.content === "string" ? markdownToPortableText(data.content) : (data.content ?? [])
+    data.content = typeof data.content === "string" ? data.content : ""
   }
   if (section.type === "featureGridBlock" && data.columns) data.columns = Number(data.columns)
   if (section.type === "pricingBlock" && Array.isArray(data.plans)) {
@@ -84,7 +83,7 @@ export const getPublishedCmsPage = cache(async (path: string): Promise<CmsPage |
   return page
 })
 
-/** CMS page-builder page in the Sanity `PageDocument` shape, or null if it has no builder sections. */
+/** CMS page-builder page as a `PageDocument`, or null if it has no builder sections. */
 export async function getCmsPageDocument(path: string): Promise<PageDocument | null> {
   const page = await getPublishedCmsPage(path)
   const blocks = page?.sections.filter((section) => !isTemplateSection(section)) ?? []
@@ -137,7 +136,8 @@ export const getSeoOverride = cache(async (path: string): Promise<SeoRow | null>
 
 const getSettingsRows = cache(async () => {
   if (!cmsPublicDb) return {} as Record<string, Record<string, unknown>>
-  const { data, error } = await cmsPublicDb.from("settings").select("key, value")
+  // Custom Code version history and preview drafts are dashboard-only (and can be large).
+  const { data, error } = await cmsPublicDb.from("settings").select("key, value").not("key", "like", "custom_code_%")
   if (error || !data) return {}
   return Object.fromEntries(data.map((row) => [row.key as string, (row.value ?? {}) as Record<string, unknown>]))
 })
@@ -148,6 +148,16 @@ export async function getCmsGeneralSettings(): Promise<GeneralSettings> {
 
 export async function getCmsWebsiteSettings(): Promise<WebsiteSettings> {
   return ((await getSettingsRows()).website ?? {}) as WebsiteSettings
+}
+
+/** Live Custom Code Manager sections (`settings.custom_code`), from the same cached settings read. */
+export async function getCmsCustomCodeValue(): Promise<unknown> {
+  return (await getSettingsRows()).custom_code ?? null
+}
+
+/** Raw Hosting Assistant settings (`settings.chatbot`), from the same cached settings read. */
+export async function getCmsAssistantSettingsValue(): Promise<unknown> {
+  return (await getSettingsRows()).chatbot ?? null
 }
 
 export type PricingCollection = { published?: boolean; plans?: PricingPlanData[] }
@@ -187,14 +197,39 @@ export const getPublishedCmsPaths = cache(async (): Promise<{ path: string; upda
   return data
 })
 
-type BlogPostTemplate = Omit<BlogPost, "slug">
+/** Route paths an editor marked "noindex" under SEO — kept out of the sitemap. */
+export const getNoIndexSeoPaths = cache(async (): Promise<string[]> => {
+  if (!cmsPublicDb) return []
+  const { data, error } = await cmsPublicDb.from("seo").select("path").eq("no_index", true)
+  if (error || !data) return []
+  return data.map((row) => row.path as string)
+})
+
+type BlogPostTemplate = Omit<BlogPost, "slug" | "featuredImage" | "wpCategories"> & {
+  archiveCategories?: string[]
+  featuredImage?: string
+  featuredImageAlt?: string
+  /** The featured image's pixel size, written by the import; ignored once the image is changed. */
+  featuredImageMeta?: { src: string; width: number; height: number }
+}
+
+/** ISO date or nothing — the date fields are free text in the dashboard. */
+function isoDate(value: unknown) {
+  return typeof value === "string" && value.trim() && !Number.isNaN(Date.parse(value)) ? value.trim() : null
+}
 
 /** CMS blog posts in the same shape as the built-in posts, so they render with the same template. */
 export async function getCmsBlogPosts(): Promise<BlogPost[]> {
   const pages = await getCmsTemplatePages("blogPost")
   return pages.map(({ path, data }) => {
     const post = data as Partial<BlogPostTemplate>
+    const image = post.featuredImage?.trim()
+    const meta = post.featuredImageMeta?.src === image ? post.featuredImageMeta : undefined
     return {
+      publishedAt: isoDate(post.publishedAt),
+      modifiedAt: isoDate(post.modifiedAt),
+      wpCategories: (post.archiveCategories ?? []).map((slug) => slug.trim()).filter(Boolean),
+      ...(image ? { featuredImage: { src: image, alt: post.featuredImageAlt?.trim() || post.title || "", ...(meta ? { width: meta.width, height: meta.height } : {}) } } : {}),
       slug: path.replace(/^\/blog\//, ""),
       title: post.title ?? "",
       excerpt: post.excerpt ?? "",
@@ -206,10 +241,4 @@ export async function getCmsBlogPosts(): Promise<BlogPost[]> {
       sections: (post.sections ?? []).map((section) => ({ heading: section.heading, body: (section.body ?? []).filter(Boolean) })),
     }
   })
-}
-
-export async function getCmsBlogPost(slug: string): Promise<BlogPost | null> {
-  const data = await getCmsTemplate<Partial<BlogPostTemplate>>("blogPost", `/blog/${slug}`)
-  if (!data) return null
-  return (await getCmsBlogPosts()).find((post) => post.slug === slug) ?? null
 }

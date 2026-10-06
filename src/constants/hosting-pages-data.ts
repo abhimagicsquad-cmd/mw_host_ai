@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { Gauge, Lock, Rocket, Search, Server, Sparkles, Terminal, TrendingUp, Zap } from "lucide-react"
+import { Globe, Gauge, Lock, Rocket, Search, Server, Sparkles, Terminal, TrendingUp, Zap } from "lucide-react"
 
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -11,6 +11,8 @@ export type HostingPageData = {
   bullets: string[]
   features: Feature[]
   faqs: FAQItem[]
+  /** Limits the pricing grid to these plan slugs (WordPress sold only Unlimited NVMe on its page). */
+  planSlugs?: string[]
 }
 
 export const hostingHubIntro = {
@@ -40,7 +42,7 @@ export const hostingPages: HostingPageData[] = [
     faqs: [
       { question: "How long does setup take?", answer: "Most accounts are live within 5 minutes of payment confirmation." },
       { question: "Can I install WordPress automatically?", answer: "Yes — Softaculous one-click install is available in cPanel on every plan." },
-      { question: "Is there a money-back guarantee?", answer: "Yes, every plan includes a 30-day money-back guarantee." },
+      { question: "Is there a money-back guarantee?", answer: "Yes. New shared hosting customers can request a full refund within 30 days of purchase; domain and SSL fees are non-refundable." },
     ],
   },
   {
@@ -102,7 +104,7 @@ export const hostingPages: HostingPageData[] = [
       "Free SSL on every domain",
     ],
     features: [
-      { title: "Full root-level cPanel", description: "File manager, cron jobs, and database tools, no waiting on support.", icon: Terminal },
+      { title: "Full cPanel access", description: "File manager, cron jobs, and database tools, no waiting on support.", icon: Terminal },
       { title: "Security hardened", description: "Server-level protections applied by default, not opt-in.", icon: Lock },
       { title: "Unlimited databases", description: "Run as many MySQL databases as your apps need.", icon: Server },
     ],
@@ -115,6 +117,7 @@ export const hostingPages: HostingPageData[] = [
   {
     slug: "unlimited-hosting",
     eyebrow: "Unlimited Hosting",
+    planSlugs: ["unlimited"],
     title: "Unlimited hosting, without the fine-print asterisk",
     description:
       "Generous storage and bandwidth limits designed for growing sites — with the same NVMe performance as every other plan, not a downgraded tier.",
@@ -137,6 +140,30 @@ export const hostingPages: HostingPageData[] = [
   },
 ]
 
+hostingPages.push({
+  slug: "usa-web-hosting",
+  eyebrow: "USA Web Hosting",
+  title: "Fast, affordable web hosting on US servers",
+  description:
+    "Serve visitors in North America from servers located in the USA — cPanel, free SSL and daily backups included, with the same 24/7 support team as our India plans.",
+  bullets: [
+    "Servers located in the United States",
+    "Free SSL certificate on every plan",
+    "cPanel with unlimited subdomains and FTP accounts",
+    "Free site backups and SpamAssassin email protection",
+  ],
+  features: [
+    { title: "Closer to US visitors", description: "Lower latency for audiences in the US and Canada, which helps page speed and SEO.", icon: Globe },
+    { title: "cPanel included", description: "Manage domains, email, databases and files from the control panel you already know.", icon: Terminal },
+    { title: "Secure by default", description: "Free SSL, SpamAssassin filtering and regular backups on every plan.", icon: Lock },
+  ],
+  faqs: [
+    { question: "When should I choose USA hosting instead of India hosting?", answer: "Choose USA hosting when most of your visitors are in North America — shorter network distance means faster page loads for them. If your audience is mainly in India, our Mumbai NVMe plans will be faster." },
+    { question: "Is the price billed monthly?", answer: "USA plans are billed annually; the price shown is the monthly equivalent of the yearly term." },
+    { question: "Can I move from a USA plan to an India plan later?", answer: "Yes. Contact support and we'll migrate your site between data centres for you." },
+  ],
+})
+
 export function getHostingPage(slug: string) {
   return hostingPages.find((page) => page.slug === slug)
 }
@@ -147,4 +174,5 @@ export const hostingPageIcons: Record<string, LucideIcon> = {
   "wordpress-hosting": Rocket,
   "linux-shared-hosting": Terminal,
   "unlimited-hosting": TrendingUp,
+  "usa-web-hosting": Globe,
 }

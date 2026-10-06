@@ -28,7 +28,7 @@ const GENERAL_GROUPS: { title: string; fields: GeneralField[] }[] = [
     title: "Contact details",
     fields: [
       { name: "contactPhone", label: "Phone (display)" },
-      { name: "contactPhoneHref", label: "Phone link", help: "e.g. tel:+918421903846" },
+      { name: "contactPhoneHref", label: "Phone link", help: "e.g. tel:+919764746633" },
       { name: "contactEmail", label: "Email" },
       { name: "contactAddress", label: "Address", multiline: true },
     ],

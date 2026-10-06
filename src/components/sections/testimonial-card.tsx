@@ -1,7 +1,6 @@
 import { Quote } from "lucide-react"
 
 import { RatingStars } from "@/components/common/rating-stars"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import type { Testimonial } from "@/types/content"
 
 type TestimonialCardProps = {
@@ -23,10 +22,22 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
       </div>
       <blockquote className="flex-1 text-[0.95rem] leading-relaxed text-body-text">&ldquo;{testimonial.quote}&rdquo;</blockquote>
       <figcaption className="flex items-center gap-3 border-t border-border-alt pt-4">
-        <Avatar className="ring-2 ring-brand-orange/15">
-          <AvatarImage src={testimonial.avatarUrl} alt={testimonial.name} />
-          <AvatarFallback className="bg-brand-navy/10 font-semibold text-brand-navy">{initials}</AvatarFallback>
-        </Avatar>
+        {testimonial.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- 40px photo from the CMS media library or /public; next/image would add a client runtime for no gain
+          <img
+            src={testimonial.avatarUrl}
+            alt={testimonial.name}
+            width={40}
+            height={40}
+            loading="lazy"
+            decoding="async"
+            className="size-10 shrink-0 rounded-full object-cover ring-2 ring-brand-orange/15"
+          />
+        ) : (
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-navy/10 text-sm font-semibold text-brand-navy ring-2 ring-brand-orange/15" aria-hidden="true">
+            {initials}
+          </span>
+        )}
         <div>
           <p className="text-sm font-semibold text-brand-navy">{testimonial.name}</p>
           {testimonial.title || testimonial.company ? (

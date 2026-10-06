@@ -1,4 +1,4 @@
-import { Phone } from "lucide-react"
+import { Mail, Phone } from "lucide-react"
 
 import { LeadCTAButton } from "@/components/common/lead-cta-button"
 import { siteConfig } from "@/constants/site-config"
@@ -9,6 +9,7 @@ type FooterCTABlockProps = {
   ctaLabel?: string
   contactPhone?: string
   contactPhoneHref?: string
+  contactEmail?: string
 }
 
 export function FooterCTABlock({
@@ -17,6 +18,7 @@ export function FooterCTABlock({
   ctaLabel = "Get in touch",
   contactPhone = siteConfig.contact.phone,
   contactPhoneHref = siteConfig.contact.phoneHref,
+  contactEmail = siteConfig.contact.email,
 }: FooterCTABlockProps) {
   return (
     <div className="flex flex-col items-center justify-between gap-6 rounded-2xl bg-brand-navy-dark px-6 py-8 text-center sm:flex-row sm:text-left">
@@ -24,10 +26,15 @@ export function FooterCTABlock({
         <p className="text-xl font-bold text-white">{title}</p>
         <p className="mt-1 text-sm text-white/70">{description}</p>
       </div>
-      <div className="flex flex-col items-center gap-3 sm:flex-row">
-        <a href={contactPhoneHref} className="flex items-center gap-2 text-sm font-medium text-white">
+      {/* WordPress's "Call our experts — Mobile No. / E-mail" block. */}
+      <div className="flex flex-col items-center gap-3 lg:flex-row lg:gap-5">
+        <a href={contactPhoneHref} className="flex items-center gap-2 text-sm font-medium text-white hover:text-brand-orange">
           <Phone className="size-4 text-brand-orange" />
           {contactPhone}
+        </a>
+        <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 text-sm font-medium text-white hover:text-brand-orange">
+          <Mail className="size-4 text-brand-orange" />
+          {contactEmail}
         </a>
         <LeadCTAButton source="footer">{ctaLabel}</LeadCTAButton>
       </div>

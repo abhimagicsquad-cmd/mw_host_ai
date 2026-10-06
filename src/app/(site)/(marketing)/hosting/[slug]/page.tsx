@@ -2,19 +2,22 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { ProductJsonLd } from "@/components/common/json-ld"
 import { FeaturesSection } from "@/components/sections/features-section"
 import { HeroSection } from "@/components/sections/hero-section"
 import { HeroVisual } from "@/components/sections/hero-visual"
 import { PricingSection } from "@/components/sections/pricing-section"
 import { getHostingPage, hostingPages } from "@/constants/hosting-pages-data"
-import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { sharedHostingPlans, usaSharedHostingPlans } from "@/constants/pricing-plans"
 import { siteConfig } from "@/constants/site-config"
+import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
-import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
+import { getAllServicePageSlugs, getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 
 type HostingSlugPageProps = {
   params: Promise<{ slug: string }>
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }: HostingSlugPageProps): Promis
   if (!cms && !page) return {}
 
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? page?.title ?? "",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle(`/hosting/${slug}`) ?? cms?.heroTitle ?? page?.title ?? "",
     description: cms?.seo?.metaDescription ?? cms?.heroDescription ?? page?.description ?? "",
     path: `/hosting/${slug}`,
   })
@@ -55,11 +58,16 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
   const faqs = cms?.faqs ?? fallback!.faqs
   const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("shared-hosting")
-  const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
+  const indiaPlans = cmsPlans.filter((plan) => plan.region !== "usa")
+  const usaPlans = cmsPlans.filter((plan) => plan.region === "usa")
+  const regionPlans =
+    slug === "usa-web-hosting" ? (usaPlans.length ? usaPlans : usaSharedHostingPlans) : indiaPlans.length ? indiaPlans : sharedHostingPlans
+  const pagePlans = fallback?.planSlugs ? regionPlans.filter((plan) => fallback.planSlugs!.includes(plan.slug)) : []
+  const plans = pagePlans.length ? pagePlans : regionPlans
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path={`/hosting/${slug}`} plans={plans} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path={`/hosting/${slug}`} plans={plans} />
 
       <HeroSection
         eyebrow={eyebrow}
@@ -72,7 +80,7 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
           copy?.heroStats?.length
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
-                { label: "Avg. load time", value: "0.7s" },
+                { label: "In business since", value: "2012" },
                 { label: "Uptime SLA", value: "99.9%" },
                 { label: "Support", value: "24/7" },
               ]
@@ -80,6 +88,8 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
         media={<HeroVisual variant="dashboard" />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Hosting", href: "/hosting" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path={`/hosting/${slug}`} kind="hosting" label={eyebrow} />
 
       <FeaturesSection
         eyebrow={copy?.featuresEyebrow || "Why this hosting"}
@@ -97,6 +107,8 @@ export default async function HostingSlugPage({ params }: HostingSlugPageProps) 
           plans={plans}
         />
       </div>
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
 
       <FAQSection eyebrow={copy?.faqEyebrow || "FAQs"} title={copy?.faqTitle || `${eyebrow} questions, answered`} items={faqs} />
 

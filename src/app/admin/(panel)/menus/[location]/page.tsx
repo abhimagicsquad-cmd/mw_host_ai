@@ -7,7 +7,6 @@ import { footerColumns, mainNav } from "@/constants/nav-items"
 import { requireAdmin } from "@/lib/admin/auth"
 import { getMenu } from "@/lib/admin/queries"
 import type { MenuLocation } from "@/lib/cms/types"
-import { getSanityNavigation } from "@/sanity/lib/queries"
 
 const CONFIG: Record<MenuLocation, { title: string; description: string }> = {
   header: { title: "Header menu", description: "Main navigation with dropdown (mega menu) columns. Icons appear next to dropdown links." },
@@ -27,17 +26,10 @@ export default async function MenuPage({ params }: { params: Promise<{ location:
 
   const cms = await getMenu(location as MenuLocation)
   let items: unknown[] = cms.data ?? []
-  let source: "cms" | "sanity" | "default" = "cms"
+  let source: "cms" | "default" = "cms"
   if (!items.length) {
-    const sanity = await getSanityNavigation()
-    const fromSanity = location === "header" ? sanity?.mainMenu : sanity?.footerColumns
-    if (fromSanity?.length) {
-      items = fromSanity
-      source = "sanity"
-    } else {
-      items = location === "header" ? mainNav : [footerColumns.quickLinks, footerColumns.services, footerColumns.resources]
-      source = "default"
-    }
+    items = location === "header" ? mainNav : [footerColumns.quickLinks, footerColumns.services, footerColumns.resources]
+    source = "default"
   }
 
   return (

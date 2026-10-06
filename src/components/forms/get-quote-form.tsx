@@ -10,7 +10,9 @@ import { TextField } from "@/components/forms/fields/text-field"
 import { TextareaField } from "@/components/forms/fields/textarea-field"
 import { FormStatusMessage } from "@/components/forms/form-status-message"
 import { FormSubmitButton } from "@/components/forms/form-submit-button"
+import { TURNSTILE_MISSING_MESSAGE, TurnstileWidget, useTurnstile } from "@/components/forms/turnstile-widget"
 import { hostingRelatedServiceValues, hostingTypeOptions, serviceOptions } from "@/constants/service-options"
+import { LEAD_CONTACT_FALLBACK, filterPhoneInput, markLeadAutoPopupShown } from "@/lib/lead-form-utils"
 import {
   getQuoteFormDefaultValues,
   getQuoteFormSchema,
@@ -29,15 +31,12 @@ function filterNameInput(event: React.ChangeEvent<HTMLInputElement>) {
   event.target.value = event.target.value.replace(/[^A-Za-z\s]/g, "")
 }
 
-function filterPhoneInput(event: React.ChangeEvent<HTMLInputElement>) {
-  event.target.value = event.target.value.replace(/\D/g, "").slice(0, 10)
-}
-
 export function GetQuoteForm({ source = "get-quote-form", defaultService, onSuccess }: GetQuoteFormProps) {
   const router = useRouter()
   const [result, setResult] = useState<SubmitResult | null>(null)
   const [formRenderedAt] = useState(() => Date.now())
   const honeypotId = useId()
+  const turnstile = useTurnstile()
 
   const {
     register,
@@ -57,6 +56,10 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
 
   const onSubmit = async (values: GetQuoteFormValues) => {
     setResult(null)
+    if (turnstile.missing) {
+      setResult({ success: false, message: TURNSTILE_MISSING_MESSAGE })
+      return
+    }
 
     try {
       const response = await fetch("/api/leads", {
@@ -74,25 +77,28 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           source,
           formRenderedAt,
           pageUrl: window.location.href,
+          turnstileToken: turnstile.token,
         }),
       })
+      turnstile.consume()
 
       const data: { success?: boolean; message?: string } = await response.json().catch(() => ({}))
       const success = Boolean(data.success)
 
       if (success) {
         reset()
+        markLeadAutoPopupShown()
         onSuccess?.()
-        router.push("/thank-you")
+        router.push("/thank-you/")
         return
       }
 
       setResult({
         success,
-        message: data.message ?? "Something went wrong. Please try again.",
+        message: data.message ?? `Something went wrong. Please try again. ${LEAD_CONTACT_FALLBACK}`,
       })
     } catch {
-      setResult({ success: false, message: "Network error — please check your connection and try again." })
+      setResult({ success: false, message: `Network error — please check your connection and try again. ${LEAD_CONTACT_FALLBACK}` })
     }
   }
 
@@ -124,7 +130,7 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
           required
           placeholder="Phone Number *"
           inputMode="numeric"
-          maxLength={10}
+          maxLength={16}
           autoComplete="tel"
           registration={register("phone", { onChange: filterPhoneInput })}
           error={errors.phone?.message}
@@ -171,6 +177,8 @@ export function GetQuoteForm({ source = "get-quote-form", defaultService, onSucc
         <label htmlFor={honeypotId}>Website</label>
         <input id={honeypotId} type="text" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>
+
+      <TurnstileWidget {...turnstile.widgetProps} />
 
       {result ? (
         <FormStatusMessage status={result.success ? "success" : "error"} message={result.message} />

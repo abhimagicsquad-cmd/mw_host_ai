@@ -1,4 +1,4 @@
--- Custom CMS (replaces Sanity Studio). Every table is written and read only by the server
+-- Custom CMS. Every table is written and read only by the server
 -- through the service role key (src/lib/supabase/server-client.ts) — RLS stays enabled with
 -- zero policies so anon/public clients have no access, mirroring 0001–0003.
 --
@@ -52,7 +52,7 @@ create index if not exists pages_updated_at_idx on public.pages (updated_at desc
 
 -- ---------------------------------------------------------------------------
 -- page_sections — ordered page-builder blocks. `type` matches the website's block
--- renderer (src/components/sanity/page-builder.tsx), `data` holds that block's fields.
+-- renderer (src/components/page-builder/page-builder.tsx), `data` holds that block's fields.
 -- ---------------------------------------------------------------------------
 create table if not exists public.page_sections (
   id uuid primary key default gen_random_uuid(),

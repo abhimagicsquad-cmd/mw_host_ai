@@ -25,7 +25,7 @@ export const sslPages: SslPageData[] = [
     faqs: [
       { question: "What does Domain Validated actually verify?", answer: "Only that you control the domain — not your business identity. That's why it issues so quickly." },
       { question: "Is this enough for a small business site?", answer: "Yes — for most informational and small business sites, DV is the standard, sufficient choice." },
-      { question: "Can I upgrade to a higher validation level later?", answer: "Yes, you can move up to Business or Extended Validated at renewal or anytime." },
+      { question: "Can I upgrade to a higher validation level later?", answer: "Yes, you can move up to Business or Extended Validation at renewal or anytime." },
     ],
   },
   {
@@ -47,7 +47,7 @@ export const sslPages: SslPageData[] = [
     title: "Domain Validated SSL with SNI — no dedicated IP required",
     description: "The same Domain Validated certificate, delivered via SNI (Server Name Indication) instead of a dedicated IP — every modern browser supports it, so there's no reason to pay for an IP you don't need.",
     bullets: ["Same DV certificate and encryption strength", "No dedicated-IP add-on required", "Supported by all current browsers and devices", "Lower total cost than DV + dedicated IP"],
-    planSlug: "domain-validated",
+    planSlug: "domain-validated-sni",
     faqs: [
       { question: "What is SNI and why does it matter?", answer: "SNI lets a single IP address serve SSL for multiple domains — it removes the need to pay for a dedicated IP just to run HTTPS." },
       { question: "Is SNI less secure than a dedicated IP?", answer: "No — the certificate and encryption are identical. SNI only changes how the certificate is delivered at the network level." },
@@ -56,13 +56,13 @@ export const sslPages: SslPageData[] = [
   },
   {
     slug: "extended-validated",
-    eyebrow: "Extended Validated (EV)",
-    title: "Extended Validated SSL — the highest identity assurance",
+    eyebrow: "Extended Validation (EV)",
+    title: "Extended Validation SSL — the highest identity assurance",
     description: "Full legal entity verification for sites that handle payments or sensitive data — the strongest identity guarantee a certificate can provide.",
     bullets: ["Full legal entity verification", "Highest identity assurance available", "256-bit encryption on every connection", "Best for financial services and e-commerce"],
     planSlug: "extended-validated",
     faqs: [
-      { question: "Who actually needs Extended Validated?", answer: "Financial services, healthcare, and e-commerce sites handling payments or sensitive personal data get the most value from EV's identity assurance." },
+      { question: "Who actually needs Extended Validation?", answer: "Financial services, healthcare, and e-commerce sites handling payments or sensitive personal data get the most value from EV's identity assurance." },
       { question: "How long does EV issuance take?", answer: "Typically longer than DV or OV — expect several business days due to the depth of legal entity verification involved." },
       { question: "Does EV show a green address bar?", answer: "Modern browsers surface EV verification more subtly than the old green bar, but the underlying verification is still the strongest available." },
     ],

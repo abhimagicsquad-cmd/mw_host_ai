@@ -3,6 +3,7 @@ import { Cpu, Gauge, HeadphonesIcon, Server, ShieldCheck, Zap } from "lucide-rea
 
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { ProductJsonLd } from "@/components/common/json-ld"
+import { AnswerSection } from "@/components/sections/answer-section"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
 import { HeroSection } from "@/components/sections/hero-section"
@@ -14,23 +15,23 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { vpsPlans, vpsPlansUSA } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { resolveIcon } from "@/lib/icon-map"
-import { buildPageMetadata } from "@/lib/seo"
-import { getPricingPlansByService, getServicePage } from "@/sanity/lib/queries"
+import { buildPageMetadata, defaultSeoTitle } from "@/lib/seo"
+import { getPricingPlansByService, getServicePage } from "@/lib/cms/queries"
 import type { FAQItem, Feature } from "@/types/content"
 
 const SLUG = "vps-hosting"
 
 const defaultReasons: Feature[] = [
   { title: "Full root access", description: "Install anything, configure everything — it's your server.", icon: Server },
-  { title: "Guaranteed resources", description: "CPU and RAM allocated to you, never shared with other tenants.", icon: Cpu },
+  { title: "Guaranteed resources", description: "A guaranteed CPU allocation and your own RAM, isolated from other customers.", icon: Cpu },
   { title: "NVMe storage", description: "The fastest storage tier, standard on every VPS plan.", icon: Gauge },
   { title: "Hardened defaults", description: "Sensible security configuration out of the box.", icon: ShieldCheck },
   { title: "24/7 support", description: "Real infrastructure engineers, not a script-reading queue.", icon: HeadphonesIcon },
-  { title: "Instant upgrades", description: "Move to a bigger tier without a migration project.", icon: Zap },
+  { title: "Easy upgrades", description: "Move to a bigger tier without a migration project.", icon: Zap },
 ]
 
 const defaultFaqs: FAQItem[] = [
-  { question: "How is VPS different from shared hosting?", answer: "VPS gives you guaranteed, dedicated CPU and RAM with full root access — shared hosting pools resources across many accounts." },
+  { question: "How is VPS different from shared hosting?", answer: "VPS gives you a guaranteed CPU and RAM allocation with full root access — shared hosting pools resources across many accounts." },
   { question: "Do I need to manage the server myself?", answer: "Yes, root access means you're responsible for server administration — ask about our managed add-on if you'd rather we handle it." },
   { question: "Can I upgrade my VPS tier later?", answer: "Yes, upgrades are handled with minimal downtime as your traffic grows." },
   { question: "What control panels are supported?", answer: "cPanel and Plesk are both available as optional add-ons." },
@@ -39,7 +40,7 @@ const defaultFaqs: FAQItem[] = [
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getServicePage("vps", SLUG)
   return buildPageMetadata({
-    title: cms?.seo?.metaTitle ?? cms?.heroTitle ?? "VPS Hosting",
+    title: cms?.seo?.metaTitle ?? defaultSeoTitle("/vps-hosting") ?? cms?.heroTitle ?? "VPS Hosting",
     description:
       cms?.seo?.metaDescription ??
       cms?.heroDescription ??
@@ -57,22 +58,26 @@ export default async function VpsHostingPage() {
     cms?.heroDescription ??
     "Full root access on NVMe-backed virtual servers — the step up for sites that have outgrown shared hosting but don't need bare metal yet."
   const bullets = cms?.bullets ?? [
-    "Guaranteed CPU and RAM — never shared",
+    "Guaranteed CPU and RAM allocation",
     "Full root access, choice of OS",
     "NVMe storage on every tier",
-    "Instant tier upgrades as you grow",
+    "Tier upgrades as you grow",
   ]
   const reasons: Feature[] =
     cms?.features?.map((f) => ({ title: f.title, description: f.description ?? "", icon: resolveIcon(f.icon) })) ?? defaultReasons
   const faqs = cms?.faqs ?? defaultFaqs
   const copy = cms?.copy
   const cmsPlans = await getPricingPlansByService("vps-hosting")
-  const indiaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region !== "usa") : vpsPlans
-  const usaPlans = cmsPlans.length ? cmsPlans.filter((plan) => plan.region === "usa") : vpsPlansUSA
+  // Region-less dashboard plans are the India tiers; the USA tab keeps the built-in USA plans
+  // (the same USA products the WordPress site sells) until USA plans are added to the CMS.
+  const cmsIndia = cmsPlans.filter((plan) => plan.region !== "usa")
+  const cmsUsa = cmsPlans.filter((plan) => plan.region === "usa")
+  const indiaPlans = cmsIndia.length ? cmsIndia : vpsPlans
+  const usaPlans = cmsUsa.length ? cmsUsa : vpsPlansUSA
 
   return (
     <>
-      <ProductJsonLd name={title} description={description} path="/vps-hosting" plans={[...indiaPlans, ...usaPlans]} />
+      <ProductJsonLd name={eyebrow} slogan={title} description={description} path="/vps-hosting" plans={[...indiaPlans, ...usaPlans]} />
 
       <HeroSection
         eyebrow={eyebrow}
@@ -85,7 +90,7 @@ export default async function VpsHostingPage() {
           copy?.heroStats?.length
             ? copy.heroStats.map(({ label, value }) => ({ label, value }))
             : [
-                { label: "Provisioning", value: "< 1 hr" },
+                { label: "Provisioning", value: "< 24 hrs" },
                 { label: "Uptime SLA", value: "99.9%" },
                 { label: "Support", value: "24/7" },
               ]
@@ -93,6 +98,8 @@ export default async function VpsHostingPage() {
         media={<HeroVisual />}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: eyebrow }]}
       />
+
+      <AnswerSection path="/vps-hosting" kind="server" label={eyebrow} />
 
       <StatsSection
         eyebrow="Why upgrade to VPS"

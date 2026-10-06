@@ -1,3 +1,5 @@
+import legacyPosts from "./legacy-blog-posts.json"
+
 export type BlogCategory = {
   slug: string
   name: string
@@ -5,7 +7,19 @@ export type BlogCategory = {
 
 export type BlogPostSection = {
   heading: string
+  /**
+   * Paragraphs of plain text. Two additions (see src/lib/blog-content.ts): `[anchor](href)`
+   * marks a link, and a paragraph that is only `![alt](src "WIDTHxHEIGHT")` is an image.
+   */
   body: string[]
+}
+
+export type BlogImage = {
+  /** Site-relative (/wp-content/uploads/…) or absolute URL. */
+  src: string
+  alt: string
+  width?: number
+  height?: number
 }
 
 export type BlogPost = {
@@ -18,6 +32,15 @@ export type BlogPost = {
   featured?: boolean
   author: { name: string; role: string }
   sections: BlogPostSection[]
+  /** ISO dates — set for the articles imported from the WordPress blog. */
+  publishedAt?: string | null
+  modifiedAt?: string | null
+  /** The article's WordPress URL — the same /<slug>/ it is served at now. */
+  legacyPath?: string
+  /** The article's categories on the WordPress blog (see `wordpressCategories`). */
+  wpCategories?: string[]
+  /** The article's featured image — set for the WordPress articles that had one. */
+  featuredImage?: BlogImage
 }
 
 /** Seed content — real CMS-backed content population is a future phase; this establishes the working index + detail template structure. */
@@ -26,9 +49,12 @@ export const blogCategories: BlogCategory[] = [
   { slug: "security", name: "Security" },
   { slug: "wordpress", name: "WordPress" },
   { slug: "business", name: "Running a Business" },
+  { slug: "web-hosting", name: "Web Hosting" },
+  { slug: "domains-email", name: "Domains & Email" },
+  { slug: "web-development", name: "Web Development" },
 ]
 
-export const blogPosts: BlogPost[] = [
+const originalPosts: BlogPost[] = [
   {
     slug: "why-page-speed-affects-conversions",
     title: "Why page speed affects conversions more than you think",
@@ -105,7 +131,7 @@ export const blogPosts: BlogPost[] = [
       {
         heading: "They all encrypt the same way",
         body: [
-          "This is the most common misconception: every certificate tier — Domain Validated, Business Validated, Extended Validated — provides the same strength of encryption. The difference between tiers is entirely about identity verification, not security strength.",
+          "This is the most common misconception: every certificate tier — Domain Validated, Business Validated, Extended Validation — provides the same strength of encryption. The difference between tiers is entirely about identity verification, not security strength.",
         ],
       },
       {
@@ -115,9 +141,9 @@ export const blogPosts: BlogPost[] = [
         ],
       },
       {
-        heading: "Business and Extended Validated",
+        heading: "Business and Extended Validation",
         body: [
-          "Business Validated (OV) confirms your organization is a real, registered legal entity. Extended Validated (EV) goes further with rigorous manual verification of your business details, historically shown with a green address bar (modern browsers show it more subtly now, but the underlying verification is still the strongest available).",
+          "Business Validated (OV) confirms your organization is a real, registered legal entity. Extended Validation (EV) goes further with rigorous manual verification of your business details, historically shown with a green address bar (modern browsers show it more subtly now, but the underlying verification is still the strongest available).",
           "These matter most for e-commerce, financial services, and anywhere a visitor is about to hand over payment details — the verification is doing trust-building work, not additional encryption work.",
         ],
       },
@@ -277,14 +303,42 @@ export const blogPosts: BlogPost[] = [
   },
 ]
 
+/**
+ * The built-in posts: the 8 written for this site and the 42 carried over from the WordPress
+ * blog. The dashboard was filled from these (scripts/import-blog-posts-to-cms.mjs) and is now
+ * where posts are edited — the site only falls back to this list when the dashboard returns no
+ * posts at all (see src/lib/cms/blog.ts).
+ */
+export const blogPosts: BlogPost[] = [...originalPosts, ...(legacyPosts as BlogPost[])]
+
+/**
+ * The WordPress blog's 15 categories. Their archive pages stay at /category/<slug>/ (as on
+ * WordPress), listing the articles WordPress filed under them; the 7 topics above are the
+ * blog's own filters. "web-hosting" and "web-development" are both, and show the topic.
+ */
+export const wordpressCategories: BlogCategory[] = [
+  { slug: "affiliate-marketing", name: "Affiliate Marketing" },
+  { slug: "blogging", name: "Blogging" },
+  { slug: "dedicated-hosting", name: "Dedicated Hosting" },
+  { slug: "digital-marketing", name: "Digital Marketing" },
+  { slug: "domain-name", name: "Domain Name" },
+  { slug: "email-hosting", name: "Email Hosting" },
+  { slug: "online-business", name: "Online Business" },
+  { slug: "secure-socket-layer-ssl", name: "Secure Socket Layer (SSL)" },
+  { slug: "secure-web-hosting", name: "Secure Web Hosting" },
+  { slug: "shared-web-hosting-service", name: "Shared Web Hosting Service" },
+  { slug: "ssl-certificate", name: "SSL Certificate" },
+  { slug: "web-designs", name: "Web Designs" },
+  { slug: "web-development", name: "Web Development" },
+  { slug: "web-hosting", name: "Web Hosting" },
+  { slug: "web-security", name: "Web Security" },
+]
+
+/** Whether this article is listed in the `category` archive (its WordPress categories — "Archive categories" in the dashboard). */
+export function inWordpressCategory(post: Pick<BlogPost, "wpCategories">, category: string) {
+  return post.wpCategories?.includes(category) ?? false
+}
+
 export function getBlogCategoryName(slug: string) {
   return blogCategories.find((category) => category.slug === slug)?.name ?? slug
-}
-
-export function getBlogPost(slug: string) {
-  return blogPosts.find((post) => post.slug === slug)
-}
-
-export function getRelatedPosts(post: BlogPost, limit = 3) {
-  return blogPosts.filter((candidate) => candidate.slug !== post.slug && candidate.categorySlug === post.categorySlug).slice(0, limit)
 }

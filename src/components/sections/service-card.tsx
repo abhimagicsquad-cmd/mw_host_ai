@@ -4,7 +4,7 @@ import { IconBadge } from "@/components/common/icon-badge"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { ServiceItem } from "@/types/content"
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 
 type ServiceCardProps = {
   service: ServiceItem

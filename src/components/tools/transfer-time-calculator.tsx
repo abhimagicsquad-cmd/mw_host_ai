@@ -40,7 +40,7 @@ export function TransferTimeCalculator() {
           <div className="flex gap-2">
             <Input id={sizeId} type="number" min="0" step="any" value={sizeValue} onChange={(event) => setSizeValue(event.target.value)} />
             <Select value={sizeUnit} onValueChange={(next) => setSizeUnit(next as ByteUnit)}>
-              <SelectTrigger className="w-28 shrink-0">
+              <SelectTrigger className="w-28 shrink-0" aria-label="File size unit">
                 <SelectValue placeholder="Unit">{(current: string) => current}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -61,7 +61,7 @@ export function TransferTimeCalculator() {
           <div className="flex gap-2">
             <Input id={speedId} type="number" min="0" step="any" value={speedValue} onChange={(event) => setSpeedValue(event.target.value)} />
             <Select value={speedUnit} onValueChange={(next) => setSpeedUnit(next as BitRateUnit)}>
-              <SelectTrigger className="w-28 shrink-0">
+              <SelectTrigger className="w-28 shrink-0" aria-label="Internet speed unit">
                 <SelectValue placeholder="Unit">{(current: string) => current}</SelectValue>
               </SelectTrigger>
               <SelectContent>

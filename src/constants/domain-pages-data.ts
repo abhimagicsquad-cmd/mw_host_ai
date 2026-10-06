@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react"
-import { ArrowRightLeft, Globe, Lock, MousePointerClick, RefreshCw, Shield, ShieldCheck, UserCog } from "lucide-react"
+import { AlertTriangle, ArrowRightLeft, CalendarPlus, Globe, Lock, MailCheck, MousePointerClick, RefreshCw, Shield, ShieldCheck, UserCog, Zap } from "lucide-react"
 
 import type { FAQItem, Feature } from "@/types/content"
 
@@ -18,6 +18,37 @@ export const tldPricing = [
   { tld: ".in", price: "₹699", suffix: "/yr" },
   { tld: ".co.in", price: "₹649", suffix: "/yr" },
   { tld: ".org", price: "₹1,418", suffix: "/yr" },
+]
+
+/** Transfer-in prices from the WordPress transfer page (.com transfers are cheaper than new registrations). */
+export const tldTransferPricing = [
+  { tld: ".com", price: "₹899", suffix: "/yr" },
+  { tld: ".in", price: "₹699", suffix: "/yr" },
+  { tld: ".co.in", price: "₹649", suffix: "/yr" },
+  { tld: ".org", price: "₹1,418", suffix: "/yr" },
+]
+
+/** "Transfer of Domain Notes" and "Important" rules from the WordPress transfer page. */
+export const domainTransferNotes: Feature[] = [
+  {
+    title: "1 year extension included",
+    description:
+      "A year is added to your current expiry date — e.g. a domain expiring 12 Jan transferred on 25 Dec expires 12 Jan the following year. No extension if you already renewed with your current registrar, so transfer 60+ days after the last renewal.",
+    icon: CalendarPlus,
+  },
+  { title: "Seamless, zero downtime", description: "Your name servers are never altered during the transfer, so your website and email keep working throughout.", icon: Zap },
+  {
+    title: "Confirm by email",
+    description: "The domain's administrative contact receives an email asking to confirm each transfer — click the link inside to send it to the registry. Emails from your old registrar can usually be ignored.",
+    icon: MailCheck,
+  },
+  { title: "Risk-free", description: "If a transfer fails or is cancelled, the full amount you paid is credited to your client area account — no questions asked.", icon: ShieldCheck },
+  {
+    title: "Renewed after expiry? Wait 45 days",
+    description: "If your domain expired and you renewed it with your old registrar, don't transfer within 45 days of the previous expiry date — no year is added and the renewal fee is lost.",
+    icon: AlertTriangle,
+  },
+  { title: "60-day transfer lock", description: "ICANN and registry rules block transfers of domains registered or transferred within the last 60 days. Wait 60 days before requesting a transfer.", icon: Lock },
 ]
 
 /** "With every domain you get" — shared feature set across all domain pages (audit §5.3). */

@@ -5,6 +5,7 @@ import { Save } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { siteConfig } from "@/constants/site-config"
 import { saveSeoAction } from "@/lib/admin/actions/seo"
 import type { SeoRow } from "@/lib/cms/types"
 import { cn } from "@/lib/utils"
@@ -12,7 +13,8 @@ import { cn } from "@/lib/utils"
 import { checkboxClassName, Field, FormMessage, selectClassName, SubmitButton } from "./form-controls"
 import { MediaUrlInput } from "./media-picker"
 
-const SITE_URL = "https://www.magicworkshost.com"
+const SITE_URL = siteConfig.url
+const SITE_HOST = new URL(SITE_URL).host
 
 function Counter({ value, ideal }: { value: string; ideal: [number, number] }) {
   const length = value.length
@@ -62,7 +64,7 @@ export function SeoForm({
   const show = (part: Exclude<SeoFormSection, "all">) => section === "all" || section === part
   const previewTitle = values.meta_title || fallbackTitle || "Page title"
   const previewDescription = values.meta_description || fallbackDescription || "Add a meta description to control this snippet."
-  const displayUrl = `${SITE_URL.replace("https://", "")}${values.path === "/" ? "" : values.path.replace(/\//g, " › ").replace(/^ › /, " › ")}`
+  const displayUrl = `${SITE_HOST}${values.path === "/" ? "" : values.path.replace(/\//g, " › ").replace(/^ › /, " › ")}`
 
   let schemaError: string | undefined
   if (values.schema_json.trim()) {
@@ -174,7 +176,7 @@ export function SeoForm({
                 )}
               </div>
               <div className="border-t p-3">
-                <p className="text-[11px] text-muted-foreground uppercase">magicworkshost.com</p>
+                <p className="text-[11px] text-muted-foreground uppercase">{SITE_HOST}</p>
                 <p className="line-clamp-1 text-sm font-semibold">{values.og_title || previewTitle}</p>
                 <p className="line-clamp-2 text-xs text-muted-foreground">{values.og_description || previewDescription}</p>
               </div>

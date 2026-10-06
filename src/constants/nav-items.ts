@@ -61,7 +61,7 @@ export const mainNav: NavItem[] = [
           { label: "Domain Validated", href: "/ssl/domain-validated", icon: "ShieldCheck" },
           { label: "Business Validated", href: "/ssl/business-validated", icon: "ShieldCheck" },
           { label: "Domain Validated (SNI)", href: "/ssl/domain-validated-sni", icon: "ShieldCheck" },
-          { label: "Extended Validated", href: "/ssl/extended-validated", icon: "ShieldCheck" },
+          { label: "Extended Validation", href: "/ssl/extended-validated", icon: "ShieldCheck" },
           { label: "Wildcard", href: "/ssl/wildcard", icon: "ShieldCheck" },
         ],
       },
@@ -85,7 +85,7 @@ export const mainNav: NavItem[] = [
     columns: [
       {
         links: [
-          { label: "Blogs", href: "/blog", icon: "BookOpen" },
+          { label: "Blog", href: "/blog", icon: "BookOpen" },
           { label: "Bandwidth Calculator", href: "/tools/bandwidth-calculator", icon: "Gauge" },
           { label: "Data Unit Calculator", href: "/tools/data-unit-calculator", icon: "Gauge" },
           { label: "Transfer Time Calculator", href: "/tools/transfer-time-calculator", icon: "Gauge" },
@@ -94,7 +94,7 @@ export const mainNav: NavItem[] = [
     ],
   },
   {
-    label: "Knowledgebase",
+    label: "Knowledge Base",
     href: "/knowledge-base",
   },
   {
@@ -136,7 +136,7 @@ export const footerColumns = {
     heading: "Resources",
     links: [
       { label: "Blog", href: "/blog" },
-      { label: "Knowledgebase", href: "/knowledge-base" },
+      { label: "Knowledge Base", href: "/knowledge-base" },
       { label: "Support", href: "/support" },
       { label: "Bandwidth Calculator", href: "/tools/bandwidth-calculator" },
       { label: "Privacy Policy", href: "/legal/privacy-policy" },

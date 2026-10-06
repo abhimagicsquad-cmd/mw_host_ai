@@ -1,10 +1,8 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { Tags } from "lucide-react"
 
 import { PricingEditor } from "@/components/admin/pricing-editor"
 import { EmptyState, PageHeader, Panel, ProblemNotice } from "@/components/admin/ui"
-import { buttonVariants } from "@/components/ui/button"
 import { requireAdmin } from "@/lib/admin/auth"
 import { can } from "@/lib/admin/permissions"
 import { cmsAdminDb, isMissingTableError } from "@/lib/cms/db"
@@ -30,13 +28,8 @@ export default async function PricingPlansPage() {
         <Panel>
           <EmptyState
             icon={Tags}
-            title="Pricing plans aren't in the CMS yet"
-            description="Import all existing content from the Migration page — the plans currently shown on the site are copied here as a draft."
-            action={
-              <Link href="/admin/migration" className={buttonVariants()}>
-                Open migration
-              </Link>
-            }
+            title="Pricing plans aren't set up yet"
+            description="The website is showing its built-in plans until a pricing collection is saved."
           />
         </Panel>
       ) : null}

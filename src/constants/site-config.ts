@@ -1,18 +1,45 @@
 import { FacebookIcon, InstagramIcon, LinkedinIcon, TwitterIcon } from "@/components/common/social-icons"
 import type { SocialLink } from "@/types/nav"
 
+const DEFAULT_SITE_URL = "https://magicworkshost.vercel.app"
+
+/** An absolute http(s) origin with no trailing slash; anything else falls back to the default. */
+function resolveSiteUrl(value: string | undefined) {
+  if (!value) return DEFAULT_SITE_URL
+  try {
+    const url = new URL(value.trim())
+    return /^https?:$/.test(url.protocol) ? url.origin : DEFAULT_SITE_URL
+  } catch {
+    return DEFAULT_SITE_URL
+  }
+}
+
 export const siteConfig = {
   name: "MagicWorks Host",
   shortName: "MWHost",
   tagline: "Hosting that performs 10X faster",
   description:
     "Fast, reliable web hosting, domains, SSL, and email hosting backed by 24/7 support.",
-  url: "https://www.magicworkshost.com",
+  legalName: "Magicworks IT Solutions Private Limited",
+  foundingYear: 2012,
+  /**
+   * Canonical origin for metadataBase, canonicals, Open Graph, sitemap, robots, JSON-LD and
+   * llms.txt. The production domain is magicworkshost.vercel.app (the original project
+   * domain 301s to it). To move to magicworkshost.com, set NEXT_PUBLIC_SITE_URL — no code change needed.
+   */
+  url: resolveSiteUrl(process.env.NEXT_PUBLIC_SITE_URL),
   contact: {
-    phone: "+91 8421903846",
-    phoneHref: "tel:+918421903846",
-    email: "abhimagicsquad@gmail.com",
+    phone: "+91 9764746633",
+    phoneHref: "tel:+919764746633",
+    email: "sales@magicworkshost.com",
     address: "#201, Vasant Bahawa, Survey No. 20, Near La Valle Casa, Bavdhan, Pune, Maharashtra – 411021",
+    postalAddress: {
+      streetAddress: "#201, Vasant Bahawa, Survey No. 20, Near La Valle Casa, Bavdhan",
+      addressLocality: "Pune",
+      addressRegion: "Maharashtra",
+      postalCode: "411021",
+      addressCountry: "IN",
+    },
     hours: {
       sales: "Mon–Sat, 9:30 AM – 6:30 PM IST",
       accounting: "Mon–Fri, 9:30 AM – 6:30 PM IST",
@@ -21,9 +48,10 @@ export const siteConfig = {
   },
 } as const
 
+/** The company's real social profiles (linked from the WordPress site; all verified live). */
 export const socialLinks: SocialLink[] = [
-  { label: "Facebook", href: "https://facebook.com", icon: FacebookIcon },
-  { label: "Twitter", href: "https://twitter.com", icon: TwitterIcon },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: LinkedinIcon },
-  { label: "Instagram", href: "https://instagram.com", icon: InstagramIcon },
+  { label: "Facebook", href: "https://www.facebook.com/magicworkshost", icon: FacebookIcon },
+  { label: "Twitter", href: "https://twitter.com/MagicWorksHost", icon: TwitterIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/magicworkshost", icon: LinkedinIcon },
+  { label: "Instagram", href: "https://www.instagram.com/magicworks_host/", icon: InstagramIcon },
 ]

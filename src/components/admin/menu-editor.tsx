@@ -76,7 +76,7 @@ function ColumnEditor({ column, onChange, showHeading = true }: { column: Column
   )
 }
 
-export function MenuEditor({ location, initialItems, source }: { location: MenuLocation; initialItems: unknown[]; source: "cms" | "sanity" | "default" }) {
+export function MenuEditor({ location, initialItems, source }: { location: MenuLocation; initialItems: unknown[]; source: "cms" | "default" }) {
   const router = useRouter()
   const [items, setItems] = useState<unknown[]>(() => structuredClone(initialItems))
   const [saved, setSaved] = useState(() => JSON.stringify(initialItems))
@@ -103,7 +103,7 @@ export function MenuEditor({ location, initialItems, source }: { location: MenuL
     <div className="flex flex-col gap-4">
       {source !== "cms" ? (
         <p className="rounded-lg border bg-card px-4 py-3 text-sm text-muted-foreground">
-          This is the menu currently live on the website ({source === "sanity" ? "from Sanity" : "built-in default"}). Saving makes the CMS its source from now on.
+          This is the menu currently live on the website (built-in default). Saving makes the CMS its source from now on.
         </p>
       ) : null}
 

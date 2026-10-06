@@ -1,4 +1,4 @@
-import type { NavColumnData, NavItemData } from "@/sanity/types"
+import type { NavColumnData, NavItemData } from "@/types/cms-content"
 import type { NavColumn, NavItem } from "@/types/nav"
 
 export function toNavColumns(columns: NavColumnData[]): NavColumn[] {

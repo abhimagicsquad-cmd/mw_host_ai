@@ -1,5 +1,7 @@
 import { siteConfig } from "@/constants/site-config"
 
+import legacyLegal from "./legacy-legal.json"
+
 export type LegalSection = {
   heading: string
   body: string[]
@@ -206,5 +208,8 @@ export const legalDocuments: Record<string, LegalDocument> = {
     ],
   },
 }
+
+// Policies carried over from the WordPress site (mail policy, affiliate terms, resource abuse).
+Object.assign(legalDocuments, legacyLegal as Record<string, LegalDocument>)
 
 export const legalSlugs = Object.keys(legalDocuments)

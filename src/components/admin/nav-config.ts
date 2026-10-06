@@ -11,7 +11,8 @@ export type AdminNavIcon =
   | "users"
   | "settings"
   | "activity"
-  | "migration"
+  | "assistant"
+  | "code"
 
 export type AdminNavLink = { label: string; href: string; permission?: Permission }
 
@@ -49,7 +50,6 @@ export const adminNav: AdminNavItem[] = [
       { label: "Custom Pages", href: "/admin/content/custom" },
     ],
   },
-  { label: "Content Migration", icon: "migration", href: "/admin/migration", permission: "pages.edit" },
   {
     label: "Media Library",
     icon: "media",
@@ -105,6 +105,33 @@ export const adminNav: AdminNavItem[] = [
     children: [
       { label: "General Settings", href: "/admin/settings/general" },
       { label: "Website Settings", href: "/admin/settings/website" },
+    ],
+  },
+  {
+    label: "Hosting Assistant",
+    icon: "assistant",
+    permission: "assistant.manage",
+    children: [
+      { label: "Settings", href: "/admin/assistant" },
+      { label: "Conversation Flows", href: "/admin/assistant/flows" },
+      { label: "Hosting Plans", href: "/admin/assistant/plans" },
+      { label: "FAQs", href: "/admin/assistant/faqs" },
+      { label: "Conversations", href: "/admin/assistant/conversations" },
+      { label: "Analytics", href: "/admin/assistant/analytics" },
+    ],
+  },
+  {
+    label: "Custom Code Manager",
+    icon: "code",
+    permission: "code.manage",
+    children: [
+      { label: "Head Code", href: "/admin/code/head" },
+      { label: "Body Start Code", href: "/admin/code/body-start" },
+      { label: "Footer Code", href: "/admin/code/footer" },
+      { label: "Custom CSS", href: "/admin/code/css" },
+      { label: "Custom JavaScript", href: "/admin/code/js" },
+      { label: "Tracking Scripts", href: "/admin/code/tracking" },
+      { label: "Verification Codes", href: "/admin/code/verification" },
     ],
   },
   { label: "Activity Logs", icon: "activity", href: "/admin/activity", permission: "activity.view" },

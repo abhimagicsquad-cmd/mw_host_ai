@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
-import { logActivity } from "@/lib/admin/activity"
+import { logActivities, logActivity } from "@/lib/admin/activity"
 import { actorId, authorizeAction } from "@/lib/admin/auth"
 import { cmsAdminDb } from "@/lib/cms/db"
 import { normalizePath, validatePagePath } from "@/lib/cms/paths"
@@ -11,7 +11,7 @@ import { isSectionType, sectionSchemaMap } from "@/lib/cms/section-schemas"
 import { templateForPath, templates, templateSectionType } from "@/lib/cms/templates"
 import type { ActionState, PageRow, PageSectionRow, PageStatus, PageType } from "@/lib/cms/types"
 
-import { refreshWebsite, toActionError } from "./utils"
+import { BULK_SELECTION_ERROR, parseBulkIds, plural, refreshWebsite, toActionError } from "./utils"
 
 const PAGE_TYPES = ["home", "service", "product", "category", "static", "landing", "blog"] as const
 
@@ -296,6 +296,82 @@ export async function saveTemplateAction(pageId: string, payload: string): Promi
     await logActivity({ admin, action: "content.updated", entityType: "page", entityId: pageId, description: `Edited content of “${page.title}” (${templates[template].label})` })
     refreshWebsite()
     return { ok: true, message: "Content saved." }
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+/** Publishes or unpublishes several pages. Pages already in that state are left untouched. */
+export async function bulkSetPageStatusAction(pageIds: string[], status: PageStatus): Promise<ActionState> {
+  try {
+    const admin = await authorizeAction("pages.publish")
+    const ids = parseBulkIds(pageIds)
+    if (!ids) return BULK_SELECTION_ERROR
+    if (status !== "published" && status !== "draft") return { error: "Unknown page status." }
+
+    const { data: current, error: readError } = await db().from("pages").select("id, title, path, status, published_at").in("id", ids)
+    if (readError) throw readError
+    const changing = (current ?? []).filter((page) => page.status !== status)
+    const verb = status === "published" ? "Published" : "Unpublished"
+    if (!changing.length) {
+      return { ok: true, message: `All selected pages are already ${status === "published" ? "published" : "drafts"}.` }
+    }
+
+    const now = new Date().toISOString()
+    const changingIds = changing.map((page) => page.id)
+    const { error } = await db().from("pages").update({ status, updated_by: actorId(admin), updated_at: now }).in("id", changingIds)
+    if (error) throw error
+    // Like the single publish action: keep the first publish date, set it only if there is none.
+    const firstPublish = status === "published" ? changing.filter((page) => !page.published_at).map((page) => page.id) : []
+    if (firstPublish.length) {
+      const { error: dateError } = await db().from("pages").update({ published_at: now }).in("id", firstPublish)
+      if (dateError) throw dateError
+    }
+
+    await logActivities(
+      changing.map((page) => ({
+        admin,
+        action: status === "published" ? ("page.published" as const) : ("page.unpublished" as const),
+        entityType: "page",
+        entityId: page.id,
+        description: `${verb} “${page.title}” (${page.path}) — bulk action`,
+        metadata: { bulk: true, batchSize: changing.length },
+      }))
+    )
+    refreshWebsite()
+    const skipped = ids.length - changing.length
+    return {
+      ok: true,
+      message: `${verb} ${plural(changing.length, "page")}.${skipped ? ` ${plural(skipped, "page")} already ${status === "published" ? "live" : "in drafts"} or not found.` : ""}`,
+    }
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+/** Deletes several pages (their sections and SEO rows go with them, as with a single delete). */
+export async function bulkDeletePagesAction(pageIds: string[]): Promise<ActionState> {
+  try {
+    const admin = await authorizeAction("pages.delete")
+    const ids = parseBulkIds(pageIds)
+    if (!ids) return BULK_SELECTION_ERROR
+
+    const { data, error } = await db().from("pages").delete().in("id", ids).select("id, title, path")
+    if (error) throw error
+    const deleted = data ?? []
+    await logActivities(
+      deleted.map((page) => ({
+        admin,
+        action: "page.deleted" as const,
+        entityType: "page",
+        entityId: page.id,
+        description: `Deleted page “${page.title}” (${page.path}) — bulk action`,
+        metadata: { bulk: true, batchSize: deleted.length },
+      }))
+    )
+    refreshWebsite()
+    const missing = ids.length - deleted.length
+    return { ok: true, message: `Deleted ${plural(deleted.length, "page")}.${missing ? ` ${plural(missing, "page")} had already been removed.` : ""}` }
   } catch (error) {
     return toActionError(error)
   }

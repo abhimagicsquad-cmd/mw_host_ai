@@ -10,36 +10,41 @@ import { WhyChooseUs } from "@/components/sections/why-choose-us"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { AffiliateEarningsCalculator } from "@/components/tools/affiliate-earnings-calculator"
+import { AffiliateSignupForm } from "@/components/forms/affiliate-signup-form"
+import Link from "@/components/common/site-link"
 import { resolveIcon } from "@/lib/icon-map"
 import { buildPageMetadata } from "@/lib/seo"
-import { getAffiliatePage } from "@/sanity/lib/queries"
+import { getAffiliatePage } from "@/lib/cms/queries"
 
 const fallbackStats = [
   { label: "Recurring commission", value: "20%", icon: "BadgePercent" },
-  { label: "Cookie window", value: "90 days", icon: "Link2" },
+  { label: "Cookie window", value: "60 days", icon: "Link2" },
   { label: "Customer churn", value: "<7%", icon: "TrendingDown" },
   { label: "Min. withdrawal", value: "₹2,000", icon: "Wallet" },
 ]
 
 const fallbackHowItWorks: { title: string; description: string; icon?: string }[] = [
-  { title: "1. Join the program", description: "Share your details and get your unique referral link within a day." },
+  { title: "1. Join the program", description: "Share your details and get your unique referral link within two business days." },
   { title: "2. Share your link", description: "Refer businesses via your site, social channels, or direct outreach." },
-  { title: "3. Get paid monthly", description: "Earn 20% recurring commission on every active referral, paid out once you hit ₹2,000." },
+  { title: "3. Get paid weekly", description: "Earn 20% recurring commission on every active referral, paid out once you hit ₹2,000." },
 ]
 
 const fallbackFaqs = [
   { question: "How much can I earn per referral?", answer: "20% of the referred customer's recurring billing, for as long as they remain a customer — not a one-time flat fee." },
-  { question: "How long does the referral cookie last?", answer: "90 days — if someone signs up within 90 days of clicking your link, you get credit for the referral." },
-  { question: "When do I get paid?", answer: "Monthly, once your unpaid commission balance reaches the ₹2,000 minimum withdrawal threshold." },
+  { question: "How long does the referral cookie last?", answer: "60 days — if someone signs up within 60 days of clicking your link, you get credit for the referral." },
+  { question: "When do I get paid?", answer: "Payouts run weekly by NEFT bank transfer, once your unpaid commission balance reaches the ₹2,000 minimum withdrawal threshold." },
   { question: "Is there a limit to how many people I can refer?", answer: "No cap — your earning potential scales with how many referrals you bring in." },
 ]
+
+/** Affiliate support address from the WordPress affiliate page. */
+const AFFILIATE_EMAIL = "affiliate@magicworkshost.com"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getAffiliatePage()
   if (!cms?.seo?.metaTitle) {
     return buildPageMetadata({
       title: "Become Our Affiliate",
-      description: "Earn 20% recurring commission referring businesses to MagicWorks Host — 90-day cookie, low minimum withdrawal, no cap.",
+      description: "Earn 20% recurring commission referring businesses to MagicWorks Host — 60-day cookie, low minimum withdrawal, no cap.",
       path: "/become-our-affiliate",
     })
   }
@@ -60,7 +65,7 @@ export default async function BecomeOurAffiliatePage() {
     "Refer businesses to MagicWorks Host and earn 20% recurring commission for as long as they stay a customer — not just a one-time payout."
   const heroBullets = cms?.heroBullets ?? [
     "20% recurring commission, every billing cycle",
-    "90-day referral cookie window",
+    "60-day referral cookie window",
     "₹2,000 minimum withdrawal",
     "No cap on how much you can earn",
   ]
@@ -75,7 +80,7 @@ export default async function BecomeOurAffiliatePage() {
         title={heroTitle}
         description={heroDescription}
         bullets={heroBullets}
-        primaryCta={{ label: "Join the program", href: LEAD_CTA_HREF }}
+        primaryCta={{ label: "Join the program", href: "#affiliate-signup" }}
         secondaryCta={{ label: "Ask a question", href: LEAD_CTA_HREF }}
         stats={stats.slice(0, 3).map((stat) => ({ label: stat.label, value: stat.value }))}
         media={<HeroVisual variant="affiliate" />}
@@ -106,12 +111,33 @@ export default async function BecomeOurAffiliatePage() {
         reasons={howItWorks.map((step) => ({ title: step.title, description: step.description ?? "", icon: resolveIcon(step.icon) }))}
       />
 
+      <SectionContainer width="narrow" id="affiliate-signup" className="scroll-mt-24">
+        <SectionHeading
+          eyebrow="Join the program"
+          title="Become our affiliate"
+          description="Fill in your details, then complete the final registration in our client area to get your referral link."
+        />
+        <div className="mt-10 rounded-2xl border border-border-alt bg-background p-6 sm:p-8">
+          <AffiliateSignupForm />
+        </div>
+        <p className="mt-5 text-center text-sm text-body-text">
+          Questions? Email{" "}
+          <a href={`mailto:${AFFILIATE_EMAIL}`} className="font-medium text-brand-orange hover:underline">
+            {AFFILIATE_EMAIL}
+          </a>{" "}
+          · Read the{" "}
+          <Link href="/legal/affiliate-programme-terms" className="font-medium text-brand-orange hover:underline">
+            Affiliate Programme Terms
+          </Link>
+        </p>
+      </SectionContainer>
+
       <FAQSection eyebrow="FAQs" title="Affiliate program questions, answered" items={faqs} />
 
       <CTASection
         title="Ready to start earning?"
         description="Share your details and we'll get your affiliate account set up."
-        primaryCta={{ label: "Join now", href: LEAD_CTA_HREF }}
+        primaryCta={{ label: "Join now", href: "#affiliate-signup" }}
         background="navy"
       />
     </>

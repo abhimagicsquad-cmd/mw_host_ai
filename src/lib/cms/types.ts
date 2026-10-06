@@ -127,6 +127,8 @@ export type LeadRow = {
   company: string | null
   hosting_type: string | null
   page_url: string | null
+  /** Absent until supabase/migrations/0005_add_lead_status.sql has been run. */
+  status?: string | null
 }
 
 export type SectionType =

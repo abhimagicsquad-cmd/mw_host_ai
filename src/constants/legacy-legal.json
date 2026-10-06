@@ -1,0 +1,305 @@
+{
+  "mail-policy": {
+    "slug": "mail-policy",
+    "title": "Mail Policy",
+    "summary": "Magicworkshost.com has a zero tolerance policy regarding unsolicited commercial email (UCE) and unsolicited bulk email (UBE) also known as “spam”.",
+    "lastUpdated": "3 December 2025",
+    "sections": [
+      {
+        "heading": "Overview",
+        "body": [
+          "Magicworkshost.com has a zero tolerance policy regarding unsolicited commercial email (UCE) and unsolicited bulk email (UBE) also known as “spam”."
+        ]
+      },
+      {
+        "heading": "The definition of spam",
+        "body": [
+          "An electronic message is “spam” IF: (1) the recipient’s personal identity and context are irrelevant because the message is equally applicable to many other potential recipients; AND (2) the recipient has not verifiably granted deliberate, explicit, and still-revocable permission for it to be sent; AND (3) the transmission and reception of the message appears to the recipient to give a disproportionate benefit to the sender.",
+          "You will be cited with “UCE/UBE Abuse” if you send any email to persons who have not specifically asked to receive email from you. The sending origin of such email is irrelevant. Upon confirmation of abuse, any MagicWorksHost.com customer engaging in this practice will have their service suspended. Not only does spam place a strain on the server that can negatively effect that server’s uptime record and performance record, you subject that server to the possibility of being blacklisted.",
+          "If your site will be sending mailings out to subscribers, this is a checklist of what you are required to do:",
+          "The number of messages allowed to be sent per hour, per cPanel Account, is 250 messages.",
+          "You must not try to hide, forge or misrepresent the sender of the e-mail and sending site of the e-mail.",
+          "Bulk mailings must specifically state how the persons’ e-mail addresses were obtained and must indicate the frequency of the mailing.",
+          "Bulk mailings should contain simple and obvious unsubscribe mechanisms. We recommend that this be in the form of a working link to a one-click unsubscribe system; however, a valid “reply to:” address may be used instead.",
+          "All subscription based e-mail must have valid, non-electronic, contact information for the sending organization in the text of each e-mail including either a phone number or physical mailing address.",
+          "All bulk e-mail must be solicited, meaning that the sender has an existing and provable relationship with the e-mail recipient and the recipient has not requested not to receive future mailings from the sender.",
+          "Prohibited Uses of MagicWorksHost.com Network Systems and Services Regarding Spam"
+        ]
+      },
+      {
+        "heading": "Sending Unsolicited Bulk Email (“UBE”, “spam”)",
+        "body": [
+          "The sending of any form of Unsolicited Bulk Email through MagicWorksHost.com’s servers is prohibited. Likewise, the sending of UBE from another service provider advertising a web site, email address or utilizing any resource hosted on MagicWorksHost.com’s servers, is prohibited. MagicWorksHost com accounts or services may not be used to solicit customers from, or collect replies to, messages sent from another Internet Service Provider where those messages violate this Policy or that of the other provider."
+        ]
+      },
+      {
+        "heading": "Running Unconfirmed Mailing Lists",
+        "body": [
+          "Subscribing email addresses to any mailing list without the express and verifiable permission of the email address owner is prohibited. All mailing lists run by MagicWorksHost.com customers must be Closed-loop (“Confirmed Opt-in”). The subscription confirmation message received from each address owner must be kept on file for the duration of the existence of the mailing list. Purchasing lists of email addresses from 3rd parties for mailing to from any MagicWorksHost.com-hosted domain, or referencing any MagicWorksHost.com account, is prohibited.",
+          "Operating an account on behalf of, or in connection with, or reselling any service to, persons or firms listed in the Spamhaus Register of Known Spam Operations (ROKSO) database at www.spamhaus.org.",
+          "We receive automatic reports from Spamhaus, AOL and SpamCop for our IP ranges. If there are more than three complaints logged against your site in one day, the site will be suspended until a resolution/explanation is made."
+        ]
+      }
+    ]
+  },
+  "affiliate-programme-terms": {
+    "slug": "affiliate-programme-terms",
+    "title": "Affiliate Programme Terms",
+    "summary": "The Affiliate program terms and conditions below constitute a legal agreement between the affiliate program participant (the Affiliate) and Magicworks IT Solutions Private Limited ",
+    "lastUpdated": "3 December 2025",
+    "sections": [
+      {
+        "heading": "Overview",
+        "body": [
+          "The Affiliate program terms and conditions below constitute a legal agreement between the affiliate program participant (the Affiliate) and Magicworks IT Solutions Private Limited (herein referred to as “The Company”), legal owner of the domain name and web site MagicWorksHost.Com (herein referred to as “The Website”), each referred to herein as a “Party” and collectively as the “Parties”. The Affiliate program (herein referred to as “The Program”) allows the Affiliate to promote the Company’s services and receive commissions according to the terms below. The Affiliate’s agreement to be bound by these terms is acknowledged by the Affiliate’s sign up and participation in the program."
+        ]
+      },
+      {
+        "heading": "1. Participation in the Affiliate Program Terms",
+        "body": [
+          "To enroll in the Program the applicants must sign up for an affiliate account via the MagicWorksHost.com website. All applications can be manually reviewed and in up to two business days MagicWorksHost will decide in good faith if the application will be accepted or not. Applications may be rejected if we determine that an applicant is unsuitable for the Program for any reason, including, but not limited to any previous history of the applicant of not complying with MagicWorksHost affiliate program terms, if the applicant’s website or activity can be related with any unlawful, defamatory, obscene, harassing or otherwise objectionable activity, such as facilitating illegal activity, promoting violence, promoting or assisting others in copyright infringement, participating in sending unsolicited email etc."
+        ]
+      },
+      {
+        "heading": "2. Affiliate Responsibilities Related to the Affiliate Account Data",
+        "body": [
+          "• The Affiliate is responsible for providing full and accurate information upon registration for the affiliate program and keeping it up to date at any time in their affiliate account. Such information includes, but is not limited to: contact details, payment details, etc. Failure to provide the correct addresses and payment information may result in the forfeiture of any commissions. Commission fees that are returned for invalid or insufficient payment information or for other reasons may be forfeited. The company reserves the right to contact the affiliate and request additional data regarding the promotional practices used by the affiliate, to which the affiliate is required to provide truthful and detailed information. Failure to provide accurate and truthful information in the registration form or when requested by the company may result in suspension of the affiliate account and all commission payments due by the Company to the Affiliate.",
+          "• The affiliate should act in good faith in his affiliate practices and refer customers in good standing. Customers in good standing: – have provided valid contact information; – have active accounts, with no abuse case open, not flagged as fraud or high fraud risk; – actively use their accounts If the company detects a pattern in the practices used by the affiliate that results in referring customers that are not in good standing, it reserves the right to suspend the affiliate account and not pay out all commission payments due by the Company to the Affiliate.",
+          "• The affiliate should not take actions that result in a potential revenue loss for the company. If the Company detects a pattern in the practices used by the affiliate that result in possible revenue losses, it reserves the right to suspend the affiliate account and not pay out all commission payments due by the Company to the Affiliate.",
+          "• The affiliate should not engage in the advertisement of business-opportunity sites, using marketing practices that we deem to be unethical or likely to attract fraudulent signups and/or signups with a very low likelihood of renewal.",
+          "• The affiliate should not use on behalf of their customers, or encourage their customers to use copyrighted or third-party’s material on their websites without the authors’ agreement. The Company reserves the right to suspend all accounts referred by the affiliate that contain copyrighted or directly copy-pasted third-party’s materials might be suspended, the affiliate account itself and all commission payments due by the Company to the Affiliate.",
+          "• The Affiliate should use only advertising materials approved by the Company. Any material that is not provided officially via the Affiliate User Area and not exclusively approved by a Company representative in a written form is deemed unapproved. The allowable promotional material may contain MagicWorksHost’s trade names, service marks, and/or logos for display on your Affiliate Site. Subject to the terms and conditions hereof, the Affiliate is granted a limited, non-exclusive, non-transferable license to access and download such promotional material and other designated promotional materials for placement on the Affiliate Site for the sole and exclusive purpose of promoting websites owned, operated or controlled by the Company. In utilizing the promotional material, the Affiliate agrees to cooperate fully with the Company in order to establish and maintain approved promotional material. The inappropriate ways of advertising include, but are not limited to:",
+          "• Using any illegal or spam method of advertising like unsolicited email, unauthorized placing of the link in forums, newsgroups, message boards etc.",
+          "• Bidding on keywords and phrases containing the “MagicWorksHost” trademark, or variations or misspellings of the trademarked term on Pay per Click or Pay per Impression campaigns on the search engines (Google, Yahoo, MSN, Ask, Bing) without prior approval by The Company.",
+          "• Providing cash backs, rewards or any other kind of incentives to obtain the sale without prior approval of the Company.",
+          "• Using the Company advertising materials, trademark or name in a way that is deteriorating for the Company’s image.",
+          "• Using iframes or any other techniques or technology that places your affiliate tracking cookie by any means other than an actual click-through. The Company has the sole right to decide if a promotion method used by the affiliate is appropriate. In case the Company finds an advertising method used by the Affiliate for inappropriate this could result in warning, suspension or possible affiliate account termination with no affiliate commission payments.",
+          "• Affiliate web sites must NOT contain lewd, obscene, illegal or pornographic material, or any other material that is deemed to be objectionable. This includes, but is not limited to, bigotry, hatred, pornography, satanic materials, trademark and copyright materials, and all content of an adult nature. The designation of any materials as such described above is left entirely to the discretion of the Company. Affiliate web site(s)’ domain name(s) must NOT contain keywords and phrases containing the “MagicWorksHost” trademark or any other variations or misspellings confusingly similar to the Company trademark, name or domain name. The Company reserves the right to suspend all affiliate accounts and invalidate commissions due to affiliates that do not comply with this item."
+        ]
+      },
+      {
+        "heading": "3. Affiliate tracking cookies",
+        "body": [
+          "The tracking of the affiliate sales is automatically performed by the use of cookies. The cookies are placed in the browser of the person that has clicked on the affiliate link and has thus reached the Company website. The cookie is stored for 60 days. If there is a previous affiliate cookie in the same browser it is overwritten by the newer one. The Company bears no responsibility if the customer has deleted their browser cookies on purpose."
+        ]
+      },
+      {
+        "heading": "4. Terms for Earning Affiliate Commissions",
+        "body": [
+          "The Affiliate is entitled to receiving the appropriate affiliate commission of the sales made by the Company, which correspond to ALL the terms below:",
+          "• The sale was made as a result of the active referring efforts of the affiliate. The company accepts this is true in any of the following situations:",
+          "• If at time of order the customer has an active cookie indicating that the affiliate is the last one that has referred the customer to the Company’s website and at the same time the customer has not reached the Company website through a search engine with a search string not containing the company name in it.",
+          "• If the affiliate claims that a customer has been referred by him/her and there are no objections to that fact by the customer and the Company does not have information that attributes the sale to another advertising channel.",
+          "• The sale was made to a person, who has not been using neither the Company’s hosting services nor has he ever created an affiliate account with the Company before.",
+          "• The sign up process of the customer was not completed by the affiliate himself.",
+          "• The sale is for any of the following hosting services: Basic, Starter, Silver, Gold or Platinum shared hosting, Cloud Hosting, Dedicated servers, and Reseller package. Other hosting service sales, which may include but are not limited to domain names or additional features offered by the Company, are not subject to commissions.",
+          "• The sale is for a hosting item either initially ordered for one month or with item price equal to or bigger than Rs 500/-. Sales for periods longer than one month whose total hosting service price is less than Rs 500/-are not subject to commissions.",
+          "• The referred customer has maintained his account active, not closed by the customer, not suspended by the company for fraud, abuse or other inappropriate usage, with domain name pointed to a MagicWorksHost server and a website with user uploaded content different from any default installation via automated installation tools provided by the Company, for the required period listed below depending on the initial customer order period:",
+          "• More than 30 days for accounts initially ordered for periods longer than one month",
+          "• More than 90 days for accounts initially ordered for one month period",
+          "• The initial order payment and any related service renewal payments of the referred customer are fully processed and are not subject to refund or charge back.",
+          "The Company reserves the right to deem invalid any sale upon its own discretion without being liable for further explanation and justification."
+        ]
+      },
+      {
+        "heading": "5. Terms for Earning and Payment of Special Signup Bonus",
+        "body": [
+          "Sometimes the company may offer special sign up bonuses to its affiliates. In order for the affiliate to be eligible for such bonuses all the following conditions should be met:",
+          "• The affiliate should have been offered such a bonus at sign up.",
+          "• The affiliate should have placed a material linking back to the company and should have informed the company of the existence of this link in the first week after the initial affiliate sign up.",
+          "• The bonus is actually earned when at least one sale commission is approved and paid to the affiliate by the company. If no legitimate sale is made no bonus is owed by the company either.",
+          "• The bonus should be earned in 6 months at most after the affiliate sign up. If no sale is approved and paid in 6 months the bonus will no longer be available."
+        ]
+      },
+      {
+        "heading": "6. Terms for Affiliate Commissions Payment",
+        "body": [
+          "Unless custom agreement exists the affiliate commissions will be paid by the Company based on the structure outlined on the Affiliate program sign up page.",
+          "The Commission Rates are subject to change upon e-mail notice to the Affiliate. Commissions deemed due and owed to the affiliate under the program terms outlined in section 5 will be paid directly by the Company after any holding period and in accordance with a regular payout cycle. The regular payout cycle is once a week. Affiliate can be paid via NEFT Bank Transfer Method",
+          "The Company reserves the right to withhold any payouts of commissions for sales that are potentially fraudulent as determined by the Company in its sole discretion.",
+          "The Company reserves the right to suspend payment of Commissions at any time and indefinitely, if it suspects fraud or other improper activity or a potential breach of any of the terms in this Agreement by the Affiliate or a Referred Customer(s). The Company reserves the right to deduct from Affiliate’s current and future Commission Fees any and all Commission Fees corresponding to any fraudulent, questionable, and canceled purchases. Where no subsequent Commission Fee is due and owing, the Company will send the Affiliate a bill for the balance of such refunded purchase upon termination of the program or termination of the Referred Customer."
+        ]
+      },
+      {
+        "heading": "7. Relationship of parties",
+        "body": [
+          "The Parties under this Agreement are independent contractors, and nothing in this Agreement will create any partnership, joint venture, agency franchise, sales representative, or employment relationship between the Parties. The Affiliate has no authority to make or accept any offers or representations on the Company’s behalf. The Affiliate cannot make any statement, whether on the Affiliate web site or otherwise, that reasonably would contradict anything in this section."
+        ]
+      },
+      {
+        "heading": "8. Termination of Affiliate Account",
+        "body": [
+          "The Affiliate can cancel his/her Affiliate account at any time by contacting the Company via the Affiliate User Area. The Affiliate account is deemed canceled after a written confirmation from the Company’s team has been sent to the Affiliate. Any commissions due at the time of the Cancellation will be sent to the affiliate with the next weekly payout."
+        ]
+      },
+      {
+        "heading": "The Company can cancel each Affiliate account",
+        "body": [
+          "• With 7 day prior notice. Any commissions due at the time of the Cancellation will be sent to the affiliate with the next weekly payout.",
+          "• Immediately with no prior notice, if the affiliate does not comply with the Affiliate program terms. In such case no prior warning or commission payments are due.",
+          "• Immediately with no prior notice, if the affiliate has not generated any sales to the company for a period more than 6 months.",
+          "After the cancellation of an affiliate account the Company will no longer track the sales associated with the affiliate and will not owe any commissions to the affiliate for future sales that may be associates with him/her."
+        ]
+      },
+      {
+        "heading": "9. Limitation of liability",
+        "body": [
+          "YOU AGREE THAT WE WILL NOT BE LIABLE FOR INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, OR ANY LOSS OF REVENUE, PROFITS, OR DATA, ARISING IN CONNECTION WITH THIS AGREEMENT OR THE AFFILIATE PROGRAM, EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. FURTHER, OUR AGGREGATE LIABILITY ARISING WITH RESPECT TO THIS AGREEMENT AND THE AFFILIATE PROGRAM WILL NOT EXCEED THE TOTAL COMMISSIONS PAID OR PAYABLE TO THE AFFILIATE UNDER THIS AGREEMENT DURING THE 3-MONTH PERIOD IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO SUCH LIABILITY."
+        ]
+      },
+      {
+        "heading": "Corporate Address",
+        "body": [
+          "201, Vasant Bahawa, Survey No. 20, Near La Valle Casa, Bavdhan, Pune, Maharashtra, India 411021."
+        ]
+      },
+      {
+        "heading": "Privacy Policy",
+        "body": [
+          "The Company’s Privacy Policy is incorporated herein by reference and governs all collection, storage and usage of personal data. By accepting the terms and conditions in this section, the Affiliate expressly consents to the use and disclosure of his/her personally identifiable and other information as described in the Privacy Policy."
+        ]
+      },
+      {
+        "heading": "Affiliate Program Terms Change",
+        "body": [
+          "The Company reserves the right to change the above terms at any time. Such changes will become effective and binding after their posting on the Company’s website. The Affiliate agrees to regularly review the Affiliate program terms and conditions and be aware of the changes made. By continuing to participate in the Affiliate program after a revision has been posted, the Affiliate agrees to abide by them."
+        ]
+      }
+    ]
+  },
+  "resource-abuse-policy": {
+    "slug": "resource-abuse-policy",
+    "title": "Resource Abuse Policy",
+    "summary": "Magicworkshost.com, Magicworks IT Solutions Private Limited. Resource Abuse Policy.",
+    "lastUpdated": "3 December 2025",
+    "sections": [
+      {
+        "heading": "Overview",
+        "body": [
+          "Magicworkshost.com, Magicworks IT Solutions Private Limited. Resource Abuse Policy."
+        ]
+      },
+      {
+        "heading": "1. Coverage",
+        "body": [
+          "This Resource Abuse Policy (RAP) applies to you if MagicWorksHost.com, Magicworks IT Solutions Private Limited, Magicworks’s Partners through Magicworks, Magicworks Vendors through Magicworks (hereafter referred to as MagicWorks, we, us or our) is providing Service to you and your account is in good standing. Terms not defined in this RAP have the meaning given to them in your agreement with MagicWorks."
+        ]
+      },
+      {
+        "heading": "2. Resource Usage",
+        "body": [
+          "Any website on our shared servers that uses a high amount of server resources (CPU, memory usage, and network resources i.e Bandwidth) will be given an option to pay for a dedicated server. The abuse and misuse of shared system resources is a serious problem. Accounts on a shared server must share resources with other users so we must limit how much of the CPU and memory that can be used by any one account.",
+          "Any questions about our abuse policy may be answered by opening a ticket with our abuse division. You may visit the helpdesk by clicking here."
+        ]
+      },
+      {
+        "heading": "3. Average Server Resource Limits",
+        "body": [
+          "• Memory usage may not exceed 10% per domain/file/application",
+          "• CPU usage may not exceed 10% per domain/file/application",
+          "• Apache connections may not exceed 20 connections",
+          "• MySQL connections may not exceed 15 user connections",
+          "• 250 emails per hour, per domain",
+          "• Bandwidth Should not Exceed more than 150 GB/cPanel Account per month",
+          "There are special exceptions to these rules to be determined at the time we discover abuse. There are different combinations of usage that can create problems and other special cases. At any given time a server is unstable and an account is found to be the cause, we reserve the right to suspend the account to keep the server online and operating normally. If the usage is an increasing trend, we recommend the user invest in a dedicated server so the website can grow at a normal rate without restriction."
+        ]
+      },
+      {
+        "heading": "4. Suspensions",
+        "body": [
+          "In the event your website has been suspended for resource abuse (abuse that cannot be resolved by removing/changing a script, etc.) and you do not wish to upgrade to a dedicated server to accommodate your site needs, we will only release the suspension within 24-48 hours. This is to ensure the CPU intensive site slows down in traffic to avoid further damage and problems. A backup will then be provided of your files or you will be allowed FTP/cPanel access for a certain time period. Any questions about our abuse policy may be answered by opening a ticket with our abuse division. You may visit the helpdesk by clicking here."
+        ]
+      },
+      {
+        "heading": "5. Inodes",
+        "body": [
+          "Accounts on any shared hosting account may not have an excessive number of inodes. Any account found to have over the inodes allotted to your account as per your plan may be removed from our backup system to prevent overload. Every file on the account is counted as 1 inode. This includes mail as well as webpage content. Inodes limit can be seen at your cPanel at right sidebar under File Usage."
+        ]
+      },
+      {
+        "heading": "6. Cron",
+        "body": [
+          "We allow customers to set up cron jobs to perform routine functions automatically. Any client who schedules cron jobs in such a manner that jobs take more then half the time to complete before the next scheduled iteration, and more frequently then 10 minutes is abusing the cron system. Any automated processes that excessively consume resources and impact server stability may be disabled at our discretion by our technicians."
+        ]
+      },
+      {
+        "heading": "7. Semi-Dedicated and VPS Services",
+        "body": [
+          "In order to control the VPS hardware node and to ensure that no single VPS account monopolizes the shared hardware resources of the VPS node (CPU/RAM) we use virtual limits to implement certain controls. The limits, or barriers if you will, which are most strictly enforced are the process limits (numproc), the RAM limits, and CPU usage limits. The ‘numproc’ limit which does not actually correlate directly with the number of processes you spawn, rather the number of kernel level threads any VPS account spawns is how the limit of kernel level processes are controlled. Please see below for the specified limits."
+        ]
+      },
+      {
+        "heading": "Numproc Limits VPS1 – 180:180 VPS2 – 220:220 VPS3 – 260:260 VPS4 – 300:300",
+        "body": [
+          "We strictly limit the amount of RAM that each account is given. With any account, your account may only use the amount of RAM which is guaranteed to your VPS."
+        ]
+      },
+      {
+        "heading": "VPS CPU Limits",
+        "body": [
+          "Our VPS offer an equal share of CPU to all accounts sharing the hardware node. With this given, the CPU limits are as follow: VPS1/2/3/4 – 700MHz Guaranteed, burstable to 850MHz",
+          "Any single VPS account which is surpassing the above limitations is considered “Abusive”. Should your VPS be abusive for more than 12 hours you will be at risk of suspension. MagicWorks, reserves the right to suspend, without prior notice, any VPS account which is causing the main hardware node to crash. MagicWorks will, in this case, send an abuse notice once the offending VPS account has been suspended."
+        ]
+      },
+      {
+        "heading": "8. “Unlimited” Usage Policy",
+        "body": [
+          "MagicWorksHost.Com offers some of its hosting packages with “Unlimited” amount of resources for specific options (disk drive space, bandwidth, domains per account, and others listed in the features page). This means that MagicWorksHost.Com will not set a specific cap for these resources and client will be able to use these resources as needed, however MagicWorksHost.Com does use a fair usage policy which applies to all accounts. MagicWorksHost.Com Fair Usage Policy implies that if the client uses the resources of the shared server to the extent where he is negatively affecting other users hosted on the same server, the resources may be capped or in some cases, but not necessarily, respectable account may be disabled before client upgrades his account to a package more suitable for his needs or fixes the issues so the resource usage on his account stops to negatively affect other users on the same shared server. Bandwidth is the main concern where an Account is consuming it unexpectedly and affecting other websites hosted on the servers. we set 150GB bandwidth to all Unlimited Plans to avoid issues for all client websites.",
+          "By the term “Unlimited Space” MagicWorksHost.Com means that it will not set a cap on the amount of files the user may host on his account, however the space on the hosting account cannot be used for: Backup storage, Online storage, File sharing services, Movie storage, Photo storage, Software storage, Copyrighted content storage, Illegal, Abusive or Offending file storage, Document Archives or any other type of Archive, File Backups (with the exception of a single cPanel backup generated from your cPanel), log files, etc. MagicWorksHost.Com reserves the right to remove such files from the user account with or without notice to the client. MagicWorksHost.Com also reserves the right to remove any single files larger than 1GB from the user account regardless of the content of the file with or without notice to the client. MagicWorksHost.Com also reserves the right the clean up a user account by removing files which fall under the criteria of files that may not be hosted on MagicWorksHost.Com accounts, if there are more than 100,000 files on a single account, with or without notice to the client. MagicWorksHost.Com also reserves the right to disable the account which holds more than 100,000 files until the relevant shared hosting account is upgraded by the client to a vps service where such limitation is not applied."
+        ]
+      },
+      {
+        "heading": "Banned Scripts or website types",
+        "body": [
+          "The following scripts are banned from use on our servers and may not be uploaded or run. Reasons for banning them include adverse effects on server load, invitations to hackers/spammers/criminal activity, etc. Hosting any type of these sites will result in instant account suspension until the content is removed. On the case that the content was uploaded willingly by the client, MagicWorksHost.Com reserves the right to terminate the account without the possibility of a refund. If the content was uploaded by a 3rd party (hackers, abusers which intend to take the client site down), then MagicWorksHost.Com will inform the client about the abusive content. MagicWorksHost.Com also reserves the right to remove such content from user account without prior notification."
+        ]
+      },
+      {
+        "heading": "Banned scripts and website types listed below",
+        "body": [
+          "• IRC scripts, eggdrops, bots",
+          "• Proxy server scripts (also any other script which operates as proxy)",
+          "• Mail bomber and spam scripts",
+          "• IP spoofers and port scanners",
+          "• Pirated Software or any form of warez",
+          "• Image Hosting Scripts (like imgur or Photobucket)",
+          "• AutoSurf site scripts",
+          "• PPC site scripts",
+          "• PTC site scripts",
+          "• Bruteforce Programs or scripts",
+          "• File sharing, dump and mirroring service scripts (like mega, rapidshare)",
+          "• Top sites generator scripts",
+          "• Illegal drug or any other substance or product not allowed to be sold in US or Contraband related sites",
+          "• Sites distributing copyrighted content without proper licenses",
+          "• Gambling sites",
+          "• Hacker programs, credit card dumps, hacker focused sites",
+          "• Forums distributing warez or any other illegal content",
+          "• Fraudulent sites (fake banking services, fake login pages, any other site mining information in illegal ways)",
+          "• Viruses, trojan horses, mass ping, ddos, udp or tcp flood scripts, or other kind of destructive scripts",
+          "• Child pornography (If MagicWorksHost.Com is to locate child pornography willingly uploaded to a client account, then the client account will be terminated instantly without any possibility of a refund)",
+          "Any kind of abusive content found on our servers should be reported to support@magicworkshost.com. MagicWorksHost.Com will handle any abuse report with the highest priority and interest. MagicWorksHost.Com will not be held liable for any damage or loss that may have arisen from content uploaded to client accounts or actions performed by scripts on such accounts on our shared or vps servers. Client who is the account owner takes full responsibility of the whole account content and all actions that are performed on the respectable account, also takes full responsibility for any and all of damages or losses that may arise from his account content or actions performed by scripts on his account."
+        ]
+      },
+      {
+        "heading": "Unlimited disk space? How is that possible?",
+        "body": [
+          "A logical question you might ask, where do you get your unlimited hard drives from? The answer is – we don’t. We use 3TB (3000GB) hard drives and this is a massive amount of space for web hosting users. We are able to provide unlimited space as not all clients require huge amounts of space on the server. For example, there might be 10 clients who need 1GB of space and then 1 client who needs 200GB. That’s no problem for us."
+        ]
+      },
+      {
+        "heading": "Can I store anything I want on the account?",
+        "body": [
+          "This might be one of the important things to be noted, that while we do not limit the space your account takes up on our server, we still require that the uploaded contents comply with our TOS.",
+          "Of course, you should never host Copyrighted content like movies or music. Same applies to abusive or illegal content (like child pornography) on our servers. Any of such content found on the account is removed, account may be disabled and we may even take legal actions and report to legal instances on rare cases of extreme abuse."
+        ]
+      },
+      {
+        "heading": "Unlimited hosting services Backups",
+        "body": [
+          "We have Daily and Weekly (Every Saturday) backups of Unlimited Hosting accounts.",
+          "This Policy shall be governed by and construed in accordance with the laws within Pune, Maharashtra (INDIA), without regard to choice of law provisions that would cause the application of the law of another jurisdiction."
+        ]
+      }
+    ]
+  }
+}

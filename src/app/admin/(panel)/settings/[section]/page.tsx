@@ -8,7 +8,6 @@ import { siteConfig } from "@/constants/site-config"
 import { requireAdmin } from "@/lib/admin/auth"
 import { getSettings } from "@/lib/admin/queries"
 import type { GeneralSettings } from "@/lib/cms/types"
-import { getSanitySiteSettings } from "@/sanity/lib/queries"
 
 const SECTIONS = {
   general: { title: "General settings", description: "Site name, contact details and business hours shown in the header, footer and contact page." },
@@ -28,19 +27,18 @@ export default async function SettingsPage({ params }: { params: Promise<{ secti
 
   const { data, problem } = await getSettings()
 
-  // What the website shows today when a CMS field is empty (Sanity, else built-in defaults).
-  const sanity = section === "general" ? await getSanitySiteSettings() : null
+  // What the website shows when a dashboard field is empty (the built-in defaults).
   const live: GeneralSettings = {
-    siteName: sanity?.siteName ?? siteConfig.name,
-    tagline: sanity?.tagline ?? siteConfig.tagline,
-    description: sanity?.description ?? siteConfig.description,
-    contactPhone: sanity?.contactPhone ?? siteConfig.contact.phone,
-    contactPhoneHref: sanity?.contactPhoneHref ?? siteConfig.contact.phoneHref,
-    contactEmail: sanity?.contactEmail ?? siteConfig.contact.email,
-    contactAddress: sanity?.contactAddress ?? siteConfig.contact.address,
-    salesHours: sanity?.salesHours ?? siteConfig.contact.hours.sales,
-    accountingHours: sanity?.accountingHours ?? siteConfig.contact.hours.accounting,
-    supportHours: sanity?.supportHours ?? siteConfig.contact.hours.support,
+    siteName: siteConfig.name,
+    tagline: siteConfig.tagline,
+    description: siteConfig.description,
+    contactPhone: siteConfig.contact.phone,
+    contactPhoneHref: siteConfig.contact.phoneHref,
+    contactEmail: siteConfig.contact.email,
+    contactAddress: siteConfig.contact.address,
+    salesHours: siteConfig.contact.hours.sales,
+    accountingHours: siteConfig.contact.hours.accounting,
+    supportHours: siteConfig.contact.hours.support,
   }
 
   return (

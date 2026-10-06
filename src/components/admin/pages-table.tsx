@@ -7,7 +7,9 @@ import { can } from "@/lib/admin/permissions"
 import type { Problem } from "@/lib/admin/queries"
 import type { PageRow } from "@/lib/cms/types"
 
+import { BulkSelectionProvider, RowCheckbox, SelectAllCheckbox } from "./bulk-selection"
 import { PageRowActions } from "./page-row-actions"
+import { PagesBulkActions } from "./pages-bulk-actions"
 import { EmptyState, formatDate, PAGE_TYPE_LABELS, Panel, Pill, ProblemNotice, StatusBadge, Table, Td, Th } from "./ui"
 
 export function PagesTable({
@@ -32,6 +34,7 @@ export function PagesTable({
     canPublish: can(admin.role, "pages.publish"),
     canDelete: can(admin.role, "pages.delete"),
   }
+  const bulk = perms.canPublish || perms.canDelete
 
   return (
     <div className="flex flex-col gap-4">
@@ -52,54 +55,67 @@ export function PagesTable({
           </form>
         }
       >
-        {pages.length ? (
-          <Table>
-            <thead>
-              <tr>
-                <Th>Title</Th>
-                <Th>Type</Th>
-                <Th>Status</Th>
-                <Th>Last updated</Th>
-                <Th className="text-right">Actions</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {pages.map((page) => (
-                <tr key={page.id} className="transition-colors hover:bg-muted/30">
-                  <Td>
-                    <Link href={`/admin/pages/${page.id}`} className="font-medium hover:text-primary hover:underline">
-                      {page.title}
-                    </Link>
-                    <p className="text-xs text-muted-foreground">{page.path}</p>
-                  </Td>
-                  <Td>
-                    <Pill>{PAGE_TYPE_LABELS[page.page_type]}</Pill>
-                  </Td>
-                  <Td>
-                    <StatusBadge status={page.status} />
-                  </Td>
-                  <Td className="text-muted-foreground">{formatDate(page.updated_at)}</Td>
-                  <Td>
-                    <PageRowActions page={{ id: page.id, title: page.title, path: page.path, status: page.status }} {...perms} />
-                  </Td>
+        <BulkSelectionProvider ids={bulk ? pages.map((page) => page.id) : []}>
+          {bulk ? <PagesBulkActions canPublish={perms.canPublish} canDelete={perms.canDelete} /> : null}
+          {pages.length ? (
+            <Table>
+              <thead>
+                <tr>
+                  {bulk ? (
+                    <Th className="w-10 pr-0">
+                      <SelectAllCheckbox label="Select all pages" />
+                    </Th>
+                  ) : null}
+                  <Th>Title</Th>
+                  <Th>Type</Th>
+                  <Th>Status</Th>
+                  <Th>Last updated</Th>
+                  <Th className="text-right">Actions</Th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          <EmptyState
-            icon={query ? Search : FileText}
-            title={query ? `No pages match “${query}”` : emptyTitle}
-            action={
-              perms.canEdit && !query ? (
-                <Link href={newHref} className={buttonVariants()}>
-                  <FilePlus2 />
-                  Create a page
-                </Link>
-              ) : null
-            }
-          />
-        )}
+              </thead>
+              <tbody>
+                {pages.map((page) => (
+                  <tr key={page.id} className="transition-colors hover:bg-muted/30">
+                    {bulk ? (
+                      <Td className="w-10 pr-0">
+                        <RowCheckbox id={page.id} label={`Select ${page.title}`} />
+                      </Td>
+                    ) : null}
+                    <Td>
+                      <Link href={`/admin/pages/${page.id}`} className="font-medium hover:text-primary hover:underline">
+                        {page.title}
+                      </Link>
+                      <p className="text-xs text-muted-foreground">{page.path}</p>
+                    </Td>
+                    <Td>
+                      <Pill>{PAGE_TYPE_LABELS[page.page_type]}</Pill>
+                    </Td>
+                    <Td>
+                      <StatusBadge status={page.status} />
+                    </Td>
+                    <Td className="text-muted-foreground">{formatDate(page.updated_at)}</Td>
+                    <Td>
+                      <PageRowActions page={{ id: page.id, title: page.title, path: page.path, status: page.status }} {...perms} />
+                    </Td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          ) : (
+            <EmptyState
+              icon={query ? Search : FileText}
+              title={query ? `No pages match “${query}”` : emptyTitle}
+              action={
+                perms.canEdit && !query ? (
+                  <Link href={newHref} className={buttonVariants()}>
+                    <FilePlus2 />
+                    Create a page
+                  </Link>
+                ) : null
+              }
+            />
+          )}
+        </BulkSelectionProvider>
       </Panel>
     </div>
   )

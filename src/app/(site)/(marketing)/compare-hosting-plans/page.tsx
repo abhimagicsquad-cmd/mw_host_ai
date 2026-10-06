@@ -3,14 +3,17 @@ import type { Metadata } from "next"
 import { LEAD_CTA_HREF } from "@/components/common/cta-or-lead-button"
 import { CTASection } from "@/components/sections/cta-section"
 import { FAQSection } from "@/components/sections/faq-section"
+import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { PageHero } from "@/components/sections/page-hero"
 import { PlanComparisonTable } from "@/components/sections/plan-comparison-table"
+import { PricingSection } from "@/components/sections/pricing-section"
 import { SectionContainer } from "@/components/layout/section-container"
 import { SectionHeading } from "@/components/layout/section-heading"
 import { comparisonRows } from "@/constants/compare-hosting-data"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
+import { testimonials } from "@/constants/testimonials"
 import { buildPageMetadata } from "@/lib/seo"
-import { getComparisonPage, getPricingPlansByService } from "@/sanity/lib/queries"
+import { getComparisonPage, getPricingPlansByService } from "@/lib/cms/queries"
 
 const fallbackFaqs = [
   { question: "Which plan should I start with?", answer: "Most new sites do well on Starter or Basic Plus NVMe — Basic Plus is our most popular tier for a reason." },
@@ -41,7 +44,7 @@ export default async function CompareHostingPlansPage() {
   const heroDescription = cms?.heroDescription ?? "The exact specs behind each plan, so you can pick with confidence instead of guessing."
   const rows = cms?.rows ?? comparisonRows
   const faqs = cms?.faqs ?? fallbackFaqs
-  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const cmsPlans = await getPricingPlansByService("shared-hosting", "india")
   const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (
@@ -58,6 +61,11 @@ export default async function CompareHostingPlansPage() {
           <PlanComparisonTable plans={plans} rows={rows} />
         </div>
       </SectionContainer>
+
+      {/* WordPress lists the full plan grid under the table, each with its 1/2/3-year buy options. */}
+      <PricingSection eyebrow="Pricing" title="Pick your plan and billing period" plans={plans} background="alt" />
+
+      <TestimonialsSection title="Don't just take it from us" description="See what our customers say about us." testimonials={testimonials} />
 
       <FAQSection eyebrow="FAQs" title="Choosing a plan" items={faqs} />
 

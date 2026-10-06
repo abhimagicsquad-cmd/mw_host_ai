@@ -1,5 +1,7 @@
 "use server"
 
+import { timingSafeEqual } from "node:crypto"
+
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { z } from "zod"
@@ -8,7 +10,9 @@ import { logActivity, getClientIp } from "@/lib/admin/activity"
 import { authorizeAction, getCurrentAdmin, isBootstrapLoginAllowed } from "@/lib/admin/auth"
 import { hashPassword, validatePasswordStrength, verifyPassword } from "@/lib/admin/password"
 import { clearLoginFailures, isLoginThrottled, recordLoginFailure } from "@/lib/admin/rate-limit"
-import { isSessionSigningConfigured, SESSION_COOKIE, SESSION_MAX_AGE_SECONDS, signSession } from "@/lib/admin/session"
+import { safeAdminPath } from "@/lib/admin/safe-redirect"
+import { isSessionSigningConfigured, SESSION_COOKIE } from "@/lib/admin/session"
+import { setSessionCookie } from "@/lib/admin/session-cookie"
 import { cmsAdminDb, isMissingTableError } from "@/lib/cms/db"
 import type { ActionState, AdminRole } from "@/lib/cms/types"
 
@@ -22,19 +26,11 @@ const loginSchema = z.object({
 
 const INVALID = "Invalid username or password."
 
-function safeNext(next: string | undefined) {
-  return next && next.startsWith("/admin/") && !next.startsWith("//") && !next.includes("\\") ? next : "/admin/dashboard"
-}
-
-async function setSessionCookie(payload: { sub: string; username: string; role: AdminRole }) {
-  const store = await cookies()
-  store.set(SESSION_COOKIE, await signSession(payload), {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/admin",
-    maxAge: SESSION_MAX_AGE_SECONDS,
-  })
+/** Constant-time string comparison (for the env bootstrap password). */
+function safeEqual(a: string, b: string) {
+  const left = Buffer.from(a)
+  const right = Buffer.from(b)
+  return left.length === right.length && timingSafeEqual(left, right)
 }
 
 export async function loginAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -46,11 +42,11 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
     return { error: "Admin login is not configured on this server (set ADMIN_SESSION_SECRET or SUPABASE_SERVICE_ROLE_KEY)." }
   }
 
-  const throttleKey = `${(await getClientIp()) ?? "unknown"}:${username.toLowerCase()}`
-  if (isLoginThrottled(throttleKey)) return { error: "Too many failed attempts. Try again in 15 minutes." }
+  const ip = await getClientIp()
+  if (await isLoginThrottled(ip, username)) return { error: "Too many failed attempts. Try again in 15 minutes." }
 
   const fail = async (reason: string) => {
-    recordLoginFailure(throttleKey)
+    recordLoginFailure(ip, username)
     await logActivity({ username, action: "auth.login_failed", entityType: "auth", description: `Failed login for "${username}"`, metadata: { reason } })
     return { error: INVALID }
   }
@@ -61,10 +57,10 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
     username.toLowerCase() === process.env.ADMIN_BOOTSTRAP_USERNAME.toLowerCase() &&
     (await isBootstrapLoginAllowed())
   ) {
-    if (password !== process.env.ADMIN_BOOTSTRAP_PASSWORD) return fail("bad_password")
-    clearLoginFailures(throttleKey)
+    if (!safeEqual(password, process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "")) return fail("bad_password")
+    clearLoginFailures(ip, username)
     await setSessionCookie({ sub: "bootstrap", username, role: "super_admin" })
-    redirect(safeNext(next))
+    redirect(safeAdminPath(next))
   }
 
   if (!cmsAdminDb) return { error: "The CMS database is not configured (missing Supabase environment variables)." }
@@ -92,8 +88,8 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   if (!(await verifyPassword(password, user.password_hash))) return fail("bad_password")
   if (!user.is_active) return fail("inactive")
 
-  clearLoginFailures(throttleKey)
-  await setSessionCookie({ sub: user.id, username: user.username, role: user.role as AdminRole })
+  clearLoginFailures(ip, username)
+  await setSessionCookie({ sub: user.id, username: user.username, role: user.role as AdminRole, passwordHash: user.password_hash })
   await cmsAdminDb.from("users").update({ last_login_at: new Date().toISOString() }).eq("id", user.id)
   await logActivity({
     admin: { id: user.id, username: user.username, role: user.role as AdminRole, email: null, full_name: null, must_change_password: false, isBootstrap: false },
@@ -102,7 +98,7 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
     description: `${user.username} signed in`,
   })
 
-  redirect(safeNext(next))
+  redirect(safeAdminPath(next))
 }
 
 export async function logoutAction() {
@@ -110,7 +106,7 @@ export async function logoutAction() {
   if (admin) await logActivity({ admin, action: "auth.logout", entityType: "auth", description: `${admin.username} signed out` })
   const store = await cookies()
   store.delete({ name: SESSION_COOKIE, path: "/admin" })
-  redirect("/admin/login")
+  redirect("/mwh-admin-login")
 }
 
 const changePasswordSchema = z
@@ -136,11 +132,14 @@ export async function changeOwnPasswordAction(_prev: ActionState, formData: Form
       return { error: "Current password is incorrect." }
     }
 
+    const passwordHash = await hashPassword(parsed.data.newPassword)
     const { error } = await cmsAdminDb
       .from("users")
-      .update({ password_hash: await hashPassword(parsed.data.newPassword), must_change_password: false, updated_at: new Date().toISOString() })
+      .update({ password_hash: passwordHash, must_change_password: false, updated_at: new Date().toISOString() })
       .eq("id", admin.id)
     if (error) throw error
+    // The new hash revokes every other session; re-issue this browser's so it stays signed in.
+    await setSessionCookie({ sub: admin.id, username: admin.username, role: admin.role, passwordHash })
 
     await logActivity({ admin, action: "auth.password_changed", entityType: "user", entityId: admin.id, description: `${admin.username} changed their password` })
     return { ok: true, message: "Password updated." }

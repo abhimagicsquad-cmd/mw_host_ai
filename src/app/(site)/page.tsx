@@ -16,12 +16,12 @@ import { ServiceGrid } from "@/components/sections/service-grid"
 import { StatsSection } from "@/components/sections/stats-section"
 import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { TrustHighlights } from "@/components/sections/trust-highlights"
-import { PageBuilder } from "@/components/sanity/page-builder"
+import { PageBuilder } from "@/components/page-builder/page-builder"
 import { sharedHostingPlans } from "@/constants/pricing-plans"
 import { testimonials } from "@/constants/testimonials"
 import { trustHighlights } from "@/constants/trust-highlights-data"
 import { applySeoOverrides, buildPageMetadata } from "@/lib/seo"
-import { getHomePage, getPricingPlansByService } from "@/sanity/lib/queries"
+import { getHomePage, getPricingPlansByService } from "@/lib/cms/queries"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getHomePage()
@@ -46,7 +46,7 @@ export default async function HomePage() {
     )
   }
 
-  const cmsPlans = await getPricingPlansByService("shared-hosting")
+  const cmsPlans = await getPricingPlansByService("shared-hosting", "india")
   const plans = cmsPlans.length ? cmsPlans : sharedHostingPlans
 
   return (
@@ -55,7 +55,7 @@ export default async function HomePage() {
         <CmsSchemaJsonLd path="/" />
 
       <BannerSection
-        message="Save up to 30% on annual NVMe hosting plans — limited time."
+        message="Save up to 30% on NVMe shared hosting with a 3-year plan."
         cta={{ label: "View pricing", href: "#pricing" }}
         dismissible
       />
@@ -68,19 +68,19 @@ export default async function HomePage() {
             <span className="text-gradient-brand">10X faster</span>
           </>
         }
-        description="Most budget hosts sell you slow HDD storage, a support queue measured in days, and a renewal price that quietly triples. We built the opposite: NVMe storage on every plan, a real SLA, and a team that answers the phone."
+        description="Most budget hosts sell you slow HDD storage, a support queue measured in days, and a renewal price that quietly triples. We built the opposite: NVMe storage on every shared hosting plan, a real SLA, and a team that answers the phone."
         bullets={[
           "NVMe storage standard, not a paid upgrade",
           "24/7 support that picks up the phone",
-          "Transparent renewal pricing, no bait-and-switch",
+          "Renewal prices shown up front, no bait-and-switch",
           "Free migration on every annual plan",
         ]}
         primaryCta={{ label: "Choose your plan", href: "#pricing" }}
         secondaryCta={{ label: "Talk to an expert", href: LEAD_CTA_HREF }}
         stats={[
           { label: "Uptime SLA", value: "99.9%" },
-          { label: "Businesses hosted", value: "12,000+" },
-          { label: "Avg. load time", value: "0.7s" },
+          { label: "In business since", value: "2012" },
+          { label: "Phone & ticket support", value: "24/7" },
         ]}
         media={<HeroVisual />}
       />
@@ -91,8 +91,8 @@ export default async function HomePage() {
         description="Switching to NVMe-backed infrastructure changes what happens the moment someone lands on your site."
         stats={[
           { label: "Faster page loads", value: "10X", icon: Zap },
-          { label: "Potential traffic lift", value: "+1000%", icon: TrendingUp },
-          { label: "Uptime guarantee", value: "99.9%", icon: ShieldCheck },
+          { label: "Storage on shared hosting", value: "NVMe", icon: TrendingUp },
+          { label: "Uptime SLA", value: "99.9%", icon: ShieldCheck },
           { label: "Support availability", value: "24/7", icon: HeadphonesIcon },
         ]}
       />
@@ -108,8 +108,8 @@ export default async function HomePage() {
 
       <TrustHighlights
         eyebrow="Why MagicWorks Host"
-        title="Promises we back with an SLA, not just a landing page"
-        description="Every claim below is something we'll put in writing — service credits, migration help, and backups included."
+        title="What you get with MagicWorks Host"
+        description="Uptime is backed by our Service Level Agreement, with service credits if we fall short."
         background="alt"
         highlights={trustHighlights}
       />
@@ -172,7 +172,7 @@ export default async function HomePage() {
         cta={{ label: "Learn more about us", href: "/about-us" }}
         highlights={[
           { label: "Years in operation", value: "13+" },
-          { label: "Businesses hosted", value: "12,000+" },
+          { label: "Data centres", value: "India & USA" },
           { label: "Support availability", value: "24/7" },
           { label: "Uptime commitment", value: "99.9%" },
         ]}
@@ -194,8 +194,8 @@ export default async function HomePage() {
         description="Everything you need to know before you switch."
         contactCta={false}
         items={[
-          { question: "How fast can I get started?", answer: "Most accounts are provisioned within 5 minutes of payment confirmation — no waiting on manual setup." },
-          { question: "Do you offer a money-back guarantee?", answer: "Yes — every plan includes a 30-day money-back guarantee, no questions asked." },
+          { question: "How fast can I get started?", answer: "Shared hosting accounts are usually set up shortly after payment is confirmed. VPS and dedicated servers are delivered within 24 hours." },
+          { question: "Do you offer a money-back guarantee?", answer: "Yes — new shared hosting customers can request a full refund within 30 days of purchase. Domain, SSL and VPS/dedicated setup fees are non-refundable; our Terms of Service have the details." },
           { question: "Can I upgrade my plan later?", answer: "Absolutely. Upgrades are instant and prorated directly from your control panel." },
           { question: "Will you help me migrate my existing site?", answer: "Yes, our team handles the migration for you on every annual plan at no extra cost." },
         ]}

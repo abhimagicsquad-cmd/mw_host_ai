@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server"
 
 import { siteConfig } from "@/constants/site-config"
-import { sendLeadNotificationEmail } from "@/lib/email"
-import { storeLead } from "@/lib/leads-store"
+import { logActivity } from "@/lib/admin/activity"
+import { linkLeadToConversation } from "@/lib/assistant/server"
+import { deliverLead } from "@/lib/lead-delivery"
+import { verifyTurnstile } from "@/lib/turnstile"
 import { leadApiPayloadSchema } from "@/schemas/lead-form.schema"
 
 export const runtime = "nodejs"
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000
 const RATE_LIMIT_MAX_REQUESTS = 5
-const DUPLICATE_WINDOW_MS = 60 * 1000
 const MIN_FILL_TIME_MS = 1500
 
 // Best-effort, in-memory only — resets on cold start/redeploy. Sufficient to blunt casual
 // abuse on a lead form; swap for Vercel KV/Upstash if traffic grows enough to need it.
 const requestLog = new Map<string, number[]>()
-const recentSubmissions = new Map<string, number>()
 
 function getClientIp(request: Request) {
   const forwarded = request.headers.get("x-forwarded-for")
@@ -23,19 +23,21 @@ function getClientIp(request: Request) {
   return request.headers.get("x-real-ip") ?? "unknown"
 }
 
+/** Drops stale entries so the in-memory map can't grow without bound. */
+function pruneStale(now: number) {
+  if (requestLog.size < 1000) return
+  for (const [key, timestamps] of requestLog) {
+    if (timestamps.every((timestamp) => now - timestamp >= RATE_LIMIT_WINDOW_MS)) requestLog.delete(key)
+  }
+}
+
 function isRateLimited(ip: string) {
   const now = Date.now()
+  pruneStale(now)
   const timestamps = (requestLog.get(ip) ?? []).filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS)
   timestamps.push(now)
   requestLog.set(ip, timestamps)
   return timestamps.length > RATE_LIMIT_MAX_REQUESTS
-}
-
-function markAndCheckDuplicate(key: string) {
-  const now = Date.now()
-  const lastSeen = recentSubmissions.get(key)
-  recentSubmissions.set(key, now)
-  return typeof lastSeen === "number" && now - lastSeen < DUPLICATE_WINDOW_MS
 }
 
 export async function POST(request: Request) {
@@ -43,7 +45,7 @@ export async function POST(request: Request) {
 
   if (isRateLimited(ip)) {
     return NextResponse.json(
-      { success: false, message: "Too many requests. Please try again in a few minutes." },
+      { success: false, message: `Too many requests. Please try again in a few minutes, or call us on ${siteConfig.contact.phone}.` },
       { status: 429 }
     )
   }
@@ -63,34 +65,21 @@ export async function POST(request: Request) {
     )
   }
 
-  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl } =
+  const { name, phone, email, message, website, source, formRenderedAt, service, company, hostingType, pageUrl, turnstileToken, assistantConversationId, assistantVisitorId } =
     parsed.data
+
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return NextResponse.json({ success: false, message: `The security check failed. Please try again, or call us on ${siteConfig.contact.phone}.` }, { status: 403 })
+  }
 
   const isLikelyBot =
     Boolean(website) || (typeof formRenderedAt === "number" && Date.now() - formRenderedAt < MIN_FILL_TIME_MS)
-
-  const isDuplicate = markAndCheckDuplicate(`${email.toLowerCase()}:${phone}`)
-
-  if (isLikelyBot || isDuplicate) {
-    return NextResponse.json({
-      success: true,
-      message: "Thanks — we've received your details and will be in touch shortly.",
-    })
+  if (isLikelyBot) {
+    return NextResponse.json({ success: true, message: "Thanks — we've received your details and will be in touch shortly." })
   }
 
-  const [storeResult, emailResult] = await Promise.all([
-    storeLead({ name, phone, email, message, source, service, company, hostingType, pageUrl }),
-    sendLeadNotificationEmail({ name, phone, email, message, source, service, company, hostingType }),
-  ])
-
-  if (!storeResult.stored && !storeResult.skipped) {
-    // Case C/D: the durable record failed to save — that's the one outcome we can't let
-    // silently succeed, even if the notification email went out (emailResult.sent).
-    console.error("[api/leads] Supabase insert failed; lead was not persisted.", {
-      email,
-      source,
-      emailSent: emailResult.sent,
-    })
+  const delivery = await deliverLead({ name, phone, email, message, source, service, company, hostingType, pageUrl })
+  if (!delivery.ok) {
     return NextResponse.json(
       {
         success: false,
@@ -99,11 +88,22 @@ export async function POST(request: Request) {
       { status: 502 }
     )
   }
+  if (delivery.duplicate) {
+    return NextResponse.json({ success: true, message: "Thanks — we've received your details and will be in touch shortly." })
+  }
 
-  if (!emailResult.sent && !emailResult.skipped) {
-    // Case B: lead is safely stored (or Supabase isn't configured yet); only the
-    // notification email failed — log it, but don't fail the user's submission.
-    console.error("[api/leads] Notification email failed after the lead was stored.", { email, source })
+  // Hosting Assistant enquiries: link the lead to its conversation and note it in the activity log.
+  if (assistantConversationId && assistantVisitorId) {
+    const leadId = delivery.leadId
+    const linked = await linkLeadToConversation(assistantConversationId, assistantVisitorId, leadId, `Enquiry sent: ${name} <${email}>`)
+    await logActivity({
+      username: "Hosting Assistant",
+      action: "assistant.lead_captured",
+      entityType: "lead",
+      entityId: leadId,
+      description: `Hosting Assistant captured a lead: ${name} <${email}>${service ? ` (${service})` : ""}`,
+      metadata: { conversationId: linked ? assistantConversationId : null, source },
+    })
   }
 
   return NextResponse.json({

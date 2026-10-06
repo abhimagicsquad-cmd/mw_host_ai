@@ -19,6 +19,11 @@ type CarouselProps = {
   plugins?: CarouselPlugin
   orientation?: "horizontal" | "vertical"
   setApi?: (api: CarouselApi) => void
+  /**
+   * Announce "Slide N of M" to screen readers on each change. Turn off while the carousel
+   * rotates on its own, so automatic advances don't interrupt (WAI-ARIA carousel pattern).
+   */
+  announceSlides?: boolean
 }
 
 type CarouselContextProps = {
@@ -50,6 +55,7 @@ function Carousel({
   opts,
   setApi,
   plugins,
+  announceSlides = true,
   className,
   children,
   ...props
@@ -115,6 +121,7 @@ function Carousel({
     api.on("select", onSelect)
 
     return () => {
+      api?.off("reInit", onSelect)
       api?.off("select", onSelect)
     }
   }, [api, onSelect])
@@ -145,7 +152,7 @@ function Carousel({
         {...props}
       >
         {children}
-        <span className="sr-only" role="status" aria-live="polite">
+        <span className="sr-only" role="status" aria-live={announceSlides ? "polite" : "off"}>
           {scrollSnapCount ? `Slide ${selectedIndex + 1} of ${scrollSnapCount}` : null}
         </span>
       </div>
@@ -258,24 +265,26 @@ function CarouselDots({ className, ...props }: React.ComponentProps<"div">) {
   if (scrollSnapCount <= 1) return null
 
   return (
+    // Plain buttons with aria-current: a tablist would promise tab/tabpanel semantics and
+    // roving focus that slide pickers don't have.
     <div
       data-slot="carousel-dots"
-      role="tablist"
-      aria-label="Slides"
-      className={cn("flex items-center justify-center gap-2", className)}
+      role="group"
+      aria-label="Choose slide"
+      className={cn("flex items-center justify-center", className)}
       {...props}
     >
       {Array.from({ length: scrollSnapCount }).map((_, index) => (
         <button
           key={index}
           type="button"
-          role="tab"
-          aria-selected={index === selectedIndex}
+          aria-current={index === selectedIndex ? "true" : undefined}
           aria-label={`Go to slide ${index + 1}`}
           onClick={() => scrollTo(index)}
+          // 24px hit target (WCAG 2.5.8) around the 10px visible dot.
           className={cn(
-            "size-2.5 rounded-full transition-colors",
-            index === selectedIndex ? "bg-brand-orange" : "bg-brand-navy/15 hover:bg-brand-navy/30"
+            "flex size-6 items-center justify-center rounded-full after:size-2.5 after:rounded-full after:transition-colors",
+            index === selectedIndex ? "after:bg-brand-orange" : "after:bg-brand-navy/15 hover:after:bg-brand-navy/30"
           )}
         />
       ))}

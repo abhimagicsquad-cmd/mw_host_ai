@@ -1,10 +1,11 @@
-import Link from "next/link"
+import Link from "@/components/common/site-link"
 import { Search as SearchIcon } from "lucide-react"
 
 import { PageHero } from "@/components/sections/page-hero"
 import { SectionContainer } from "@/components/layout/section-container"
 import { Input } from "@/components/ui/input"
 import { buildPageMetadata } from "@/lib/seo"
+import { getBlog } from "@/lib/cms/blog"
 import { searchSite } from "@/lib/search-index"
 
 type SearchPageProps = {
@@ -20,7 +21,7 @@ export const generateMetadata = () => buildPageMetadata({
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q = "" } = await searchParams
-  const results = searchSite(q)
+  const results = searchSite(q, (await getBlog()).posts)
 
   return (
     <>
@@ -31,13 +32,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       />
 
       <SectionContainer width="narrow">
-        <form action="/search" method="get" className="relative">
+        <form action="/search/" method="get" className="relative">
           <SearchIcon className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             name="q"
             defaultValue={q}
             placeholder="Search the site…"
+            aria-label="Search the site"
             className="h-12 pl-11"
             autoFocus
           />

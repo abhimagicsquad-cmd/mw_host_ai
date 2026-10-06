@@ -10,11 +10,14 @@ export const leadMessageField = z
   .optional()
   .or(z.literal(""))
 
+/** Service value of affiliate-programme applications (the affiliate signup form; not in the dropdown). */
+export const AFFILIATE_SERVICE_VALUE = "affiliate-programme"
+
 export const serviceField = z
   .string()
   .min(1, "Please select a service.")
   .refine(
-    (value) => serviceOptions.some((option) => option.value === value),
+    (value) => value === AFFILIATE_SERVICE_VALUE || serviceOptions.some((option) => option.value === value),
     "Please select a valid service."
   )
 
@@ -48,11 +51,17 @@ export const leadFormDefaultValues: LeadFormValues = {
  * forms can share one submission pipeline.
  */
 export const leadApiPayloadSchema = leadFormSchema.extend({
+  // <GetQuoteForm /> sends its requirements (up to 2000 characters) as the message.
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
   source: z.string().max(60).optional(),
   formRenderedAt: z.number().optional(),
   company: z.string().trim().max(120).optional().or(z.literal("")),
   hostingType: z.string().max(60).optional().or(z.literal("")),
   pageUrl: z.string().max(500).optional().or(z.literal("")),
+  turnstileToken: z.string().max(2048).nullish(),
+  // Set by the Hosting Assistant widget so the lead is linked to its conversation.
+  assistantConversationId: z.string().uuid().nullish(),
+  assistantVisitorId: z.string().regex(/^[A-Za-z0-9_-]{8,64}$/).nullish(),
 })
 
 export type LeadApiPayload = z.infer<typeof leadApiPayloadSchema>

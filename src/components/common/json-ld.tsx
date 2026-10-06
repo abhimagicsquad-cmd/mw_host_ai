@@ -1,11 +1,59 @@
-import { siteConfig } from "@/constants/site-config"
+import { siteConfig, socialLinks } from "@/constants/site-config"
+import { publicPath } from "@/lib/public-paths"
 import type { BreadcrumbItem, FAQItem } from "@/types/content"
 
+const ORG_ID = `${siteConfig.url}/#organization`
+const WEBSITE_ID = `${siteConfig.url}/#website`
+const LOGO_URL = `${siteConfig.url}/images/mwh-mark.png`
+const SHARE_IMAGE_URL = `${siteConfig.url}/opengraph-image`
+
 function JsonLd({ data }: { data: object }) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
+  // Escape "<" so no string in the data can close the <script> element.
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />
 }
 
-/** Organization + WebSite structured data for the homepage. */
+const postalAddress = { "@type": "PostalAddress", ...siteConfig.contact.postalAddress }
+
+/** Service groups for the Organization's OfferCatalog: [service name, route path]. */
+const OFFER_CATALOG: { name: string; items: [string, string][] }[] = [
+  {
+    name: "Web hosting",
+    items: [
+      ["Shared Web Hosting", "/hosting/buy-web-hosting"],
+      ["WordPress Hosting", "/hosting/wordpress-hosting"],
+      ["Linux Shared Hosting", "/hosting/linux-shared-hosting"],
+      ["VPS Hosting", "/vps-hosting"],
+      ["Cloud Hosting", "/services/cloud-hosting"],
+      ["Reseller Hosting", "/services/reseller-hosting"],
+      ["Dedicated Servers", "/dedicated-hosting/dedicated-server"],
+      ["Managed Dedicated Servers", "/dedicated-hosting/managed-dedicated-server"],
+    ],
+  },
+  {
+    name: "Domains, SSL and email",
+    items: [
+      ["Domain Registration", "/domain/domain-name-registration"],
+      ["Domain Transfer", "/domain/transfer-your-domain-name"],
+      ["SSL Certificates", "/ssl"],
+      ["Business Email Hosting", "/email-hosting/business"],
+    ],
+  },
+  {
+    name: "Website services",
+    items: [
+      ["Website Development", "/services/website-development"],
+      ["Website Maintenance", "/services/website-maintenance"],
+      ["Website Migration", "/services/website-migration"],
+      ["Website Security", "/services/website-security"],
+    ],
+  },
+]
+
+/**
+ * Organization + LocalBusiness + WebSite graph for the homepage. The entity data (legal name,
+ * founding year, address, contact points, official social profiles via sameAs) is what search
+ * and AI answer engines use to identify the company and connect it to its profiles.
+ */
 export function OrganizationJsonLd() {
   return (
     <JsonLd
@@ -14,23 +62,79 @@ export function OrganizationJsonLd() {
         "@graph": [
           {
             "@type": "Organization",
+            "@id": ORG_ID,
             name: siteConfig.name,
+            legalName: siteConfig.legalName,
+            alternateName: "MagicWorksHost",
             url: siteConfig.url,
-            logo: `${siteConfig.url}/images/logo-magicworkshost-best-web-hosting-300.png`,
-            telephone: siteConfig.contact.phone,
+            logo: { "@type": "ImageObject", url: LOGO_URL, width: 512, height: 512 },
+            image: SHARE_IMAGE_URL,
+            description: siteConfig.description,
+            foundingDate: String(siteConfig.foundingYear),
             email: siteConfig.contact.email,
-            address: {
-              "@type": "PostalAddress",
-              streetAddress: siteConfig.contact.address,
+            telephone: siteConfig.contact.phone,
+            address: postalAddress,
+            areaServed: { "@type": "Country", name: "India" },
+            sameAs: socialLinks.map((link) => link.href),
+            contactPoint: [
+              { "@type": "ContactPoint", contactType: "sales", telephone: siteConfig.contact.phone, email: siteConfig.contact.email, areaServed: "IN", availableLanguage: ["en"] },
+              { "@type": "ContactPoint", contactType: "technical support", telephone: siteConfig.contact.phone, areaServed: "IN", availableLanguage: ["en"], hoursAvailable: { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], opens: "00:00", closes: "23:59" } },
+            ],
+            knowsAbout: [
+              "Web hosting",
+              "NVMe hosting",
+              "WordPress hosting",
+              "VPS hosting",
+              "Cloud hosting",
+              "Reseller hosting",
+              "Dedicated servers",
+              "Domain registration",
+              "SSL certificates",
+              "Business email hosting",
+              "Website development",
+              "Website maintenance",
+              "Website migration",
+              "Website security",
+            ],
+            // What the company offers, each linked to its page — the service ↔ company relationships
+            // knowledge graphs and answer engines use to say "MagicWorks Host offers X".
+            hasOfferCatalog: {
+              "@type": "OfferCatalog",
+              name: `${siteConfig.name} services`,
+              itemListElement: OFFER_CATALOG.map((group) => ({
+                "@type": "OfferCatalog",
+                name: group.name,
+                itemListElement: group.items.map(([name, path]) => ({
+                  "@type": "Offer",
+                  itemOffered: { "@type": "Service", name, url: `${siteConfig.url}${publicPath(path)}`, provider: { "@id": ORG_ID } },
+                })),
+              })),
             },
           },
           {
+            "@type": "LocalBusiness",
+            "@id": `${siteConfig.url}/#localbusiness`,
+            name: siteConfig.name,
+            parentOrganization: { "@id": ORG_ID },
+            url: siteConfig.url,
+            image: LOGO_URL,
+            telephone: siteConfig.contact.phone,
+            email: siteConfig.contact.email,
+            address: postalAddress,
+            openingHoursSpecification: [
+              { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "09:30", closes: "18:30" },
+            ],
+          },
+          {
             "@type": "WebSite",
+            "@id": WEBSITE_ID,
             name: siteConfig.name,
             url: siteConfig.url,
+            inLanguage: "en-IN",
+            publisher: { "@id": ORG_ID },
             potentialAction: {
               "@type": "SearchAction",
-              target: `${siteConfig.url}/search?q={search_term_string}`,
+              target: `${siteConfig.url}/search/?q={search_term_string}`,
               "query-input": "required name=search_term_string",
             },
           },
@@ -64,15 +168,37 @@ export function FaqJsonLd({ items }: { items: FAQItem[] }) {
   )
 }
 
+/** HowTo structured data for a numbered "how to get started" list rendered on the page. */
+export function HowToJsonLd({ name, steps }: { name: string; steps: { name: string; text: string }[] }) {
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        name,
+        step: steps.map((step, index) => ({ "@type": "HowToStep", position: index + 1, name: step.name, text: step.text })),
+      }}
+    />
+  )
+}
+
 type BlogPostingJsonLdProps = {
   title: string
   description: string
   slug: string
   authorName: string
+  datePublished?: string | null
+  dateModified?: string | null
+  wordCount?: number
+  section?: string
+  /** The post's own image (site-relative or absolute); defaults to the branded share card. */
+  image?: string
 }
 
 /** BlogPosting structured data for a single blog post page. */
-export function BlogPostingJsonLd({ title, description, slug, authorName }: BlogPostingJsonLdProps) {
+export function BlogPostingJsonLd({ title, description, slug, authorName, datePublished, dateModified, wordCount, section, image }: BlogPostingJsonLdProps) {
+  const url = `${siteConfig.url}${publicPath(`/blog/${slug}`)}`
+  const isTeam = /magicworks host/i.test(authorName)
   return (
     <JsonLd
       data={{
@@ -80,18 +206,22 @@ export function BlogPostingJsonLd({ title, description, slug, authorName }: Blog
         "@type": "BlogPosting",
         headline: title,
         description,
-        url: `${siteConfig.url}/blog/${slug}`,
-        author: {
-          "@type": "Organization",
-          name: authorName,
-        },
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        image: [image ? new URL(image, siteConfig.url).href : SHARE_IMAGE_URL],
+        ...(datePublished ? { datePublished } : {}),
+        ...(dateModified || datePublished ? { dateModified: dateModified ?? datePublished } : {}),
+        ...(wordCount ? { wordCount } : {}),
+        ...(section ? { articleSection: section } : {}),
+        inLanguage: "en-IN",
+        // Team posts are authored by the Organization itself — same @id, so the same name
+        // (a different name on the same @id reads as two conflicting entities).
+        author: isTeam ? { "@type": "Organization", "@id": ORG_ID, name: siteConfig.name, url: siteConfig.url } : { "@type": "Person", name: authorName, worksFor: { "@id": ORG_ID } },
         publisher: {
           "@type": "Organization",
+          "@id": ORG_ID,
           name: siteConfig.name,
-          logo: {
-            "@type": "ImageObject",
-            url: `${siteConfig.url}/images/logo-magicworkshost-best-web-hosting-300.png`,
-          },
+          logo: { "@type": "ImageObject", url: LOGO_URL, width: 512, height: 512 },
         },
       }}
     />
@@ -104,56 +234,168 @@ function parsePriceNumber(price: string) {
 }
 
 type ProductJsonLdProps = {
+  /** The service's plain name ("WordPress Hosting") — what people and AI engines search for. */
   name: string
+  /** The page's marketing headline, kept as the product's slogan. */
+  slogan?: string
   description: string
   path: string
   plans: { name: string; price: string }[]
 }
 
-/** Product structured data for a pricing page — a single Offer for one plan, or an AggregateOffer across a tier grid. */
-export function ProductJsonLd({ name, description, path, plans }: ProductJsonLdProps) {
+/**
+ * Product + Service structured data for a pricing page: offers (a single Offer for one plan,
+ * or an AggregateOffer across a tier grid), and a Service entity provided by the Organization
+ * so the service connects to the company in knowledge graphs.
+ */
+export function ProductJsonLd({ name, slogan, description, path, plans }: ProductJsonLdProps) {
   const prices = plans.map((plan) => parsePriceNumber(plan.price)).filter((value): value is number => typeof value === "number")
   if (prices.length === 0) return null
 
-  const url = `${siteConfig.url}${path}`
+  const url = `${siteConfig.url}${publicPath(path)}`
+  const common = { priceCurrency: "INR", url, availability: "https://schema.org/InStock", seller: { "@id": ORG_ID } }
   const offers =
     prices.length === 1
-      ? { "@type": "Offer", priceCurrency: "INR", price: prices[0], url, availability: "https://schema.org/InStock" }
-      : {
-          "@type": "AggregateOffer",
-          priceCurrency: "INR",
-          lowPrice: Math.min(...prices),
-          highPrice: Math.max(...prices),
-          offerCount: prices.length,
-          url,
-        }
+      ? { "@type": "Offer", price: prices[0], ...common }
+      : { "@type": "AggregateOffer", lowPrice: Math.min(...prices), highPrice: Math.max(...prices), offerCount: prices.length, ...common }
 
   return (
     <JsonLd
       data={{
         "@context": "https://schema.org",
-        "@type": "Product",
-        name,
-        description,
-        url,
-        offers,
+        "@graph": [
+          {
+            "@type": "Product",
+            "@id": `${url}#product`,
+            name,
+            ...(slogan && slogan !== name ? { slogan } : {}),
+            description,
+            url,
+            image: SHARE_IMAGE_URL,
+            brand: { "@type": "Brand", name: siteConfig.name },
+            offers,
+          },
+          {
+            "@type": "Service",
+            "@id": `${url}#service`,
+            name,
+            serviceType: name,
+            description,
+            url,
+            provider: { "@id": ORG_ID },
+            brand: { "@type": "Brand", name: siteConfig.name },
+            offers,
+          },
+        ],
       }}
     />
   )
 }
 
-/** BreadcrumbList structured data — pass the same items rendered by <Breadcrumbs />. */
+/**
+ * Service structured data for a quoted service (no published price): the service entity, its
+ * provider (the Organization) and the topics it's about, so answer engines connect the service
+ * to the company. Priced services use <ProductJsonLd />, which emits a Service node too.
+ */
+export function ServiceJsonLd({ name, description, path, category }: { name: string; description: string; path: string; category: string }) {
+  const url = `${siteConfig.url}${publicPath(path)}`
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "@id": `${url}#service`,
+        name,
+        serviceType: name,
+        category,
+        description,
+        url,
+        provider: { "@id": ORG_ID },
+        brand: { "@type": "Brand", name: siteConfig.name },
+        areaServed: { "@type": "Country", name: "India" },
+        availableChannel: {
+          "@type": "ServiceChannel",
+          serviceUrl: url,
+          servicePhone: { "@type": "ContactPoint", telephone: siteConfig.contact.phone, contactType: "sales" },
+        },
+      }}
+    />
+  )
+}
+
+/** Article structured data for a knowledge-base guide, with the answer block marked speakable for voice assistants. */
+export function GuideArticleJsonLd({
+  title,
+  description,
+  path,
+  dateModified,
+  section,
+  about,
+}: {
+  title: string
+  description: string
+  path: string
+  dateModified: string
+  section: string
+  about: string[]
+}) {
+  const url = `${siteConfig.url}${publicPath(path)}`
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "@id": `${url}#article`,
+        headline: title,
+        description,
+        url,
+        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        image: [SHARE_IMAGE_URL],
+        datePublished: dateModified,
+        dateModified,
+        articleSection: section,
+        inLanguage: "en-IN",
+        about: about.map((name) => ({ "@type": "Thing", name })),
+        author: { "@type": "Organization", "@id": ORG_ID, name: siteConfig.name, url: siteConfig.url },
+        publisher: { "@type": "Organization", "@id": ORG_ID, name: siteConfig.name, logo: { "@type": "ImageObject", url: LOGO_URL, width: 512, height: 512 } },
+        isPartOf: { "@type": "WebSite", "@id": WEBSITE_ID },
+        speakable: { "@type": "SpeakableSpecification", cssSelector: ["[data-speakable]"] },
+      }}
+    />
+  )
+}
+
+/** ItemList of the pages in a hub (e.g. the website services hub), in display order. */
+export function ItemListJsonLd({ name, items }: { name: string; items: { name: string; path: string }[] }) {
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name,
+        itemListElement: items.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.name, url: `${siteConfig.url}${publicPath(item.path)}` })),
+      }}
+    />
+  )
+}
+
+/**
+ * BreadcrumbList structured data — pass the same items rendered by <Breadcrumbs />. Middle
+ * crumbs without a link (e.g. a "Legal" label with no index page) are left out, since every
+ * crumb except the current page must have a URL.
+ */
 export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
+  const linked = items.filter((item, index) => item.href || index === items.length - 1)
   return (
     <JsonLd
       data={{
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        itemListElement: items.map((item, index) => ({
+        itemListElement: linked.map((item, index) => ({
           "@type": "ListItem",
           position: index + 1,
           name: item.label,
-          ...(item.href ? { item: `${siteConfig.url}${item.href}` } : {}),
+          ...(item.href ? { item: `${siteConfig.url}${publicPath(item.href)}` } : {}),
         })),
       }}
     />
